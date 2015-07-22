@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">Simple Planner</string>
+
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="action_search">Search</string>
+    <string name="action_add">Add</string>
+    <string name="action_upload">Upload Calendars</string>
+    <string name="info_current_date">Current Date</string>
+    <string name="action_options">Open option menu</string>
+
+    <string name="mode_day">Day</string>
+    <string name="mode_week">Week</string>
+    <string name="mode_month">Month</string>
+
+
+    <string-array name="screen_array">
+        <item>Day</item>
+        <item>Week</item>
+        <item>Month</item>
+        <item>My Calendars</item>
+    </string-array>
+</resources>
