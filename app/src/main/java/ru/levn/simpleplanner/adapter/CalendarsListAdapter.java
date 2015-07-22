@@ -2,14 +2,18 @@ package ru.levn.simpleplanner.adapter;
 
 import android.content.Context;
 import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Map;
 
+import ru.levn.simpleplanner.Common;
 import ru.levn.simpleplanner.R;
 
 /**
@@ -17,26 +21,36 @@ import ru.levn.simpleplanner.R;
  */
 public class CalendarsListAdapter extends BaseAdapter {
 
-    Context ctx;
-    LayoutInflater lInflater;
-    ArrayList<String> objects;
+    private Context ctx;
+    private LayoutInflater lInflater;
+    private Map<String, String> objects;
+    private Map<String, Boolean> selectedObjects;
 
-    public CalendarsListAdapter(Context context, ArrayList<String> calendars) {
+    public CalendarsListAdapter(Context context, Map<String, String> calendars, Map<String, Boolean> selectedCalendars) {
         ctx = context;
         objects = calendars;
+        selectedObjects = selectedCalendars;
         lInflater = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
-    // number of elements
+    // количество элементов
     @Override
     public int getCount() {
         return objects.size();
     }
 
 
+    // Получить элемент по позиции
     @Override
     public Object getItem(int position) {
-        return objects.get(position);
+        int i = 0;
+        for (Map.Entry<String, String> val : objects.entrySet()) {
+            if (i == position) {
+                return val;
+            }
+            i ++;
+        }
+        return null;
     }
 
 
@@ -56,10 +70,12 @@ public class CalendarsListAdapter extends BaseAdapter {
             view = lInflater.inflate(R.layout.calendar_representation, parent, false);
         }
 
-        String name = (String)getItem(position);
+        Map.Entry<String, String> val = (Map.Entry<String, String>)getItem(position);
 
 
-        ((TextView) view.findViewById(R.id.calendar_name)).setText(name);
+        ((TextView) view.findViewById(R.id.calendar_name)).setText(val.getValue());
+        ((TextView) view.findViewById(R.id.calendar_id)).setText(val.getKey());
+        ((CheckBox) view.findViewById(R.id.is_calendar_enabled)).setChecked(Common.selectedCalendarsIDs.get(val.getKey()));
         return view;
     }
 

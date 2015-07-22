@@ -7,6 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
+
 import ru.levn.simpleplanner.R;
 
 /**
@@ -21,8 +23,9 @@ public class ScreenMonth extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.month, container,
-                false);
+        View rootView = inflater.inflate(R.layout.month, container, false);
+
+
 
         return rootView;
     }

@@ -2,6 +2,7 @@ package ru.levn.simpleplanner;
 
 import java.text.DateFormatSymbols;
 import java.util.Calendar;
+import java.util.HashMap;
 
 /**
  * Created by Levshin_N on 14.07.2015.
@@ -16,11 +17,14 @@ public class Common {
 
     public static int currentFragment;
 
+    public static HashMap<String, Boolean> selectedCalendarsIDs;
+
     public static void initCurrentDate() {
         Calendar c = Calendar.getInstance();
         day = c.get(Calendar.DAY_OF_MONTH);
         month = c.get(Calendar.MONTH);
         year = c.get(Calendar.YEAR);
+        selectedCalendarsIDs = new HashMap<String, Boolean>();
     }
 
     public static String getTextCurrentDate() {

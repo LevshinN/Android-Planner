@@ -7,26 +7,33 @@ import android.net.Uri;
 import java.lang.reflect.Array;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+import ru.levn.simpleplanner.Common;
 
 /**
  * Created by Levshin_N on 14.07.2015.
  */
 
 public class CalendarProvider {
-    private Uri calendarsUri;
-    private static String[] projection = new String[]{"_id", "name"};
+    private static Uri calendarsUri;
+    private static final String[] projection = new String[]{"_id", "name"};
+    private static Map<String, String> calendars;
 
-    public CalendarProvider () {
+    public CalendarProvider (Activity activity) {
         calendarsUri = Uri.parse("content://com.android.calendar/calendars");
+        calendars = new HashMap<String, String>();
+        updateCalendars(activity);
     }
 
-    // Получить список доступных календарей
-    public ArrayList<String> GetCalendarsNames(Activity activity) {
+    public static void updateCalendars(Activity activity) {
+        calendars.clear();
+        HashMap<String, Boolean> newSelectedCalendarIDs = new HashMap<String, Boolean>();
 
-        // Заводим список назаваний доступных календарей
-        ArrayList<String> calendarsNames = new ArrayList<String>();
-
-        // Пробегаемся по всей базе календарей
+        // РџСЂРѕР±РµРіР°РµРјСЃСЏ РїРѕ РІСЃРµР№ Р±Р°Р·Рµ РєР°Р»РµРЅРґР°СЂРµР№
         Cursor managedCursor = activity.getContentResolver().query(calendarsUri, projection, null, null, null);
         if (managedCursor != null && managedCursor.moveToFirst())
         {
@@ -39,13 +46,38 @@ public class CalendarProvider {
                 calName = managedCursor.getString(nameColumn);
                 calID = managedCursor.getString(idColumn);
                 if (calName != null) {
-                    // Добавляем название в список
-                    calendarsNames.add(calName);
+                    // Р”РѕР±Р°РІР»СЏРµРј РЅР°Р·РІР°РЅРёРµ РІ СЃРїРёСЃРѕРє
+                    calendars.put(calID, calName);
+                    newSelectedCalendarIDs.put(calID, true);
                 }
             } while (managedCursor.moveToNext());
             managedCursor.close();
         }
 
+        for (Map.Entry<String, Boolean> val : newSelectedCalendarIDs.entrySet()) {
+            if (Common.selectedCalendarsIDs.containsKey(val.getKey()) && !Common.selectedCalendarsIDs.get(val.getKey())) {
+                newSelectedCalendarIDs.put(val.getKey(), val.getValue());
+            }
+        }
+
+        Common.selectedCalendarsIDs = newSelectedCalendarIDs;
+    }
+
+    // РџРѕР»СѓС‡РёС‚СЊ СЃРїРёСЃРѕРє РґРѕСЃС‚СѓРїРЅС‹С… РєР°Р»РµРЅРґР°СЂРµР№
+    public static ArrayList<String> GetCalendarsNames(Activity activity) {
+
+        // Р—Р°РІРѕРґРёРј СЃРїРёСЃРѕРє РЅР°Р·Р°РІР°РЅРёР№ РґРѕСЃС‚СѓРїРЅС‹С… РєР°Р»РµРЅРґР°СЂРµР№
+        ArrayList<String> calendarsNames = new ArrayList<String>();
+
+        for (String name: calendars.values()) {
+            calendarsNames.add(name);
+        }
+
         return calendarsNames;
     }
+
+    public static Map<String,String> GetCalendars () {
+        return calendars;
+    }
+
 }

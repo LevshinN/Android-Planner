@@ -31,6 +31,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Map;
 
 import ru.levn.simpleplanner.adapter.CalendarsListAdapter;
 import ru.levn.simpleplanner.calendar.CalendarProvider;
@@ -72,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.tool_bar);
         setSupportActionBar(toolbar);
 
-        mCalendarProvider = new CalendarProvider();
+        mCalendarProvider = new CalendarProvider(this);
         mIntent = getIntent();
 
         mScreenTitles = getResources().getStringArray(R.array.screen_array);
@@ -141,13 +142,15 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             case R.id.action_upload:
                 // Show toast about click.
-                ArrayList<String> calendarsNames = mCalendarProvider.GetCalendarsNames(this);
+                Map<String,String> calendars = mCalendarProvider.GetCalendars();
 
                 StringBuilder message = new StringBuilder();
                 message.append(getString(R.string.action_upload) + '\n');
                 message.append("Календари:" + '\n');
-                for (String name : calendarsNames) {
-                    message.append(name + '\n');
+                for (Map.Entry<String,String> val : calendars.entrySet()) {
+                    if (Common.selectedCalendarsIDs.get(val.getKey())) {
+                        message.append(val.getValue() + '\n');
+                    }
                 }
 
                 Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
@@ -190,12 +193,8 @@ public class MainActivity extends AppCompatActivity {
             case 3:
                 fragment = new ScreenCalendars();
 
-                // Передаем фрагменту список календарей
-                ArrayList<String> calendarsNames = mCalendarProvider.GetCalendarsNames(this);
-                Bundle bundle = new Bundle();
-                bundle.putStringArrayList(Common.CALENDARS_LIST_KEY, calendarsNames);
-                mIntent.putStringArrayListExtra("cal_names", calendarsNames);
-                fragment.setArguments(bundle);
+                // Обновляем список календарей
+                CalendarProvider.updateCalendars(this);
 
                 if (currentMode != null) {
                     currentMode.setBackgroundResource(android.R.color.transparent);
