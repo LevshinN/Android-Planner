@@ -15,6 +15,8 @@ import java.util.Map;
 
 import ru.levn.simpleplanner.Common;
 import ru.levn.simpleplanner.R;
+import ru.levn.simpleplanner.calendar.Calendar;
+import ru.levn.simpleplanner.calendar.CalendarProvider;
 
 /**
  * Created by Levshin_N on 14.07.2015.
@@ -23,34 +25,24 @@ public class CalendarsListAdapter extends BaseAdapter {
 
     private Context ctx;
     private LayoutInflater lInflater;
-    private Map<String, String> objects;
-    private Map<String, Boolean> selectedObjects;
+    private ArrayList<Calendar> calendarList;
 
-    public CalendarsListAdapter(Context context, Map<String, String> calendars, Map<String, Boolean> selectedCalendars) {
-        ctx = context;
-        objects = calendars;
-        selectedObjects = selectedCalendars;
-        lInflater = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+    public CalendarsListAdapter(Context context, ArrayList<Calendar> calendars) {
+        calendarList = calendars;
+        lInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     // количество элементов
     @Override
     public int getCount() {
-        return objects.size();
+        return calendarList.size();
     }
 
 
     // Получить элемент по позиции
     @Override
     public Object getItem(int position) {
-        int i = 0;
-        for (Map.Entry<String, String> val : objects.entrySet()) {
-            if (i == position) {
-                return val;
-            }
-            i ++;
-        }
-        return null;
+        return calendarList.get(position);
     }
 
 
@@ -64,18 +56,30 @@ public class CalendarsListAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         Log.d("CalendarsListAdapter", "getView is called");
 
-
         View view = convertView;
         if (view == null) {
             view = lInflater.inflate(R.layout.calendar_representation, parent, false);
         }
 
-        Map.Entry<String, String> val = (Map.Entry<String, String>)getItem(position);
+        Calendar cal = (Calendar)getItem(position);
 
+        ((TextView) view.findViewById(R.id.calendar_name)).setText(cal.getName());
+        ((TextView) view.findViewById(R.id.calendar_id)).setText(cal.getId());
 
-        ((TextView) view.findViewById(R.id.calendar_name)).setText(val.getValue());
-        ((TextView) view.findViewById(R.id.calendar_id)).setText(val.getKey());
-        ((CheckBox) view.findViewById(R.id.is_calendar_enabled)).setChecked(Common.selectedCalendarsIDs.get(val.getKey()));
+        CheckBox isEnabledCB = (CheckBox) view.findViewById(R.id.is_calendar_enabled);
+        isEnabledCB.setChecked(cal.isEnabled());
+
+        isEnabledCB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String calID = (String) v.getTag();
+                boolean isEnabled = ( (CheckBox) v ).isChecked();
+                CalendarProvider.changeCalendarSelection(calID, isEnabled);
+            }
+        });
+
+        isEnabledCB.setTag(cal.getId());
+
         return view;
     }
 

@@ -9,6 +9,7 @@ import java.util.HashMap;
  */
 public class Common {
     public static String CALENDARS_LIST_KEY = "cal_names";
+    public static String ENABLED_CALENDARS_DB = "enabledcaldb";
 
     public static final int DIALOG_DATE = 1001;
     public static int day;
@@ -17,14 +18,12 @@ public class Common {
 
     public static int currentFragment;
 
-    public static HashMap<String, Boolean> selectedCalendarsIDs;
 
     public static void initCurrentDate() {
         Calendar c = Calendar.getInstance();
         day = c.get(Calendar.DAY_OF_MONTH);
         month = c.get(Calendar.MONTH);
         year = c.get(Calendar.YEAR);
-        selectedCalendarsIDs = new HashMap<String, Boolean>();
     }
 
     public static String getTextCurrentDate() {

@@ -2,38 +2,30 @@ package ru.levn.simpleplanner;
 
 
 import android.app.DatePickerDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
-import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Map;
 
-import ru.levn.simpleplanner.adapter.CalendarsListAdapter;
+import ru.levn.simpleplanner.calendar.Calendar;
+import ru.levn.simpleplanner.calendar.CalendarDBHelper;
 import ru.levn.simpleplanner.calendar.CalendarProvider;
 import ru.levn.simpleplanner.fragment.DatePickerFragment;
 import ru.levn.simpleplanner.fragment.ScreenCalendars;
@@ -54,8 +46,6 @@ public class MainActivity extends AppCompatActivity {
 
     private ActionBarDrawerToggle mDrawerToggle;
 
-    private CalendarProvider mCalendarProvider;
-
     private Intent mIntent;
 
     private Toolbar toolbar;
@@ -69,11 +59,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         Common.initCurrentDate();
+        CalendarProvider.initCalendarProvider(this);
 
         toolbar = (Toolbar) findViewById(R.id.tool_bar);
         setSupportActionBar(toolbar);
 
-        mCalendarProvider = new CalendarProvider(this);
         mIntent = getIntent();
 
         mScreenTitles = getResources().getStringArray(R.array.screen_array);
@@ -142,15 +132,12 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             case R.id.action_upload:
                 // Show toast about click.
-                Map<String,String> calendars = mCalendarProvider.GetCalendars();
 
                 StringBuilder message = new StringBuilder();
                 message.append(getString(R.string.action_upload) + '\n');
                 message.append("Календари:" + '\n');
-                for (Map.Entry<String,String> val : calendars.entrySet()) {
-                    if (Common.selectedCalendarsIDs.get(val.getKey())) {
-                        message.append(val.getValue() + '\n');
-                    }
+                for (Calendar cal : CalendarProvider.getEnabledCalendarList()) {
+                    message.append(cal.getName() + '\n');
                 }
 
                 Toast.makeText(this, message, Toast.LENGTH_SHORT).show();

@@ -52,8 +52,8 @@ public class ScreenCalendars extends Fragment {
         Map<String, Boolean> newSelectedCalendarIDs = new HashMap<String, Boolean>();
 
 
-        // Заполняем лист названиями календарей
-        final CalendarsListAdapter mListAdapter = new CalendarsListAdapter(this.getActivity(), CalendarProvider.GetCalendars(), Common.selectedCalendarsIDs);
+        // Р—Р°РїРѕР»РЅСЏРµРј Р»РёСЃС‚ РЅР°Р·РІР°РЅРёСЏРјРё РєР°Р»РµРЅРґР°СЂРµР№
+        final CalendarsListAdapter mListAdapter = new CalendarsListAdapter(this.getActivity(), CalendarProvider.calendars);
         Toast.makeText(this.getActivity(), "" + mListAdapter.getCount(), Toast.LENGTH_SHORT).show();
         calendarsList.setAdapter(mListAdapter);
 
@@ -61,9 +61,9 @@ public class ScreenCalendars extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                // Получаем список выбраныых элементов
+                // РџРѕР»СѓС‡Р°РµРј СЃРїРёСЃРѕРє РІС‹Р±СЂР°РЅС‹С‹С… СЌР»РµРјРµРЅС‚РѕРІ
                 CheckBox c = (CheckBox)view.findViewById(R.id.is_calendar_enabled);
-                Common.selectedCalendarsIDs.put(((Map.Entry<String,String>)mListAdapter.getItem(position)).getKey(), c.isActivated());
+                c.callOnClick();
             }
         });
 
