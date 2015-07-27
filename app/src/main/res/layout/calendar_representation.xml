@@ -3,32 +3,45 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:padding="@dimen/abc_list_item_padding_horizontal_material"
-    android:weightSum="1">
+    android:layout_height="wrap_content">
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_height="wrap_content"
         android:layout_width="0dp"
         android:layout_weight="1.0">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="@dimen/activity_horizontal_margin"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:text="Calendar Name"
-            android:textSize="20sp"
-            android:id="@+id/calendar_name" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:text="Calendar ID"
+            android:text="ID"
             android:textSize="20sp"
             android:id="@+id/calendar_id" />
 
-    </RelativeLayout>
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.7"
+            android:text="Account Name"
+            android:textSize="20sp"
+            android:id="@+id/calendar_acc_name" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.6"
+            android:text="Display Name"
+            android:textSize="20sp"
+            android:id="@+id/calendar_disp_name" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1.0"
+            android:text="Owner Account"
+            android:textSize="20sp"
+            android:id="@+id/calendar_owner_acc" />
+
+    </LinearLayout>
 
     <CheckBox
         android:layout_width="wrap_content"

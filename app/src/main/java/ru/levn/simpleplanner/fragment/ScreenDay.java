@@ -11,13 +11,19 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.DateFormatSymbols;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import ru.levn.simpleplanner.Common;
 import ru.levn.simpleplanner.R;
+import ru.levn.simpleplanner.adapter.EventListAdapter;
+import ru.levn.simpleplanner.calendar.CalendarProvider;
+import ru.levn.simpleplanner.calendar.Event;
 
 /**
  * Created by Levshin_N on 14.07.2015.
@@ -25,6 +31,8 @@ import ru.levn.simpleplanner.R;
 public class ScreenDay extends Fragment {
 
     private Context context;
+    private View rootView;
+    private ListView eventList;
 
     // Projection array. Creating indices for this array instead of doing
     // dynamic lookups improves performance.
@@ -49,16 +57,25 @@ public class ScreenDay extends Fragment {
                              Bundle savedInstanceState) {
 
 
-        View rootView = inflater.inflate(R.layout.day, container,
-                false);
-
+        rootView = inflater.inflate(R.layout.day, container, false);
         context = getActivity().getApplicationContext();
+        eventList = (ListView)rootView.findViewById(R.id.day_event_list);
 
-        TextView date = (TextView)rootView.findViewById(R.id.day_text_view);
-
-        date.setText( Common.getTextCurrentDate() );
+        update();
 
         return rootView;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        ArrayList<Event> events = CalendarProvider.getAvailableEvents(this.getActivity());
+        final EventListAdapter mListAdapter = new EventListAdapter(this.getActivity(), events);
+        eventList.setAdapter(mListAdapter);
+
+
+        Toast.makeText(this.getActivity(), "" + events.size(), Toast.LENGTH_SHORT).show();
     }
 
     private void getTasks(int date) {
@@ -71,5 +88,10 @@ public class ScreenDay extends Fragment {
         String[] selectionArgs = new String[] {"levshin.niklay@phystech.edu", "com.google",
                 "sampleuser@gmail.com"};
 
+    }
+
+    private void update() {
+        TextView date = (TextView)rootView.findViewById(R.id.day_text_view);
+        date.setText( Common.getTextCurrentDate() );
     }
 }

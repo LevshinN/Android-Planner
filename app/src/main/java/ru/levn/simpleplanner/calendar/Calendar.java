@@ -5,27 +5,11 @@ package ru.levn.simpleplanner.calendar;
  */
 
 public class Calendar {
-    private String name;
-    private String id;
-    private boolean enabled;
+    public String id;
+    public String account_name;
+    public String display_name;
+    public String owner_account;
 
-    public Calendar( String newName, String newId, boolean isEnabled) {
-        name = newName;
-        id = newId;
-        enabled = isEnabled;
-    }
+    public boolean enabled;
 
-    public Calendar( String newName, String newId) {
-        name = newName;
-        id = newId;
-        enabled = true;
-    }
-
-    public String getName() { return name; }
-    public String getId() { return id; }
-    public boolean isEnabled() { return enabled; }
-
-    public void setEnabled( boolean isEnable ) {
-        enabled = isEnable;
-    }
 }

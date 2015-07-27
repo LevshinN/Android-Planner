@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -57,6 +58,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        DisplayMetrics displayMetrics = getApplicationContext().getResources().getDisplayMetrics();
+        float dpHeight = displayMetrics.heightPixels / displayMetrics.density;
+        float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
+
+        Log.d("SCREEN_INFO", "Width = " + dpWidth);
+        Log.d("SCREEN_INFO", "Height = " + dpHeight);
 
         Common.initCurrentDate();
         CalendarProvider.initCalendarProvider(this);
@@ -137,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
                 message.append(getString(R.string.action_upload) + '\n');
                 message.append("Календари:" + '\n');
                 for (Calendar cal : CalendarProvider.getEnabledCalendarList()) {
-                    message.append(cal.getName() + '\n');
+                    message.append(cal.display_name + '\n');
                 }
 
                 Toast.makeText(this, message, Toast.LENGTH_SHORT).show();

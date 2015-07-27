@@ -6,6 +6,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.provider.CalendarContract;
 import android.util.Log;
 
 import java.lang.reflect.Array;
@@ -27,7 +28,43 @@ public class CalendarProvider {
     public static ArrayList<Calendar> calendars;
 
     private static Uri calendarsUri;
-    private static final String[] projection = new String[]{"_id", "name"};
+
+    private static final String[] projectionCalendar = new String[]{
+            CalendarContract.Calendars._ID,                     // 0
+            CalendarContract.Calendars.ACCOUNT_NAME,            // 1
+            CalendarContract.Calendars.CALENDAR_DISPLAY_NAME,   // 2
+            CalendarContract.Calendars.OWNER_ACCOUNT            // 3
+    };
+
+    // The indices for the projection array above.
+    private static final int PROJECTION_CALENDAR_ID_INDEX = 0;
+    private static final int PROJECTION_CALENDAR_ACCOUNT_NAME_INDEX = 1;
+    private static final int PROJECTION_CALENDAR_DISPLAY_NAME_INDEX = 2;
+    private static final int PROJECTION_CALENDAR_OWNER_ACCOUNT_INDEX = 3;
+
+    private static final String[] projectionEvent = new String[] {
+            CalendarContract.Events._ID,            // 0
+            CalendarContract.Events.CALENDAR_ID,    // 1
+            CalendarContract.Events.EVENT_COLOR,    // 2
+            CalendarContract.Events.TITLE,          // 3
+            CalendarContract.Events.DESCRIPTION,    // 4
+            CalendarContract.Events.DTSTART,        // 5
+            CalendarContract.Events.DTEND,          // 6
+            CalendarContract.Events.EVENT_LOCATION  // 7
+    };
+
+    // The indices for the projection array above.
+    private static final int PROJECTION_EVENT_ID_INDEX = 0;
+    private static final int PROJECTION_EVENT_CALENDAR_ID_INDEX = 1;
+    private static final int PROJECTION_EVENT_COLOR = 2;
+    private static final int PROJECTION_EVENT_TITLE = 3;
+    private static final int PROJECTION_EVENT_DESCRIPTION = 4;
+    private static final int PROJECTION_EVENT_DTSTART = 5;
+    private static final int PROJECTION_EVENT_DTEND = 6;
+    private static final int PROJECTION_EVENT_LOCATION = 7;
+
+
+
     private static HashMap<String, Boolean> selectedCalendarsIDs;
 
     private static CalendarDBHelper dbHelper;
@@ -46,6 +83,8 @@ public class CalendarProvider {
     }
 
     private static void LoadDB() {
+        Log.d("Databse", "Loading...");
+
         ContentValues cv = new ContentValues();
         Cursor c = db.query(Common.ENABLED_CALENDARS_DB, null, null, null, null, null, null);
 
@@ -64,6 +103,8 @@ public class CalendarProvider {
     }
 
     private static void SaveDB() {
+        Log.d("Databse", "Saving...");
+
         db.delete(Common.ENABLED_CALENDARS_DB, null, null);
 
         // создаем объект для данных
@@ -82,45 +123,43 @@ public class CalendarProvider {
         LoadDB();
 
         // Пробегаемся по всей базе календарей
-        Cursor managedCursor = activity.getContentResolver().query(calendarsUri, projection, null, null, null);
+        Cursor managedCursor = activity.getContentResolver().query(calendarsUri, projectionCalendar, null, null, null);
         if (managedCursor != null && managedCursor.moveToFirst())
         {
-            String calName;
-            String calID;
-            int nameColumn = managedCursor.getColumnIndex("name");
-            int idColumn = managedCursor.getColumnIndex("_id");
+            String calendarID = null;
+            String calendarAccName = null;
+            String calendarDispName = null;
+            String calendarOwnerAcc = null;
+
             do
             {
-                calName = managedCursor.getString(nameColumn);
-                calID = managedCursor.getString(idColumn);
-                if (calName != null) {
-                    // Проверяем не новый ли календарь за счет того
-                    // что ищем его в всписке выбранных/отключенных календарей
-                    if (!selectedCalendarsIDs.containsKey(calID)) {
-                        selectedCalendarsIDs.put(calID, true);
-                    }
+                calendarID = managedCursor.getString(PROJECTION_CALENDAR_ID_INDEX);
+                calendarAccName = managedCursor.getString(PROJECTION_CALENDAR_ACCOUNT_NAME_INDEX);
+                calendarDispName = managedCursor.getString(PROJECTION_CALENDAR_DISPLAY_NAME_INDEX);
+                calendarOwnerAcc = managedCursor.getString(PROJECTION_CALENDAR_OWNER_ACCOUNT_INDEX);
 
-                    // Добавляем название в список
-                    calendars.add(new Calendar(calName, calID, selectedCalendarsIDs.get(calID)));
+
+                // Проверяем не новый ли календарь за счет того
+                // что ищем его в всписке выбранных/отключенных календарей
+                if (!selectedCalendarsIDs.containsKey(calendarID)) {
+                    selectedCalendarsIDs.put(calendarID, true);
                 }
+
+                // Добавляем название в список
+                Calendar cal = new Calendar();
+                cal.id = calendarID;
+                cal.account_name = calendarAccName;
+                cal.display_name = calendarDispName;
+                cal.owner_account = calendarOwnerAcc;
+                cal.enabled = selectedCalendarsIDs.get(calendarID);
+
+                calendars.add(cal);
+
             } while (managedCursor.moveToNext());
             managedCursor.close();
         }
 
         SaveDB();
-    }
-
-    // Получить список доступных календарей
-    public static ArrayList<String> GetCalendarsNames(Activity activity) {
-
-        // Заводим список назаваний доступных календарей
-        ArrayList<String> calendarsNames = new ArrayList<String>();
-
-        for (Calendar cal: calendars) {
-            calendarsNames.add(cal.getName());
-        }
-
-        return calendarsNames;
     }
 
     public static void changeCalendarSelection(String id, boolean enabled) {
@@ -134,11 +173,55 @@ public class CalendarProvider {
     public static ArrayList<Calendar> getEnabledCalendarList () {
         ArrayList<Calendar> enabledCalendarList = new ArrayList<>();
         for (Calendar cal : calendars) {
-            if (selectedCalendarsIDs.get(cal.getId())) {
+            if (selectedCalendarsIDs.get(cal.id)) {
                 enabledCalendarList.add(cal);
             }
         }
         return enabledCalendarList;
     }
+
+    public static ArrayList<Event> getAvailableEvents(Activity activity) {
+        ArrayList<Event> events = new ArrayList<>();
+
+        String selection = "(" + CalendarContract.Events.CALENDAR_ID + " = ?)";
+        String[] selectionArgs;
+
+        for ( Calendar cal : calendars ) {
+            if ( selectedCalendarsIDs.get(cal.id) ) {
+                Cursor c = null;
+                selectionArgs = new String[]{cal.id};
+
+                c = activity.getContentResolver().query(CalendarContract.Events.CONTENT_URI, projectionEvent, selection, selectionArgs, null);
+
+                if (c != null && c.moveToFirst()) {
+                    do {
+                        Event event = new Event();
+
+                        String title = c.getString(PROJECTION_EVENT_TITLE);
+
+                        if (title == null) {
+                            continue;
+                        }
+
+                        event.CAL_ID = c.getString(PROJECTION_EVENT_CALENDAR_ID_INDEX);
+                        event.EVENT_ID = c.getString(PROJECTION_EVENT_ID_INDEX);
+                        event.COLOR = c.getString(PROJECTION_EVENT_COLOR);
+                        event.TITLE = c.getString(PROJECTION_EVENT_TITLE);
+                        event.DESCRIPTION = c.getString(PROJECTION_EVENT_DESCRIPTION);
+                        event.DT_START = c.getLong(PROJECTION_EVENT_DTSTART);
+                        event.DT_END = c.getLong(PROJECTION_EVENT_DTEND);
+                        event.EVENT_LOC = c.getString(PROJECTION_EVENT_LOCATION);
+
+                        events.add(event);
+
+                    } while (c.moveToNext());
+                }
+            }
+        }
+
+        return events;
+    }
+
+
 
 }
