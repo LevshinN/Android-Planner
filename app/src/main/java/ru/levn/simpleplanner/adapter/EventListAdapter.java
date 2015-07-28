@@ -65,10 +65,13 @@ public class EventListAdapter extends BaseAdapter {
 
     private void editContentView(View v, Event event) {
 
+        TextView id = (TextView)v.findViewById(R.id.event_id);
         TextView title = (TextView)v.findViewById(R.id.event_title);
         TextView description = (TextView)v.findViewById(R.id.event_description);
         TextView location = (TextView)v.findViewById(R.id.event_location_description);
         View locView = v.findViewById(R.id.event_location);
+
+        id.setText(event.EVENT_ID);
 
         if ( event.TITLE == null ) {
             ((ViewGroup) title.getParent()).removeView(title);

@@ -7,6 +7,7 @@ package ru.levn.simpleplanner.calendar;
 public class Event {
     public String EVENT_ID;
     public String CAL_ID;
+    public String ORIGINAL_ID;
     public int COLOR;
     public String TITLE;
     public String DESCRIPTION;

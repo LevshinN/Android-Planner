@@ -52,7 +52,8 @@ public class CalendarProvider {
             CalendarContract.Events.DTEND,          // 6
             CalendarContract.Events.DURATION,       // 7
             CalendarContract.Events.ALL_DAY,        // 8
-            CalendarContract.Events.EVENT_LOCATION  // 9
+            CalendarContract.Events.EVENT_LOCATION,  // 9
+            CalendarContract.Events.ORIGINAL_ID     // 10
     };
 
     // The indices for the projection array above.
@@ -66,6 +67,15 @@ public class CalendarProvider {
     private static final int PROJECTION_EVENT_DURATION = 7;
     private static final int PROJECTION_EVENT_ALL_DAY = 8;
     private static final int PROJECTION_EVENT_LOCATION = 9;
+    private static final int PROJECTION_EVENT_ORIGINAL_ID = 10;
+
+
+    private static final String[] projectionInstance = new String[] {
+            CalendarContract.Instances.EVENT_ID,    // 0
+    };
+
+    private static final int PROJECTION_INSTANCE_EVENT_ID = 0;
+
 
 
 
@@ -184,50 +194,53 @@ public class CalendarProvider {
         return enabledCalendarList;
     }
 
-    public static ArrayList<Event> getAvailableEvents(Activity activity) {
-        ArrayList<Event> events = new ArrayList<>();
+    private static Event getEventById(Activity activity, String eventID) {
+        String selection = "(" + CalendarContract.Events._ID    + " = ?)";
+        String[] selectionArgs = new String[] { eventID };
 
-        String selection = "(" + CalendarContract.Events.CALENDAR_ID + " = ?)";
+        Cursor cEvent = activity.getContentResolver().query(CalendarContract.Events.CONTENT_URI, projectionEvent, selection, selectionArgs, null);
+
+        if (cEvent != null && cEvent.moveToFirst() ) {
+            Event event = new Event();
+            event.CAL_ID = cEvent.getString(PROJECTION_EVENT_CALENDAR_ID_INDEX);
+            event.EVENT_ID = cEvent.getString(PROJECTION_EVENT_ID_INDEX);
+            event.COLOR = cEvent.getInt(PROJECTION_EVENT_COLOR);
+            event.TITLE = cEvent.getString(PROJECTION_EVENT_TITLE);
+            event.DESCRIPTION = cEvent.getString(PROJECTION_EVENT_DESCRIPTION);
+            event.DT_START = cEvent.getLong(PROJECTION_EVENT_DTSTART);
+            event.DT_END = cEvent.getLong(PROJECTION_EVENT_DTEND);
+            event.DURATION = cEvent.getLong(PROJECTION_EVENT_DURATION);
+            event.ALL_DAY = cEvent.getLong(PROJECTION_EVENT_ALL_DAY) > 0;
+            event.EVENT_LOC = cEvent.getString(PROJECTION_EVENT_LOCATION);
+            event.ORIGINAL_ID = cEvent.getString(PROJECTION_EVENT_ORIGINAL_ID);
+
+            return event;
+        }
+
+        return null;
+    }
+
+    public static ArrayList<Event> getAvilableEventsForPeriod(Activity activity, long UTCStart, long UTCEnd) {
+        ArrayList<Event> events = new ArrayList<>();
+//        String selection = "(("  +  CalendarContract.Events._ID    + " = ?) AND (" +
+//                                    CalendarContract.Events.CALENDAR_ID  + " = ?))" ;
+
+        String selection = "(" + CalendarContract.Events._ID    + " = ?)";
         String[] selectionArgs;
 
-        for ( Calendar cal : calendars ) {
-            if ( selectedCalendarsIDs.get(cal.id) ) {
-                Cursor c = null;
-                selectionArgs = new String[]{cal.id};
+        Cursor c = CalendarContract.Instances.query(activity.getContentResolver(), projectionInstance, UTCStart, UTCEnd);
 
-                c = activity.getContentResolver().query(CalendarContract.Events.CONTENT_URI, projectionEvent, selection, selectionArgs, null);
+        if (c != null && c.moveToFirst()) {
+            do {
+                String eventID = c.getString(PROJECTION_INSTANCE_EVENT_ID);
+                Event event = getEventById(activity, eventID);
 
-                if (c != null && c.moveToFirst()) {
-                    do {
-                        Event event = new Event();
-
-                        String title = c.getString(PROJECTION_EVENT_TITLE);
-
-                        if (title == null) {
-                            continue;
-                        }
-
-                        event.CAL_ID = c.getString(PROJECTION_EVENT_CALENDAR_ID_INDEX);
-                        event.EVENT_ID = c.getString(PROJECTION_EVENT_ID_INDEX);
-                        event.COLOR = c.getInt(PROJECTION_EVENT_COLOR);
-                        event.TITLE = c.getString(PROJECTION_EVENT_TITLE);
-                        event.DESCRIPTION = c.getString(PROJECTION_EVENT_DESCRIPTION);
-                        event.DT_START = c.getLong(PROJECTION_EVENT_DTSTART);
-                        event.DT_END = c.getLong(PROJECTION_EVENT_DTEND);
-                        event.DURATION = c.getLong(PROJECTION_EVENT_DURATION);
-                        event.ALL_DAY = c.getLong(PROJECTION_EVENT_ALL_DAY) > 0;
-                        event.EVENT_LOC = c.getString(PROJECTION_EVENT_LOCATION);
-
-                        events.add(event);
-
-                    } while (c.moveToNext());
+                if (event != null) {
+                    events.add(event);
                 }
-            }
+            } while (c.moveToNext());
         }
 
         return events;
     }
-
-
-
 }

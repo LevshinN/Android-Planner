@@ -18,6 +18,9 @@ import android.widget.Toast;
 import java.text.DateFormatSymbols;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.TimeZone;
 
 import ru.levn.simpleplanner.Common;
 import ru.levn.simpleplanner.R;
@@ -70,24 +73,21 @@ public class ScreenDay extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        ArrayList<Event> events = CalendarProvider.getAvailableEvents(this.getActivity());
+        Calendar c = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
+
+        c.clear();
+        c.set(Common.year, Common.month, Common.day, 0, 0, 0);
+        long start = c.getTimeInMillis();
+
+        c.clear();
+        c.set(Common.year, Common.month, Common.day, 23, 59, 59);
+        long finish = c.getTimeInMillis();
+
+        ArrayList<Event> events = CalendarProvider.getAvilableEventsForPeriod(this.getActivity(), start, finish);
         final EventListAdapter mListAdapter = new EventListAdapter(this.getActivity(), events);
         eventList.setAdapter(mListAdapter);
 
-
         Toast.makeText(this.getActivity(), "" + events.size(), Toast.LENGTH_SHORT).show();
-    }
-
-    private void getTasks(int date) {
-        Cursor cur = null;
-        ContentResolver cr = context.getContentResolver();
-
-        Uri uri = CalendarContract.Calendars.CONTENT_URI;
-
-
-        String[] selectionArgs = new String[] {"levshin.niklay@phystech.edu", "com.google",
-                "sampleuser@gmail.com"};
-
     }
 
     private void update() {
