@@ -56,53 +56,73 @@ public class EventListAdapter extends BaseAdapter {
         Event event = (Event) getItem(position);
 
 
-        editView((TextView) view.findViewById(R.id.event_title), event.TITLE);
-        editView((TextView) view.findViewById(R.id.event_description), event.DESCRIPTION);
-        editView((TextView) view.findViewById(R.id.event_start_time), getTime(event.DT_START));
-        editView((TextView) view.findViewById(R.id.event_end_time), getTime(event.DT_END));
-        editView((TextView) view.findViewById(R.id.event_id), event.COLOR);
-
-        if (!editView((TextView) view.findViewById(R.id.event_location), event.EVENT_LOC)) {
-            View v = view.findViewById(R.id.location_icon);
-            ((ViewGroup) v.getParent()).removeView(v);
-        }
-
-        editView((ImageView)view.findViewById(R.id.event_color), event.COLOR);
+        editContentView(view.findViewById(R.id.event_content), event);
+        editColorView(view.findViewById(R.id.event_color), event.COLOR);
+        editTimeView(view.findViewById(R.id.time_view), event);
 
         return view;
     }
 
-    private boolean editView(TextView v, String text) {
-        if ( text == null ) {
-            ((ViewGroup) v.getParent()).removeView(v);
-            return false;
-        } else {
+    private void editContentView(View v, Event event) {
 
-            String clearText = text.replaceAll("\\s+", "");
-            if (clearText.equals("")) {
-                ((ViewGroup) v.getParent()).removeView(v);
-                return false;
+        TextView title = (TextView)v.findViewById(R.id.event_title);
+        TextView description = (TextView)v.findViewById(R.id.event_description);
+        TextView location = (TextView)v.findViewById(R.id.event_location_description);
+        View locView = v.findViewById(R.id.event_location);
+
+        if ( event.TITLE == null ) {
+            ((ViewGroup) title.getParent()).removeView(title);
+        } else {
+            title.setText(event.TITLE);
+        }
+
+        if ( event.DESCRIPTION == null ) {
+            ((ViewGroup) description.getParent()).removeView(description);
+        } else {
+            String clear = event.DESCRIPTION.replaceAll("\\s+", "");
+            if ( clear.equals("") ) {
+                ((ViewGroup) description.getParent()).removeView(description);
+            }
+            else description.setText(event.DESCRIPTION);
+        }
+
+        if ( event.EVENT_LOC == null || event.EVENT_LOC.equals("") ) {
+            ((ViewGroup) locView.getParent()).removeView(locView);
+        } else {
+            location.setText(event.EVENT_LOC);
+        }
+    }
+
+    private void editColorView(View v, int color) {
+        if (color == 0) {
+            ((ViewGroup) v.getParent()).removeView(v);
+        }
+
+        v.setBackgroundColor(0xff000000 + color);
+    }
+
+    private void editTimeView(View v, Event event) {
+        if ( event.ALL_DAY || event.DT_START == 0 ) {
+            ((ViewGroup) v.getParent()).removeView(v);
+        } else {
+            ((TextView)v.findViewById(R.id.event_start_time)).setText(getTime(event.DT_START));
+
+            if (event.DT_END != 0) {
+                ((TextView)v.findViewById(R.id.event_end_time)).setText(getTime(event.DT_END));
+            } else if ( event.DURATION > 0 ) {
+                ((TextView)v.findViewById(R.id.event_end_time)).setText(getTime(event.DT_START + event.DURATION));
             } else {
-                v.setText(text);
-                return true;
+                TextView tv = (TextView)v.findViewById(R.id.event_end_time);
+                ((ViewGroup) tv.getParent()).removeView(tv);
             }
         }
     }
 
-    private boolean editView(ImageView v, String color) {
-        if (color == null) {
-            return false;
-        }
-
-        v.setBackgroundColor(0xff000000 + new Integer(color));
-        return true;
-    }
-
     private String getTime(long UTCTime) {
         Calendar cal = Calendar.getInstance();
-        cal.setTimeZone(TimeZone.getTimeZone("GMT"));
+        cal.setTimeZone(TimeZone.getDefault());
         cal.setTimeInMillis(UTCTime);
 
-        return "" + cal.get(Calendar.HOUR) + ":" + cal.get(Calendar.MINUTE);
+        return String.format("%02d:%02d", cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE));
     }
 }

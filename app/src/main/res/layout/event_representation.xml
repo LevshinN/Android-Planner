@@ -15,7 +15,8 @@
         android:layout_height="wrap_content"
         android:layout_weight="1.0"
         android:orientation="vertical"
-        android:padding="@dimen/abc_button_padding_horizontal_material">
+        android:padding="@dimen/abc_button_padding_horizontal_material"
+        android:id="@+id/event_content">
 
 
         <TextView
@@ -36,14 +37,15 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:id="@+id/event_location">
 
             <ImageView
-                android:layout_width="15dp"
-                android:layout_height="match_parent"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
                 android:scaleType="fitCenter"
                 android:background="@drawable/ic_action_place"
-                android:id="@+id/location_icon"/>
+                android:id="@+id/event_location_icon"/>
 
             <TextView
                 android:layout_width="0dp"
@@ -52,51 +54,59 @@
                 android:textSize="@dimen/abc_text_size_body_1_material"
                 android:textStyle="italic"
                 android:text="Event location"
-                android:id="@+id/event_location"/>
+                android:id="@+id/event_location_description"/>
 
         </LinearLayout>
 
 
     </LinearLayout>
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="match_parent">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:id="@+id/event_id" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:id="@+id/event_cal_id" />
-
-
-
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:padding="@dimen/abc_button_padding_horizontal_material">
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=" "/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:id="@+id/event_start_time" />
+            android:text=" "/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:minHeight="@dimen/abc_action_button_min_height_material"
+        android:orientation="vertical"
+        android:padding="@dimen/abc_button_padding_horizontal_material"
+        android:id="@+id/time_view">
+
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:id="@+id/event_end_time" />
+            android:layout_gravity="top"
+            android:id="@+id/event_start_time"
+            android:text = "event_start"/>
 
-    </RelativeLayout>
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1.0"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:id="@+id/event_end_time"
+            android:text = "event_end"/>
+
+    </LinearLayout>
 
 </LinearLayout>
