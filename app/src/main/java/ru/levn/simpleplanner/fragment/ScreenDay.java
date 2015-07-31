@@ -1,16 +1,20 @@
 package ru.levn.simpleplanner.fragment;
 
 
+
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.CalendarContract;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,6 +40,7 @@ public class ScreenDay extends Fragment {
     private Context context;
     private View rootView;
     private ListView eventList;
+    private EventListAdapter eventListAdapter;
 
     // Projection array. Creating indices for this array instead of doing
     // dynamic lookups improves performance.
@@ -73,25 +78,29 @@ public class ScreenDay extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        Calendar c = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
+        Pair<Long,Long> period = CalendarProvider.getDayPeriod();
 
-        c.clear();
-        c.set(Common.year, Common.month, Common.day, 0, 0, 0);
-        long start = c.getTimeInMillis();
-
-        c.clear();
-        c.set(Common.year, Common.month, Common.day, 23, 59, 59);
-        long finish = c.getTimeInMillis();
-
-        ArrayList<Event> events = CalendarProvider.getAvilableEventsForPeriod(this.getActivity(), start, finish);
-        final EventListAdapter mListAdapter = new EventListAdapter(this.getActivity(), events);
-        eventList.setAdapter(mListAdapter);
+        ArrayList<Event> events = Common.calendarProvider.getAvilableEventsForPeriod(this.getActivity(), period.first, period.second);
+        eventListAdapter = new EventListAdapter(this.getActivity(), events);
+        eventList.setAdapter(eventListAdapter);
+        eventList.setOnItemClickListener(selectItemListener);
 
         Toast.makeText(this.getActivity(), "" + events.size(), Toast.LENGTH_SHORT).show();
     }
 
     private void update() {
         TextView date = (TextView)rootView.findViewById(R.id.day_text_view);
-        date.setText( Common.getTextCurrentDate() );
+        date.setText(Common.getTextCurrentDate(Common.currentFragment));
     }
+
+    AdapterView.OnItemClickListener selectItemListener = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            Event event = (Event)parent.getItemAtPosition(position);
+            DialogFragment event_info = EventInfo.newInstance(0, event);
+            event_info.show(getFragmentManager(), "event_info");
+        }
+    };
+
+
 }

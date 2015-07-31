@@ -37,10 +37,6 @@ import ru.levn.simpleplanner.fragment.ScreenWeek;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final int DAY_MODE = 0;
-    private static final int WEEK_MODE = 1;
-    private static final int MONTH_MODE = 2;
-
     private String[] mScreenTitles;
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
@@ -66,7 +62,10 @@ public class MainActivity extends AppCompatActivity {
         Log.d("SCREEN_INFO", "Width = " + dpWidth);
         Log.d("SCREEN_INFO", "Height = " + dpHeight);
 
-        Common.initCurrentDate();
+        if (savedInstanceState == null) {
+            Common.initCurrentDate();
+        }
+
         CalendarProvider.initCalendarProvider(this);
 
         toolbar = (Toolbar) findViewById(R.id.tool_bar);
@@ -99,12 +98,13 @@ public class MainActivity extends AppCompatActivity {
         // Set the list's click listener
         mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
 
-        // Initialize the first fragment when the application first loads.
-        if (savedInstanceState == null)  {
-            selectItem(DAY_MODE);
-        }
 
         buildToolbar();
+
+        // Initialize the first fragment when the application first loads.
+        if (savedInstanceState == null)  {
+            selectItem(Common.DAY_MODE);
+        }
     }
 
     @Override
@@ -170,17 +170,17 @@ public class MainActivity extends AppCompatActivity {
         Fragment fragment = null;
         View pressedButton = null;
         switch (position) {
-            case DAY_MODE:
+            case Common.DAY_MODE:
                 fragment = new ScreenDay();
                 pressedButton = findViewById(R.id.btn_day_mode);
                 break;
 
-            case WEEK_MODE:
+            case Common.WEEK_MODE:
                 fragment = new ScreenWeek();
                 pressedButton = findViewById(R.id.btn_week_mode);
                 break;
 
-            case MONTH_MODE:
+            case Common.MONTH_MODE:
                 fragment = new ScreenMonth();
                 pressedButton = findViewById(R.id.btn_month_mode);
                 break;
@@ -225,6 +225,8 @@ public class MainActivity extends AppCompatActivity {
 
             currentMode = pressedButton;
         }
+
+        btnCurrentDate.setText(Common.getTextCurrentDate(Common.currentFragment));
     }
 
     /**
@@ -256,17 +258,23 @@ public class MainActivity extends AppCompatActivity {
 
                 switch (v.getId()) {
                     case R.id.btn_day_mode:
-                        selectItem(DAY_MODE);
-                        return;
+                        selectItem(Common.DAY_MODE);
+                        break;
+
                     case R.id.btn_week_mode:
-                        selectItem(WEEK_MODE);
-                        return;
+                        selectItem(Common.WEEK_MODE);
+                        break;
+
                     case R.id.btn_month_mode:
-                        selectItem(MONTH_MODE);
-                        return;
+                        selectItem(Common.MONTH_MODE);
+                        break;
+
                     case R.id.btn_current_date:
                         showDatePicker();
+                        break;
 
+                    default:
+                        break;
                 }
             }
         };
@@ -274,7 +282,7 @@ public class MainActivity extends AppCompatActivity {
 
         btnCurrentDate = (Button)findViewById(R.id.btn_current_date);
         btnCurrentDate.setOnClickListener(listener);
-        btnCurrentDate.setText(Common.getTextCurrentDate());
+        btnCurrentDate.setText(Common.getTextCurrentDate(Common.currentFragment));
 
 
         Button btnDay = (Button)findViewById(R.id.btn_day_mode);
@@ -292,9 +300,9 @@ public class MainActivity extends AppCompatActivity {
         DatePickerFragment date = new DatePickerFragment();
 
         Bundle args = new Bundle();
-        args.putInt("year", Common.year);
-        args.putInt("month", Common.month);
-        args.putInt("day", Common.day);
+        args.putInt("year", Common.selectedDate.get(java.util.Calendar.YEAR));
+        args.putInt("month", Common.selectedDate.get(java.util.Calendar.MONTH));
+        args.putInt("day", Common.selectedDate.get(java.util.Calendar.DAY_OF_MONTH));
         date.setArguments(args);
 
         date.setCallBack(ondate);
@@ -304,14 +312,12 @@ public class MainActivity extends AppCompatActivity {
     DatePickerDialog.OnDateSetListener ondate = new DatePickerDialog.OnDateSetListener() {
         @Override
         public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-            Common.year = year;
-            Common.month = monthOfYear;
-            Common.day = dayOfMonth;
-
+//            Common.year = year;
+//            Common.month = monthOfYear;
+//            Common.day = dayOfMonth;
+            Common.selectedDate.set(year, monthOfYear, dayOfMonth);
             selectItem(Common.currentFragment);
-            btnCurrentDate.setText(Common.getTextCurrentDate());
         }
     };
-
 
 }

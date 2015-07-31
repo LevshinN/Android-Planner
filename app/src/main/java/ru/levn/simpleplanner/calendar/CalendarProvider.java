@@ -8,15 +8,18 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.provider.CalendarContract;
 import android.util.Log;
+import android.util.Pair;
 
 import java.lang.reflect.Array;
 import java.net.URI;
 import java.security.KeyException;
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.TimeZone;
 
 import ru.levn.simpleplanner.Common;
 
@@ -222,11 +225,6 @@ public class CalendarProvider {
 
     public static ArrayList<Event> getAvilableEventsForPeriod(Activity activity, long UTCStart, long UTCEnd) {
         ArrayList<Event> events = new ArrayList<>();
-//        String selection = "(("  +  CalendarContract.Events._ID    + " = ?) AND (" +
-//                                    CalendarContract.Events.CALENDAR_ID  + " = ?))" ;
-
-        String selection = "(" + CalendarContract.Events._ID    + " = ?)";
-        String[] selectionArgs;
 
         Cursor c = CalendarContract.Instances.query(activity.getContentResolver(), projectionInstance, UTCStart, UTCEnd);
 
@@ -242,5 +240,42 @@ public class CalendarProvider {
         }
 
         return events;
+    }
+
+    public static Pair<Long,Long> getDayPeriod() {
+
+        java.util.Calendar cal = (java.util.Calendar)Common.selectedDate.clone();
+
+        cal.set(java.util.Calendar.HOUR_OF_DAY, 0);
+        cal.set(java.util.Calendar.MINUTE, 0);
+        cal.set(java.util.Calendar.SECOND, 0);
+
+        long start = cal.getTimeInMillis();
+
+        cal.add(java.util.Calendar.DAY_OF_MONTH, 1);
+
+        long finish = cal.getTimeInMillis();
+
+        return new Pair<>(start, finish);
+    }
+
+    public static Pair<Long,Long> getWeekPeriod() {
+
+        java.util.Calendar cal = (java.util.Calendar)Common.selectedDate.clone();
+
+        cal.set(java.util.Calendar.HOUR_OF_DAY, 0); // ! clear would not reset the hour of day !
+        cal.clear(java.util.Calendar.MINUTE);
+        cal.clear(java.util.Calendar.SECOND);
+        cal.clear(java.util.Calendar.MILLISECOND);
+
+        cal.set(java.util.Calendar.DAY_OF_WEEK, cal.getFirstDayOfWeek());
+
+        long start = cal.getTimeInMillis();
+
+
+        cal.add(java.util.Calendar.WEEK_OF_YEAR, 1);
+        long finish = cal.getTimeInMillis();
+
+        return new Pair<>(start, finish);
     }
 }
