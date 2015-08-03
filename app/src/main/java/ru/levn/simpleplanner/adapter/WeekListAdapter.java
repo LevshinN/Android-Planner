@@ -10,6 +10,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import ru.levn.simpleplanner.R;
+import ru.levn.simpleplanner.calendar.CalendarProvider;
 import ru.levn.simpleplanner.calendar.Event;
 
 /**
@@ -50,7 +51,25 @@ public class WeekListAdapter extends BaseAdapter {
         }
 
         ((TextView)view.findViewById(R.id.event_info_title)).setText(event.TITLE);
+        editTimeInfo((TextView)view.findViewById(R.id.event_info_time), event);
 
         return view;
+    }
+
+    private void editTimeInfo(TextView timeInfo, Event event ) {
+        if (event.ALL_DAY) {
+            timeInfo.setText("ALL DAY");
+            return;
+        }
+
+        String timeText = CalendarProvider.getTime(event.DT_START);
+
+        if (event.DT_END != 0) {
+            timeText += "-" + CalendarProvider.getTime(event.DT_END);
+        } else if (event.DURATION != 0) {
+            timeText += "-" + CalendarProvider.getTime(event.DT_START + event.DURATION);
+        }
+
+        timeInfo.setText(timeText);
     }
 }

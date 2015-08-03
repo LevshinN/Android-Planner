@@ -83,7 +83,7 @@ public class ScreenWeek extends Fragment {
         public void onSelectedDayChange(CalendarView view, int year, int month, int dayOfMonth) {
             if (calendarView.getDate() != calendarDate) {
                 Common.SetDate(year, month, dayOfMonth);
-                MainActivity.btnCurrentDate.setText(Common.getTextCurrentDate(Common.currentFragment));
+                MainActivity.btnCurrentDate.setText(CalendarProvider.getTextCurrentDate(Common.currentFragment, Common.GetSelectedDate().getTimeInMillis()));
                 Toast.makeText(view.getContext(), "Year=" + year + " Month=" + month + " Day=" + dayOfMonth, Toast.LENGTH_LONG).show();
                 refreshView();
             }

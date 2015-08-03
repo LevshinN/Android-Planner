@@ -90,7 +90,7 @@ public class ScreenDay extends Fragment {
 
     private void update() {
         TextView date = (TextView)rootView.findViewById(R.id.day_text_view);
-        date.setText(Common.getTextCurrentDate(Common.currentFragment));
+        date.setText(CalendarProvider.getTextCurrentDate(Common.currentFragment, Common.GetSelectedDate().getTimeInMillis()));
     }
 
     AdapterView.OnItemClickListener selectItemListener = new AdapterView.OnItemClickListener() {

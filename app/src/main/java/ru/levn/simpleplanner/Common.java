@@ -31,44 +31,6 @@ public class Common {
         selectedDate = Calendar.getInstance();
     }
 
-    public static String getTextCurrentDate(int mode) {
-        SimpleDateFormat dateFormat = null;
-
-        switch (mode) {
-            case DAY_MODE:
-                dateFormat = new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault());
-                return dateFormat.format(selectedDate.getTime());
-
-            case WEEK_MODE:
-
-                Calendar c = (Calendar)selectedDate.clone();
-
-                c.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
-
-                int day = c.get(Calendar.DAY_OF_MONTH);
-                int month = c.get(Calendar.MONTH);
-                int year = c.get(Calendar.YEAR);
-
-                String startWeek =  "" + day + " " + new DateFormatSymbols().getShortMonths()[month % 12] + " " + year;
-
-                c.add(Calendar.WEEK_OF_YEAR, 1);
-
-                day = c.get(Calendar.DAY_OF_MONTH);
-                month = c.get(Calendar.MONTH);
-                year = c.get(Calendar.YEAR);
-
-                String endWeek = "" + day + " " + new DateFormatSymbols().getShortMonths()[month % 12] + " " + year;
-
-                return startWeek + " - " + endWeek;
-
-            case MONTH_MODE:
-
-                dateFormat = new SimpleDateFormat("MMMM yyyy", Locale.getDefault());
-                return dateFormat.format(selectedDate.getTime());
-        }
-
-        return null;
-    }
 
     public static Calendar GetSelectedDate() {
         return selectedDate;

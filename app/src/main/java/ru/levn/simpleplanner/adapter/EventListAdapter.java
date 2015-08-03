@@ -19,6 +19,7 @@ import java.util.Date;
 import java.util.TimeZone;
 
 import ru.levn.simpleplanner.R;
+import ru.levn.simpleplanner.calendar.CalendarProvider;
 import ru.levn.simpleplanner.calendar.Event;
 
 /**
@@ -107,12 +108,12 @@ public class EventListAdapter extends BaseAdapter {
         if ( event.ALL_DAY || event.DT_START == 0 ) {
             ((ViewGroup) v.getParent()).removeView(v);
         } else {
-            ((TextView)v.findViewById(R.id.event_start_time)).setText(getTime(event.DT_START));
+            ((TextView)v.findViewById(R.id.event_start_time)).setText(CalendarProvider.getTime(event.DT_START));
 
             if (event.DT_END != 0) {
-                ((TextView)v.findViewById(R.id.event_end_time)).setText(getTime(event.DT_END));
+                ((TextView)v.findViewById(R.id.event_end_time)).setText(CalendarProvider.getTime(event.DT_END));
             } else if ( event.DURATION > 0 ) {
-                ((TextView)v.findViewById(R.id.event_end_time)).setText(getTime(event.DT_START + event.DURATION));
+                ((TextView)v.findViewById(R.id.event_end_time)).setText(CalendarProvider.getTime(event.DT_START + event.DURATION));
             } else {
                 TextView tv = (TextView)v.findViewById(R.id.event_end_time);
                 ((ViewGroup) tv.getParent()).removeView(tv);
@@ -120,11 +121,5 @@ public class EventListAdapter extends BaseAdapter {
         }
     }
 
-    private String getTime(long UTCTime) {
-        Calendar cal = Calendar.getInstance();
-        cal.setTimeZone(TimeZone.getDefault());
-        cal.setTimeInMillis(UTCTime);
 
-        return String.format("%02d:%02d", cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE));
-    }
 }

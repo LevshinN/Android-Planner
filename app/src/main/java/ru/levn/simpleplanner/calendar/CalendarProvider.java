@@ -13,10 +13,13 @@ import android.util.Pair;
 import java.lang.reflect.Array;
 import java.net.URI;
 import java.security.KeyException;
+import java.text.DateFormatSymbols;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
@@ -246,9 +249,7 @@ public class CalendarProvider {
 
         java.util.Calendar cal = (java.util.Calendar)Common.GetSelectedDate().clone();
 
-        cal.set(java.util.Calendar.HOUR_OF_DAY, 0);
-        cal.set(java.util.Calendar.MINUTE, 0);
-        cal.set(java.util.Calendar.SECOND, 0);
+
 
         long start = cal.getTimeInMillis();
 
@@ -263,10 +264,9 @@ public class CalendarProvider {
 
         java.util.Calendar cal = (java.util.Calendar)Common.GetSelectedDate().clone();
 
-        cal.set(java.util.Calendar.HOUR_OF_DAY, 0); // ! clear would not reset the hour of day !
-        cal.clear(java.util.Calendar.MINUTE);
-        cal.clear(java.util.Calendar.SECOND);
-        cal.clear(java.util.Calendar.MILLISECOND);
+        cal.set(java.util.Calendar.HOUR_OF_DAY, 0);
+        cal.set(java.util.Calendar.MINUTE, 0);
+        cal.set(java.util.Calendar.SECOND, 0);
 
         cal.set(java.util.Calendar.DAY_OF_WEEK, java.util.Calendar.MONDAY);
 
@@ -274,8 +274,58 @@ public class CalendarProvider {
 
 
         cal.add(java.util.Calendar.WEEK_OF_YEAR, 1);
+        cal.add(java.util.Calendar.MILLISECOND, -1);
         long finish = cal.getTimeInMillis();
 
-        return new Pair<>(start, finish - 1);
+        return new Pair<>(start, finish);
+    }
+
+    public static String getTime(long UTCTime) {
+        java.util.Calendar cal = java.util.Calendar.getInstance();
+        cal.setTimeZone(TimeZone.getDefault());
+        cal.setTimeInMillis(UTCTime);
+
+        return String.format("%02d:%02d", cal.get(java.util.Calendar.HOUR_OF_DAY), cal.get(java.util.Calendar.MINUTE));
+    }
+
+    public static String getTextCurrentDate(int mode, long UTCDate) {
+        SimpleDateFormat dateFormat = null;
+
+        switch (mode) {
+            case Common.DAY_MODE:
+                dateFormat = new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault());
+                return dateFormat.format(UTCDate);
+
+            case Common.WEEK_MODE:
+
+                java.util.Calendar c = new GregorianCalendar();
+
+                c.setTimeInMillis(UTCDate);
+
+                c.set(java.util.Calendar.DAY_OF_WEEK, java.util.Calendar.MONDAY);
+
+                int day = c.get(java.util.Calendar.DAY_OF_MONTH);
+                int month = c.get(java.util.Calendar.MONTH);
+                int year = c.get(java.util.Calendar.YEAR);
+
+                String startWeek =  "" + day + " " + new DateFormatSymbols().getShortMonths()[month % 12] + " " + year;
+
+                c.add(java.util.Calendar.WEEK_OF_YEAR, 1);
+
+                day = c.get(java.util.Calendar.DAY_OF_MONTH);
+                month = c.get(java.util.Calendar.MONTH);
+                year = c.get(java.util.Calendar.YEAR);
+
+                String endWeek = "" + day + " " + new DateFormatSymbols().getShortMonths()[month % 12] + " " + year;
+
+                return startWeek + " - " + endWeek;
+
+            case Common.MONTH_MODE:
+
+                dateFormat = new SimpleDateFormat("MMMM yyyy", Locale.getDefault());
+                return dateFormat.format(UTCDate);
+        }
+
+        return null;
     }
 }

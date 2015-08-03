@@ -227,7 +227,7 @@ public class MainActivity extends AppCompatActivity {
             currentMode = pressedButton;
         }
 
-        btnCurrentDate.setText(Common.getTextCurrentDate(Common.currentFragment));
+        btnCurrentDate.setText(CalendarProvider.getTextCurrentDate(Common.currentFragment, Common.GetSelectedDate().getTimeInMillis()));
     }
 
     /**
@@ -283,7 +283,7 @@ public class MainActivity extends AppCompatActivity {
 
         btnCurrentDate = (Button)findViewById(R.id.btn_current_date);
         btnCurrentDate.setOnClickListener(listener);
-        btnCurrentDate.setText(Common.getTextCurrentDate(Common.currentFragment));
+        btnCurrentDate.setText(CalendarProvider.getTextCurrentDate(Common.currentFragment, Common.GetSelectedDate().getTimeInMillis()));
 
 
         Button btnDay = (Button)findViewById(R.id.btn_day_mode);

@@ -9,7 +9,9 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.TextView;
 
+import ru.levn.simpleplanner.Common;
 import ru.levn.simpleplanner.R;
+import ru.levn.simpleplanner.calendar.CalendarProvider;
 import ru.levn.simpleplanner.calendar.Event;
 
 /**
@@ -86,7 +88,24 @@ public class EventInfo extends DialogFragment implements View.OnClickListener {
     }
 
     private String getTimeDescription() {
-        return "" + event.DT_START + " " + event.DT_END;
+        String timeText = "";
+
+        timeText += CalendarProvider.getTextCurrentDate(Common.DAY_MODE, event.DT_START);
+
+
+        if (event.ALL_DAY) {
+            return ", ALL_DAY";
+        }
+
+
+        timeText += ", " + CalendarProvider.getTime(event.DT_START);
+
+        if (event.DT_END != 0) {
+            timeText += " - " + CalendarProvider.getTime(event.DT_END);
+        } else if (event.DURATION != 0) {
+            timeText += " - " + CalendarProvider.getTime(event.DT_START + event.DURATION);
+        }
+        return timeText;
     }
 
 }
