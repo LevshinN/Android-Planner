@@ -98,11 +98,9 @@ public class EventListAdapter extends BaseAdapter {
     }
 
     private void editColorView(View v, int color) {
-        if (color == 0) {
-            ((ViewGroup) v.getParent()).removeView(v);
+        if (color != 0) {
+            v.setBackgroundColor(0xff000000 + color);
         }
-
-        v.setBackgroundColor(0xff000000 + color);
     }
 
     private void editTimeView(View v, Event event) {

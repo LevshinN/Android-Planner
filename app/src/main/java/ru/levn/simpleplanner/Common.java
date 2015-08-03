@@ -20,7 +20,7 @@ public class Common {
     public static String ENABLED_CALENDARS_DB = "enabledcaldb";
 
     public static final int DIALOG_DATE = 1001;
-    public static Calendar selectedDate;
+    private static Calendar selectedDate;
 
     public static CalendarProvider calendarProvider;
 
@@ -42,7 +42,8 @@ public class Common {
             case WEEK_MODE:
 
                 Calendar c = (Calendar)selectedDate.clone();
-                c.set(Calendar.DAY_OF_WEEK, c.getFirstDayOfWeek());
+
+                c.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
 
                 int day = c.get(Calendar.DAY_OF_MONTH);
                 int month = c.get(Calendar.MONTH);
@@ -67,5 +68,16 @@ public class Common {
         }
 
         return null;
+    }
+
+    public static Calendar GetSelectedDate() {
+        return selectedDate;
+    }
+
+    public static void SetDate(int year, int month, int day) {
+        selectedDate.set(year, month, day);
+
+        // Нужно вызвать для того, чтобы принудить календарь пересчитать остальные значения.
+        selectedDate.getTime();
     }
 }

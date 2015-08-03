@@ -244,7 +244,7 @@ public class CalendarProvider {
 
     public static Pair<Long,Long> getDayPeriod() {
 
-        java.util.Calendar cal = (java.util.Calendar)Common.selectedDate.clone();
+        java.util.Calendar cal = (java.util.Calendar)Common.GetSelectedDate().clone();
 
         cal.set(java.util.Calendar.HOUR_OF_DAY, 0);
         cal.set(java.util.Calendar.MINUTE, 0);
@@ -256,19 +256,19 @@ public class CalendarProvider {
 
         long finish = cal.getTimeInMillis();
 
-        return new Pair<>(start, finish);
+        return new Pair<>(start, finish - 1);
     }
 
     public static Pair<Long,Long> getWeekPeriod() {
 
-        java.util.Calendar cal = (java.util.Calendar)Common.selectedDate.clone();
+        java.util.Calendar cal = (java.util.Calendar)Common.GetSelectedDate().clone();
 
         cal.set(java.util.Calendar.HOUR_OF_DAY, 0); // ! clear would not reset the hour of day !
         cal.clear(java.util.Calendar.MINUTE);
         cal.clear(java.util.Calendar.SECOND);
         cal.clear(java.util.Calendar.MILLISECOND);
 
-        cal.set(java.util.Calendar.DAY_OF_WEEK, cal.getFirstDayOfWeek());
+        cal.set(java.util.Calendar.DAY_OF_WEEK, java.util.Calendar.MONDAY);
 
         long start = cal.getTimeInMillis();
 
@@ -276,6 +276,6 @@ public class CalendarProvider {
         cal.add(java.util.Calendar.WEEK_OF_YEAR, 1);
         long finish = cal.getTimeInMillis();
 
-        return new Pair<>(start, finish);
+        return new Pair<>(start, finish - 1);
     }
 }

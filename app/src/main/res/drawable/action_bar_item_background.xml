@@ -5,11 +5,11 @@
     <item
         android:state_focused="true"
         android:state_pressed="true"
-        android:drawable="@color/yellow" />
+        android:drawable="@color/dark_yellow" />
     <!-- pressed: color=red -->
     <item
         android:state_pressed="true"
-        android:drawable="@color/yellow" />
+        android:drawable="@color/dark_yellow" />
     <!-- normal: color=transparent -->
     <item
         android:drawable="@android:color/transparent" />

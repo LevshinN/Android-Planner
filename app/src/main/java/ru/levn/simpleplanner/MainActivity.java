@@ -19,6 +19,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CalendarView;
 import android.widget.DatePicker;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -48,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private View currentMode;
 
-    private Button btnCurrentDate;
+    public static Button btnCurrentDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -300,9 +301,10 @@ public class MainActivity extends AppCompatActivity {
         DatePickerFragment date = new DatePickerFragment();
 
         Bundle args = new Bundle();
-        args.putInt("year", Common.selectedDate.get(java.util.Calendar.YEAR));
-        args.putInt("month", Common.selectedDate.get(java.util.Calendar.MONTH));
-        args.putInt("day", Common.selectedDate.get(java.util.Calendar.DAY_OF_MONTH));
+        java.util.Calendar selectedDate = Common.GetSelectedDate();
+        args.putInt("year", selectedDate.get(java.util.Calendar.YEAR));
+        args.putInt("month", selectedDate.get(java.util.Calendar.MONTH));
+        args.putInt("day", selectedDate.get(java.util.Calendar.DAY_OF_MONTH));
         date.setArguments(args);
 
         date.setCallBack(ondate);
@@ -312,12 +314,8 @@ public class MainActivity extends AppCompatActivity {
     DatePickerDialog.OnDateSetListener ondate = new DatePickerDialog.OnDateSetListener() {
         @Override
         public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-//            Common.year = year;
-//            Common.month = monthOfYear;
-//            Common.day = dayOfMonth;
-            Common.selectedDate.set(year, monthOfYear, dayOfMonth);
+            Common.SetDate(year, monthOfYear, dayOfMonth);
             selectItem(Common.currentFragment);
         }
     };
-
 }
