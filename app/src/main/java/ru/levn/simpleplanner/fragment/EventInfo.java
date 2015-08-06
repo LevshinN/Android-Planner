@@ -73,7 +73,7 @@ public class EventInfo extends DialogFragment implements View.OnClickListener {
         TextView location = (TextView)v.findViewById(R.id.event_info_location);
         TextView description = (TextView)v.findViewById(R.id.event_info_description);
 
-        String timeDescription = getTimeDescription();
+        String timeDescription = event.getTextDate(true);
         if (timeDescription.equals(" ")) {
             ((ViewGroup) time.getParent()).removeView(time);
         } else { time.setText(timeDescription); }
@@ -86,26 +86,4 @@ public class EventInfo extends DialogFragment implements View.OnClickListener {
             ((ViewGroup) description.getParent()).removeView(description);
         } else { description.setText(event.DESCRIPTION); }
     }
-
-    private String getTimeDescription() {
-        String timeText = "";
-
-        timeText += CalendarProvider.getTextCurrentDate(Common.DAY_MODE, event.DT_START);
-
-
-        if (event.ALL_DAY) {
-            return ", ALL_DAY";
-        }
-
-
-        timeText += ", " + CalendarProvider.getTime(event.DT_START);
-
-        if (event.DT_END != 0) {
-            timeText += " - " + CalendarProvider.getTime(event.DT_END);
-        } else if (event.DURATION != 0) {
-            timeText += " - " + CalendarProvider.getTime(event.DT_START + event.DURATION);
-        }
-        return timeText;
-    }
-
 }

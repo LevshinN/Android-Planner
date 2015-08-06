@@ -51,25 +51,8 @@ public class WeekListAdapter extends BaseAdapter {
         }
 
         ((TextView)view.findViewById(R.id.event_info_title)).setText(event.TITLE);
-        editTimeInfo((TextView)view.findViewById(R.id.event_info_time), event);
+        ((TextView)view.findViewById(R.id.event_info_time)).setText(event.getTextDate(false));
 
         return view;
-    }
-
-    private void editTimeInfo(TextView timeInfo, Event event ) {
-        if (event.ALL_DAY) {
-            timeInfo.setText("ALL DAY");
-            return;
-        }
-
-        String timeText = CalendarProvider.getTime(event.DT_START);
-
-        if (event.DT_END != 0) {
-            timeText += "-" + CalendarProvider.getTime(event.DT_END);
-        } else if (event.DURATION != 0) {
-            timeText += "-" + CalendarProvider.getTime(event.DT_START + event.DURATION);
-        }
-
-        timeInfo.setText(timeText);
     }
 }

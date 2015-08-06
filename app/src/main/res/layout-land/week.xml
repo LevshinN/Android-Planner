@@ -101,7 +101,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1.0"
             android:selectedWeekBackgroundColor="@color/yellow"
-            android:weekNumberColor="@color/dark_yellow"
+            android:weekNumberColor="@color/orange"
             android:shownWeekCount="4"
             android:padding="1dp"/>
 

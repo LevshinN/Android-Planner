@@ -69,8 +69,6 @@ public class ScreenDay extends Fragment {
         context = getActivity().getApplicationContext();
         eventList = (ListView)rootView.findViewById(R.id.day_event_list);
 
-        update();
-
         return rootView;
     }
 
@@ -86,11 +84,6 @@ public class ScreenDay extends Fragment {
         eventList.setOnItemClickListener(selectItemListener);
 
         Toast.makeText(this.getActivity(), "" + events.size(), Toast.LENGTH_SHORT).show();
-    }
-
-    private void update() {
-        TextView date = (TextView)rootView.findViewById(R.id.day_text_view);
-        date.setText(CalendarProvider.getTextCurrentDate(Common.currentFragment, Common.GetSelectedDate().getTimeInMillis()));
     }
 
     AdapterView.OnItemClickListener selectItemListener = new AdapterView.OnItemClickListener() {

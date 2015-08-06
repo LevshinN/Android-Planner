@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <array name="event_colors_values">
+        <item>@color/grey</item>
+        <item>@color/red</item>
+        <item>@color/blue</item>
+        <item>@color/yellow</item>
+        <item>@color/green</item>
+        <item>@color/orange</item>
+    </array>
+
+    <string-array name="event_colors_names">
+        <item>Grey</item>
+        <item>Red</item>
+        <item>Blue</item>
+        <item>Yellow</item>
+        <item>Green</item>
+        <item>Orange</item>
+    </string-array>
+</resources>

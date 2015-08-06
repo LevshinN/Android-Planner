@@ -78,9 +78,14 @@ public class CalendarProvider {
 
     private static final String[] projectionInstance = new String[] {
             CalendarContract.Instances.EVENT_ID,    // 0
+            CalendarContract.Instances.BEGIN,   // 1
+            CalendarContract.Instances.END      // 2
     };
 
     private static final int PROJECTION_INSTANCE_EVENT_ID = 0;
+    private static final int PROJECTION_INSTANCE_BEGIN = 1;
+    private static final int PROJECTION_INSTANCE_END = 2;
+
 
 
 
@@ -233,10 +238,22 @@ public class CalendarProvider {
 
         if (c != null && c.moveToFirst()) {
             do {
+
                 String eventID = c.getString(PROJECTION_INSTANCE_EVENT_ID);
+
+                long eventStart = c.getLong(PROJECTION_INSTANCE_BEGIN);
+                long eventEnd = c.getLong(PROJECTION_INSTANCE_END);
+
+                // Отбрасываем события, которые пересекаются с текущим периодом одной миллисекундой.
+                if (eventStart == UTCEnd || eventEnd == UTCStart) {
+                    continue;
+                }
+
                 Event event = getEventById(activity, eventID);
 
                 if (event != null) {
+                    event.DT_START = eventStart;
+                    event.DT_END = eventEnd;
                     events.add(event);
                 }
             } while (c.moveToNext());
@@ -267,15 +284,15 @@ public class CalendarProvider {
         cal.set(java.util.Calendar.HOUR_OF_DAY, 0);
         cal.set(java.util.Calendar.MINUTE, 0);
         cal.set(java.util.Calendar.SECOND, 0);
+        cal.set(java.util.Calendar.MILLISECOND, 0);
 
         cal.set(java.util.Calendar.DAY_OF_WEEK, java.util.Calendar.MONDAY);
 
-        long start = cal.getTimeInMillis();
+        long start = cal.getTimeInMillis() + cal.get(java.util.Calendar.ZONE_OFFSET);
 
 
         cal.add(java.util.Calendar.WEEK_OF_YEAR, 1);
-        cal.add(java.util.Calendar.MILLISECOND, -1);
-        long finish = cal.getTimeInMillis();
+        long finish = cal.getTimeInMillis() + cal.get(java.util.Calendar.ZONE_OFFSET);
 
         return new Pair<>(start, finish);
     }
@@ -286,46 +303,5 @@ public class CalendarProvider {
         cal.setTimeInMillis(UTCTime);
 
         return String.format("%02d:%02d", cal.get(java.util.Calendar.HOUR_OF_DAY), cal.get(java.util.Calendar.MINUTE));
-    }
-
-    public static String getTextCurrentDate(int mode, long UTCDate) {
-        SimpleDateFormat dateFormat = null;
-
-        switch (mode) {
-            case Common.DAY_MODE:
-                dateFormat = new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault());
-                return dateFormat.format(UTCDate);
-
-            case Common.WEEK_MODE:
-
-                java.util.Calendar c = new GregorianCalendar();
-
-                c.setTimeInMillis(UTCDate);
-
-                c.set(java.util.Calendar.DAY_OF_WEEK, java.util.Calendar.MONDAY);
-
-                int day = c.get(java.util.Calendar.DAY_OF_MONTH);
-                int month = c.get(java.util.Calendar.MONTH);
-                int year = c.get(java.util.Calendar.YEAR);
-
-                String startWeek =  "" + day + " " + new DateFormatSymbols().getShortMonths()[month % 12] + " " + year;
-
-                c.add(java.util.Calendar.WEEK_OF_YEAR, 1);
-
-                day = c.get(java.util.Calendar.DAY_OF_MONTH);
-                month = c.get(java.util.Calendar.MONTH);
-                year = c.get(java.util.Calendar.YEAR);
-
-                String endWeek = "" + day + " " + new DateFormatSymbols().getShortMonths()[month % 12] + " " + year;
-
-                return startWeek + " - " + endWeek;
-
-            case Common.MONTH_MODE:
-
-                dateFormat = new SimpleDateFormat("MMMM yyyy", Locale.getDefault());
-                return dateFormat.format(UTCDate);
-        }
-
-        return null;
     }
 }

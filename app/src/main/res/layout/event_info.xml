@@ -9,7 +9,7 @@
         android:id="@+id/event_info_title_area"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/dark_yellow"
+        android:background="@color/grey"
         android:padding="@dimen/abc_control_padding_material">
 
         <TextView

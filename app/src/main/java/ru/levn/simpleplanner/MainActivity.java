@@ -2,6 +2,8 @@ package ru.levn.simpleplanner;
 
 
 import android.app.DatePickerDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.support.v4.app.Fragment;
@@ -16,6 +18,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -24,11 +27,15 @@ import android.widget.DatePicker;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.text.DateFormatSymbols;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.Locale;
 
-import ru.levn.simpleplanner.calendar.Calendar;
-import ru.levn.simpleplanner.calendar.CalendarDBHelper;
 import ru.levn.simpleplanner.calendar.CalendarProvider;
+import ru.levn.simpleplanner.fragment.CreateEventFragment;
 import ru.levn.simpleplanner.fragment.DatePickerFragment;
 import ru.levn.simpleplanner.fragment.ScreenCalendars;
 import ru.levn.simpleplanner.fragment.ScreenDay;
@@ -108,11 +115,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        selectItem(Common.currentFragment);
-    }
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//        selectItem(Common.currentFragment);
+//    }
 
 
 
@@ -136,20 +143,15 @@ public class MainActivity extends AppCompatActivity {
         // Handle action buttons
         switch(item.getItemId()) {
             case R.id.action_add:
-                // Show toast about click.
-                Toast.makeText(this, R.string.action_add, Toast.LENGTH_SHORT).show();
+                DialogFragment editEventDialog = new CreateEventFragment();
+                editEventDialog.setStyle(DialogFragment.STYLE_NORMAL, R.style.full_screen_dialog);
+                editEventDialog.setCancelable(true);
+                editEventDialog.show(getFragmentManager(), "create_new_event");
                 return true;
             case R.id.action_upload:
                 // Show toast about click.
 
-                StringBuilder message = new StringBuilder();
-                message.append(getString(R.string.action_upload) + '\n');
-                message.append("Календари:" + '\n');
-                for (Calendar cal : CalendarProvider.getEnabledCalendarList()) {
-                    message.append(cal.display_name + '\n');
-                }
-
-                Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "upload", Toast.LENGTH_SHORT).show();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -193,10 +195,8 @@ public class MainActivity extends AppCompatActivity {
                 CalendarProvider.updateCalendars(this);
 
                 if (currentMode != null) {
-                    currentMode.setBackgroundResource(android.R.color.transparent);
+                    currentMode.setPressed(false);
                 }
-
-                Log.d("MainActivity", "-----------OK----------" );
                 break;
 
             default:
@@ -219,15 +219,15 @@ public class MainActivity extends AppCompatActivity {
         if (pressedButton != null) {
 
             if (currentMode != null) {
-                currentMode.setBackgroundResource(android.R.color.transparent);
+                currentMode.setSelected(false);
             }
 
-            pressedButton.setBackgroundResource(R.color.dark_yellow);
+            pressedButton.setSelected(true);
 
             currentMode = pressedButton;
         }
 
-        btnCurrentDate.setText(CalendarProvider.getTextCurrentDate(Common.currentFragment, Common.GetSelectedDate().getTimeInMillis()));
+        btnCurrentDate.setText(getTextCurrentDate(Common.currentFragment));
     }
 
     /**
@@ -283,7 +283,7 @@ public class MainActivity extends AppCompatActivity {
 
         btnCurrentDate = (Button)findViewById(R.id.btn_current_date);
         btnCurrentDate.setOnClickListener(listener);
-        btnCurrentDate.setText(CalendarProvider.getTextCurrentDate(Common.currentFragment, Common.GetSelectedDate().getTimeInMillis()));
+        updateTitle();
 
 
         Button btnDay = (Button)findViewById(R.id.btn_day_mode);
@@ -318,4 +318,50 @@ public class MainActivity extends AppCompatActivity {
             selectItem(Common.currentFragment);
         }
     };
+
+    private static String getTextCurrentDate(int mode) {
+        SimpleDateFormat dateFormat = null;
+        long UTCDate = Common.GetSelectedDate().getTimeInMillis();
+
+        switch (mode) {
+            case Common.DAY_MODE:
+                dateFormat = new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault());
+                return dateFormat.format(UTCDate);
+
+            case Common.WEEK_MODE:
+
+                java.util.Calendar c = new GregorianCalendar();
+
+                c.setTimeInMillis(UTCDate);
+
+                c.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+
+                int day = c.get(Calendar.DAY_OF_MONTH);
+                int month = c.get(Calendar.MONTH);
+                int year = c.get(Calendar.YEAR);
+
+                String startWeek =  "" + day + " " + new DateFormatSymbols().getShortMonths()[month % 12] + " " + year;
+
+                c.add(java.util.Calendar.WEEK_OF_YEAR, 1);
+
+                day = c.get(Calendar.DAY_OF_MONTH);
+                month = c.get(Calendar.MONTH);
+                year = c.get(Calendar.YEAR);
+
+                String endWeek = "" + day + " " + new DateFormatSymbols().getShortMonths()[month % 12] + " " + year;
+
+                return startWeek + " - " + endWeek;
+
+            case Common.MONTH_MODE:
+
+                dateFormat = new SimpleDateFormat("MMMM yyyy", Locale.getDefault());
+                return dateFormat.format(UTCDate);
+        }
+
+        return null;
+    }
+
+    public static void updateTitle() {
+        btnCurrentDate.setText(getTextCurrentDate(Common.currentFragment));
+    }
 }
