@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/material_blue_grey_950">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            style="@style/WeekTableDayHeaderLand"
+            android:text="ПН"/>
+
+        <TextView
+            style="@style/WeekTableDayHeaderLand"
+            android:text="ВТ"/>
+
+        <TextView
+            style="@style/WeekTableDayHeaderLand"
+            android:text="СР"/>
+
+        <TextView
+            style="@style/WeekTableDayHeaderLand"
+            android:text="ЧТ"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1.0"
+        android:orientation="horizontal">
+
+        <ListView
+            android:id="@+id/week_table_day_1"
+            style="@style/SmallEventListStyleLand"/>
+
+        <ListView
+            android:id="@+id/week_table_day_3"
+            style="@style/SmallEventListStyleLand"/>
+
+        <ListView
+            android:id="@+id/week_table_day_5"
+            style="@style/SmallEventListStyleLand"/>
+
+        <ListView
+            android:id="@+id/week_table_day_7"
+            style="@style/SmallEventListStyleLand"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            style="@style/WeekTableDayHeaderLand"
+            android:text="ПТ"/>
+
+        <TextView
+            style="@style/WeekTableDayHeaderLand"
+            android:text="СБ"/>
+
+        <TextView
+            style="@style/WeekTableDayHeaderLand"
+            android:text="ВС"/>
+
+        <TextView
+            style="@style/WeekTableDayHeaderLand"
+            android:text="КАЛЕНДАРЬ"/>
+
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1.0"
+        android:orientation="horizontal">
+
+        <ListView
+            android:id="@+id/week_table_day_2"
+            style="@style/SmallEventListStyleLand"/>
+
+        <ListView
+            android:id="@+id/week_table_day_4"
+            style="@style/SmallEventListStyleLand"/>
+
+        <ListView
+            android:id="@+id/week_table_day_6"
+            style="@style/SmallEventListStyleLand"/>
+
+        <CalendarView
+            style="@style/WeekModeCellStyle"
+            android:id="@+id/navigation_calendar"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1.0"
+            android:selectedWeekBackgroundColor="@color/yellow"
+            android:weekNumberColor="@color/orange"
+            android:shownWeekCount="4"
+            android:padding="1dp"/>
+
+    </LinearLayout>
+
+</LinearLayout>

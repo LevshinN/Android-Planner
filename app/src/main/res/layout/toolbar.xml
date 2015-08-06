@@ -22,7 +22,8 @@
                 style="@style/ButtonModeToolbarTheme"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
-                android:id="@+id/btn_current_date"/>
+                android:id="@+id/btn_current_date"
+                android:text="CURRENT DATE"/>
 
         </RelativeLayout>
 

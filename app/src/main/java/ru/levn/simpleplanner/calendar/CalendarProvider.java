@@ -8,15 +8,21 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.provider.CalendarContract;
 import android.util.Log;
+import android.util.Pair;
 
 import java.lang.reflect.Array;
 import java.net.URI;
 import java.security.KeyException;
+import java.text.DateFormatSymbols;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.TimeZone;
 
 import ru.levn.simpleplanner.Common;
 
@@ -52,7 +58,8 @@ public class CalendarProvider {
             CalendarContract.Events.DTEND,          // 6
             CalendarContract.Events.DURATION,       // 7
             CalendarContract.Events.ALL_DAY,        // 8
-            CalendarContract.Events.EVENT_LOCATION  // 9
+            CalendarContract.Events.EVENT_LOCATION,  // 9
+            CalendarContract.Events.ORIGINAL_ID     // 10
     };
 
     // The indices for the projection array above.
@@ -66,6 +73,20 @@ public class CalendarProvider {
     private static final int PROJECTION_EVENT_DURATION = 7;
     private static final int PROJECTION_EVENT_ALL_DAY = 8;
     private static final int PROJECTION_EVENT_LOCATION = 9;
+    private static final int PROJECTION_EVENT_ORIGINAL_ID = 10;
+
+
+    private static final String[] projectionInstance = new String[] {
+            CalendarContract.Instances.EVENT_ID,    // 0
+            CalendarContract.Instances.BEGIN,   // 1
+            CalendarContract.Instances.END      // 2
+    };
+
+    private static final int PROJECTION_INSTANCE_EVENT_ID = 0;
+    private static final int PROJECTION_INSTANCE_BEGIN = 1;
+    private static final int PROJECTION_INSTANCE_END = 2;
+
+
 
 
 
@@ -184,50 +205,103 @@ public class CalendarProvider {
         return enabledCalendarList;
     }
 
-    public static ArrayList<Event> getAvailableEvents(Activity activity) {
+    private static Event getEventById(Activity activity, String eventID) {
+        String selection = "(" + CalendarContract.Events._ID    + " = ?)";
+        String[] selectionArgs = new String[] { eventID };
+
+        Cursor cEvent = activity.getContentResolver().query(CalendarContract.Events.CONTENT_URI, projectionEvent, selection, selectionArgs, null);
+
+        if (cEvent != null && cEvent.moveToFirst() ) {
+            Event event = new Event();
+            event.CAL_ID = cEvent.getString(PROJECTION_EVENT_CALENDAR_ID_INDEX);
+            event.EVENT_ID = cEvent.getString(PROJECTION_EVENT_ID_INDEX);
+            event.COLOR = cEvent.getInt(PROJECTION_EVENT_COLOR);
+            event.TITLE = cEvent.getString(PROJECTION_EVENT_TITLE);
+            event.DESCRIPTION = cEvent.getString(PROJECTION_EVENT_DESCRIPTION);
+            event.DT_START = cEvent.getLong(PROJECTION_EVENT_DTSTART);
+            event.DT_END = cEvent.getLong(PROJECTION_EVENT_DTEND);
+            event.DURATION = cEvent.getLong(PROJECTION_EVENT_DURATION);
+            event.ALL_DAY = cEvent.getLong(PROJECTION_EVENT_ALL_DAY) > 0;
+            event.EVENT_LOC = cEvent.getString(PROJECTION_EVENT_LOCATION);
+            event.ORIGINAL_ID = cEvent.getString(PROJECTION_EVENT_ORIGINAL_ID);
+
+            return event;
+        }
+
+        return null;
+    }
+
+    public static ArrayList<Event> getAvilableEventsForPeriod(Activity activity, long UTCStart, long UTCEnd) {
         ArrayList<Event> events = new ArrayList<>();
 
-        String selection = "(" + CalendarContract.Events.CALENDAR_ID + " = ?)";
-        String[] selectionArgs;
+        Cursor c = CalendarContract.Instances.query(activity.getContentResolver(), projectionInstance, UTCStart, UTCEnd);
 
-        for ( Calendar cal : calendars ) {
-            if ( selectedCalendarsIDs.get(cal.id) ) {
-                Cursor c = null;
-                selectionArgs = new String[]{cal.id};
+        if (c != null && c.moveToFirst()) {
+            do {
 
-                c = activity.getContentResolver().query(CalendarContract.Events.CONTENT_URI, projectionEvent, selection, selectionArgs, null);
+                String eventID = c.getString(PROJECTION_INSTANCE_EVENT_ID);
 
-                if (c != null && c.moveToFirst()) {
-                    do {
-                        Event event = new Event();
+                long eventStart = c.getLong(PROJECTION_INSTANCE_BEGIN);
+                long eventEnd = c.getLong(PROJECTION_INSTANCE_END);
 
-                        String title = c.getString(PROJECTION_EVENT_TITLE);
-
-                        if (title == null) {
-                            continue;
-                        }
-
-                        event.CAL_ID = c.getString(PROJECTION_EVENT_CALENDAR_ID_INDEX);
-                        event.EVENT_ID = c.getString(PROJECTION_EVENT_ID_INDEX);
-                        event.COLOR = c.getInt(PROJECTION_EVENT_COLOR);
-                        event.TITLE = c.getString(PROJECTION_EVENT_TITLE);
-                        event.DESCRIPTION = c.getString(PROJECTION_EVENT_DESCRIPTION);
-                        event.DT_START = c.getLong(PROJECTION_EVENT_DTSTART);
-                        event.DT_END = c.getLong(PROJECTION_EVENT_DTEND);
-                        event.DURATION = c.getLong(PROJECTION_EVENT_DURATION);
-                        event.ALL_DAY = c.getLong(PROJECTION_EVENT_ALL_DAY) > 0;
-                        event.EVENT_LOC = c.getString(PROJECTION_EVENT_LOCATION);
-
-                        events.add(event);
-
-                    } while (c.moveToNext());
+                // Отбрасываем события, которые пересекаются с текущим периодом одной миллисекундой.
+                if (eventStart == UTCEnd || eventEnd == UTCStart) {
+                    continue;
                 }
-            }
+
+                Event event = getEventById(activity, eventID);
+
+                if (event != null) {
+                    event.DT_START = eventStart;
+                    event.DT_END = eventEnd;
+                    events.add(event);
+                }
+            } while (c.moveToNext());
         }
 
         return events;
     }
 
+    public static Pair<Long,Long> getDayPeriod() {
+
+        java.util.Calendar cal = (java.util.Calendar)Common.GetSelectedDate().clone();
 
 
+
+        long start = cal.getTimeInMillis();
+
+        cal.add(java.util.Calendar.DAY_OF_MONTH, 1);
+
+        long finish = cal.getTimeInMillis();
+
+        return new Pair<>(start, finish - 1);
+    }
+
+    public static Pair<Long,Long> getWeekPeriod() {
+
+        java.util.Calendar cal = (java.util.Calendar)Common.GetSelectedDate().clone();
+
+        cal.set(java.util.Calendar.HOUR_OF_DAY, 0);
+        cal.set(java.util.Calendar.MINUTE, 0);
+        cal.set(java.util.Calendar.SECOND, 0);
+        cal.set(java.util.Calendar.MILLISECOND, 0);
+
+        cal.set(java.util.Calendar.DAY_OF_WEEK, java.util.Calendar.MONDAY);
+
+        long start = cal.getTimeInMillis() + cal.get(java.util.Calendar.ZONE_OFFSET);
+
+
+        cal.add(java.util.Calendar.WEEK_OF_YEAR, 1);
+        long finish = cal.getTimeInMillis() + cal.get(java.util.Calendar.ZONE_OFFSET);
+
+        return new Pair<>(start, finish);
+    }
+
+    public static String getTime(long UTCTime) {
+        java.util.Calendar cal = java.util.Calendar.getInstance();
+        cal.setTimeZone(TimeZone.getDefault());
+        cal.setTimeInMillis(UTCTime);
+
+        return String.format("%02d:%02d", cal.get(java.util.Calendar.HOUR_OF_DAY), cal.get(java.util.Calendar.MINUTE));
+    }
 }

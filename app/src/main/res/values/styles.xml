@@ -16,5 +16,49 @@
         <item name="android:background">@drawable/action_bar_item_background</item>
     </style>
 
+    <style name="SmallEventListStylePort" parent="WeekModeCellStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_weight">1.0</item>
+    </style>
+
+    <style name="SmallEventListStyleLand" parent="WeekModeCellStyle">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_weight">1.0</item>
+    </style>
+
+    <style name="WeekTableDayHeaderLand" parent="WeekModeCellStyle">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1.0</item>
+    </style>
+
+    <style name="WeekTableDayHeaderPort" parent="WeekModeCellStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="WeekModeCellStyle">
+        <item name="android:background">@android:color/white</item>
+        <item name="android:layout_margin">1dp</item>
+        <item name="android:padding">1dp</item>
+    </style>
+
+    <style name="full_screen_dialog" parent="Base.Theme.AppCompat.Light.Dialog">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
+        <item name="android:windowSoftInputMode">stateHidden|adjustPan</item>
+        <item name="android:minWidth" type="dimen">600dp</item>
+    </style>
+
+    <style name="buttonTheme">
+        <item name="android:background">@android:color/white</item>
+        <item name="android:textColor">@color/orange</item>
+        <item name="android:textSize">@dimen/abc_text_size_button_material</item>
+    </style>
 
 </resources>
