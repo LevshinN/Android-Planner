@@ -1,11 +1,8 @@
 package ru.levn.simpleplanner.fragment;
 
-import android.app.ActionBar;
 import android.app.DatePickerDialog;
-import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.TimePickerDialog;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,8 +11,6 @@ import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.DatePicker;
-import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -28,7 +23,8 @@ import ru.levn.simpleplanner.R;
 import ru.levn.simpleplanner.adapter.ColorListAdapter;
 
 /**
- * Created by Levshin_N on 04.08.2015.
+ * Автор: Левшин Николай, 707 группа.
+ * Дата создания: 04.08.2015.
  */
 public class CreateEventFragment extends DialogFragment {
 
@@ -90,7 +86,7 @@ public class CreateEventFragment extends DialogFragment {
             DatePickerFragment date = new DatePickerFragment();
 
             Bundle args = new Bundle();
-            Calendar selectedDate = Common.GetSelectedDate();
+            Calendar selectedDate = Common.sSelectedDate.getDate();
             args.putInt("year", selectedDate.get(Calendar.YEAR));
             args.putInt("month", selectedDate.get(Calendar.MONTH));
             args.putInt("day", selectedDate.get(Calendar.DAY_OF_MONTH));

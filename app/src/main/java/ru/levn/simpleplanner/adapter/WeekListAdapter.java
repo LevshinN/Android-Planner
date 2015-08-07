@@ -10,11 +10,11 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import ru.levn.simpleplanner.R;
-import ru.levn.simpleplanner.calendar.CalendarProvider;
 import ru.levn.simpleplanner.calendar.Event;
 
 /**
- * Created by Levshin_N on 31.07.2015.
+ * Автор: Левшин Николай, 707 группа.
+ * Дата создания: 31.07.2015.
  */
 public class WeekListAdapter extends BaseAdapter {
     private LayoutInflater lInflater;
@@ -43,14 +43,18 @@ public class WeekListAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        View view = lInflater.inflate(R.layout.event_small_representation, parent, false);
-        Event event = (Event) getItem(position);
-
-        if (event.COLOR != 0) {
-            (view.findViewById(R.id.event_small_area)).setBackgroundColor(0xff000000 + event.COLOR);
+        View view = convertView;
+        if (view == null) {
+            view = lInflater.inflate(R.layout.event_small_representation, parent, false);
         }
 
-        ((TextView)view.findViewById(R.id.event_info_title)).setText(event.TITLE);
+        Event event = (Event) getItem(position);
+
+        if (event.color != 0) {
+            (view.findViewById(R.id.event_small_area)).setBackgroundColor(0xff000000 + event.color);
+        }
+
+        ((TextView)view.findViewById(R.id.event_info_title)).setText(event.title);
         ((TextView)view.findViewById(R.id.event_info_time)).setText(event.getTextDate(false));
 
         return view;
