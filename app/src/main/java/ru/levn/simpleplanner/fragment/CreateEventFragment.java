@@ -3,29 +3,43 @@ package ru.levn.simpleplanner.fragment;
 import android.app.DatePickerDialog;
 import android.app.DialogFragment;
 import android.app.TimePickerDialog;
+import android.content.ContentResolver;
+import android.content.ContentValues;
+import android.content.Context;
 import android.os.Bundle;
+import android.provider.CalendarContract;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
 import java.text.DateFormatSymbols;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 import ru.levn.simpleplanner.Common;
 import ru.levn.simpleplanner.R;
+import ru.levn.simpleplanner.adapter.CalendarAdapter;
 import ru.levn.simpleplanner.adapter.ColorListAdapter;
+import ru.levn.simpleplanner.calendar.CalendarProvider;
+import ru.levn.simpleplanner.calendar.MyCalendar;
 
 /**
  * Автор: Левшин Николай, 707 группа.
  * Дата создания: 04.08.2015.
  */
+
 public class CreateEventFragment extends DialogFragment {
 
     private static final int EDIT_START_DATE = R.id.edit_event_start_button;
@@ -39,7 +53,17 @@ public class CreateEventFragment extends DialogFragment {
     private View mRootView;
     private int mDateOnEdit;
 
-    private String mEditTime;
+    private int mSelectedYear;
+    private int mSelectedMonth;
+    private int mSelectedDay;
+    private int mSelectedHour;
+    private int mSelectedMinute;
+
+    private long mStartTime;
+    private long mEndTime;
+
+    private String mSelectedCalendar;
+    private int mSelectedColor;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
@@ -54,8 +78,15 @@ public class CreateEventFragment extends DialogFragment {
         colorSelector.setAdapter(colorAdapter);
         colorSelector.setOnItemSelectedListener(colorSelectorListener);
 
+        CalendarSpinnerAdapter calendarsListAdapter = new CalendarSpinnerAdapter(this.getActivity(),CalendarProvider.calendars);
+        Spinner calendarSelector = (Spinner)mRootView.findViewById(R.id.edie_event_calendar);
+        calendarSelector.setAdapter(calendarsListAdapter);
+        calendarSelector.setOnItemSelectedListener(calendarSelectorListener);
+
         (mRootView.findViewById(R.id.edit_event_start_button)).setOnClickListener(buttonListener);
         (mRootView.findViewById(R.id.edit_event_end_button)).setOnClickListener(buttonListener);
+        (mRootView.findViewById(R.id.edit_event_cancel)).setOnClickListener(buttonListener);
+        (mRootView.findViewById(R.id.edit_event_ok)).setOnClickListener(buttonListener);
 
         return mRootView;
     }
@@ -64,23 +95,52 @@ public class CreateEventFragment extends DialogFragment {
 
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-            int selectedColor = (Integer)parent.getSelectedItem();
-            mRootView.findViewById(R.id.edit_event_title_area).setBackgroundColor(selectedColor);
+            mSelectedColor = (Integer)parent.getSelectedItem();
+            mRootView.findViewById(R.id.edit_event_title_area).setBackgroundColor(mSelectedColor);
         }
 
         @Override
         public void onNothingSelected(AdapterView<?> parent) {}
     };
 
+    Spinner.OnItemSelectedListener calendarSelectorListener = new AdapterView.OnItemSelectedListener() {
+
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            mSelectedCalendar = ((MyCalendar)parent.getSelectedItem()).id;
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+
+        }
+    };
+
     Button.OnClickListener buttonListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             mDateOnEdit = v.getId();
-            showDatePicker(DIALOG_DATE);
+
+            switch (mDateOnEdit) {
+                case R.id.edit_event_start_button:
+                    mShowDatePicker(DIALOG_DATE);
+                    break;
+                case R.id.edit_event_end_button:
+                    mShowDatePicker(DIALOG_DATE);
+                    break;
+                case R.id.edit_event_ok:
+                    mSaveEvent();
+                    break;
+                case R.id.edit_event_cancel:
+                    dismiss();
+                    break;
+                default:
+                    break;
+            }
         }
     };
 
-    private void showDatePicker(int mode) {
+    private void mShowDatePicker(int mode) {
         if (mode == DIALOG_DATE) {
 
             DatePickerFragment date = new DatePickerFragment();
@@ -91,7 +151,7 @@ public class CreateEventFragment extends DialogFragment {
             args.putInt("month", selectedDate.get(Calendar.MONTH));
             args.putInt("day", selectedDate.get(Calendar.DAY_OF_MONTH));
             date.setArguments(args);
-            date.setCallBack(ondate);
+            date.setCallBack(mOnDate);
             date.show(getFragmentManager(), "Date Picker");
         }
 
@@ -104,23 +164,29 @@ public class CreateEventFragment extends DialogFragment {
             args.putInt("minute", currentTime.get(Calendar.MINUTE));
 
             time.setArguments(args);
-            time.setCallBack(ontime);
+            time.setCallBack(mOnTime);
             time.show(getFragmentManager(), "Time Picker");
         }
     }
 
-    DatePickerDialog.OnDateSetListener ondate = new DatePickerDialog.OnDateSetListener() {
+    DatePickerDialog.OnDateSetListener mOnDate = new DatePickerDialog.OnDateSetListener() {
         @Override
         public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-            mEditTime =  "" + dayOfMonth + " " + new DateFormatSymbols().getShortMonths()[monthOfYear % 12] + " " + year;
-            showDatePicker(DIALOG_TIME);
+            mSelectedYear = year;
+            mSelectedMonth = monthOfYear;
+            mSelectedDay = dayOfMonth;
+
+            // mEditTime =  "" + dayOfMonth + " " + new DateFormatSymbols().getShortMonths()[monthOfYear % 12] + " " + year;
+            mShowDatePicker(DIALOG_TIME);
         }
     };
 
-    TimePickerDialog.OnTimeSetListener ontime = new TimePickerDialog.OnTimeSetListener() {
+    TimePickerDialog.OnTimeSetListener mOnTime = new TimePickerDialog.OnTimeSetListener() {
         @Override
         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-            mEditTime = "" + hourOfDay + ":" + minute + " " + mEditTime;
+            mSelectedHour = hourOfDay;
+            mSelectedMinute = minute;
+            // mEditTime = "" + hourOfDay + ":" + minute + " " + mEditTime;
 
             int editTextID = -1;
             switch(mDateOnEdit) {
@@ -135,7 +201,92 @@ public class CreateEventFragment extends DialogFragment {
                     break;
             }
 
-            ((TextView)mRootView.findViewById(editTextID)).setText(mEditTime);
+            String timeText = mSelectedHour + ":" + mSelectedMinute +
+                    " " + mSelectedDay +
+                    " " + new DateFormatSymbols().getShortMonths()[mSelectedMonth % 12] +
+                    " " + mSelectedYear;
+
+            mUpdateStartOrEndTime(mDateOnEdit);
+            ((TextView)mRootView.findViewById(editTextID)).setText(timeText);
         }
     };
+
+    private void mUpdateStartOrEndTime(int mode) {
+        Calendar calendar = new GregorianCalendar(mSelectedYear,
+                mSelectedMonth,
+                mSelectedDay,
+                mSelectedHour,
+                mSelectedMinute);
+
+        switch (mode) {
+            case EDIT_START_DATE:
+                mStartTime = calendar.getTimeInMillis();
+                break;
+            case EDIT_END_DATE:
+                mEndTime = calendar.getTimeInMillis();
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void mSaveEvent() {
+
+        EditText titleView = (EditText)mRootView.findViewById(R.id.edit_event_title);
+        EditText descriptionView = (EditText)mRootView.findViewById(R.id.edit_event_description);
+        EditText locationView = (EditText)mRootView.findViewById(R.id.edit_event_location_text);
+
+        String title = titleView.getText().toString();
+        String description = descriptionView.getText().toString();
+        String location = locationView.getText().toString();
+
+        ContentResolver cr = mRootView.getContext().getContentResolver();
+        ContentValues values = new ContentValues();
+        values.put(CalendarContract.Events.DTSTART, mStartTime);
+        values.put(CalendarContract.Events.DTEND, mEndTime);
+        values.put(CalendarContract.Events.TITLE, title);
+        values.put(CalendarContract.Events.DESCRIPTION, description);
+        values.put(CalendarContract.Events.EVENT_LOCATION, location);
+        values.put(CalendarContract.Events.EVENT_COLOR, mSelectedColor);
+        values.put(CalendarContract.Events.CALENDAR_ID, mSelectedCalendar);
+        values.put(CalendarContract.Events.EVENT_TIMEZONE, Calendar.getInstance().getTimeZone().getDisplayName());
+        cr.insert(CalendarContract.Events.CONTENT_URI, values);
+
+        dismiss();
+    }
+}
+
+class CalendarSpinnerAdapter extends CalendarAdapter {
+    private TextView calendarName;
+
+    public CalendarSpinnerAdapter(Context context, ArrayList<MyCalendar> calendars) {
+        mCalendarList = calendars;
+        mLInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+    }
+
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        Log.d("CalendarsListAdapter", "getView is called");
+
+        View view = convertView;
+
+        if (view == null) {
+            LinearLayout linLayout = new LinearLayout(mLInflater.getContext());
+            linLayout.setLayoutParams( new AbsListView.LayoutParams(AbsListView.LayoutParams.MATCH_PARENT, AbsListView.LayoutParams.MATCH_PARENT) );
+            ViewGroup.LayoutParams lpView = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            calendarName = new TextView(mLInflater.getContext());
+            calendarName.setLayoutParams(lpView);
+            calendarName.setTextAppearance(mLInflater.getContext(), android.R.style.TextAppearance_DeviceDefault_Medium);
+            calendarName.setPadding(10,10,10,10);
+            linLayout.addView(calendarName);
+
+            view = linLayout;
+        }
+
+
+        MyCalendar cal = (MyCalendar)getItem(position);
+        calendarName.setText(cal.displayName);
+
+        return view;
+    }
 }
