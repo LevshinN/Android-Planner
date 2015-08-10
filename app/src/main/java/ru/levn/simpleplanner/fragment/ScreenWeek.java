@@ -62,8 +62,8 @@ public class ScreenWeek extends Fragment {
 
         // Настраиваем календарь
         calendarView = (CalendarView)rootView.findViewById(R.id.navigation_calendar);
-        calendarView.setDate(Common.GetSelectedDate().getTimeInMillis());
-        calendarView.setFirstDayOfWeek(Common.GetSelectedDate().getFirstDayOfWeek());
+        calendarView.setDate(Common.sSelectedDate.getDate().getTimeInMillis());
+        calendarView.setFirstDayOfWeek(Common.sSelectedDate.getDate().getFirstDayOfWeek());
         calendarView.setOnDateChangeListener(selectDateListener);
 
         calendarDate = calendarView.getDate();
@@ -84,8 +84,8 @@ public class ScreenWeek extends Fragment {
             if (calendarView.getDate() != calendarDate) {
 
                 calendarDate = calendarView.getDate();
-                Common.SetDate(year, month, dayOfMonth);
-                MainActivity.updateTitle();
+                Common.sSelectedDate.setDate(year, month, dayOfMonth);
+                Common.sUpdateTitle();
                 Toast.makeText(view.getContext(), "Year=" + year + " Month=" + month + " Day=" + dayOfMonth, Toast.LENGTH_LONG).show();
                 refreshView();
             }
@@ -101,7 +101,7 @@ public class ScreenWeek extends Fragment {
         long dayDuration = (end - start) / 7;
 
         // Понедельник
-        ArrayList<Event> events = Common.calendarProvider.getAvilableEventsForPeriod(this.getActivity(), start, start + dayDuration);
+        ArrayList<Event> events = Common.sCalendarProvider.getAvilableEventsForPeriod(this.getActivity(), start, start + dayDuration);
         WeekListAdapter adapter = new WeekListAdapter(this.getActivity(), events);
         ListView lv = (ListView)rootView.findViewById(R.id.week_table_day_1);
         lv.setAdapter(adapter);
@@ -109,7 +109,7 @@ public class ScreenWeek extends Fragment {
 
         // Вторник
         start += dayDuration;
-        events = Common.calendarProvider.getAvilableEventsForPeriod(this.getActivity(), start, start + dayDuration);
+        events = Common.sCalendarProvider.getAvilableEventsForPeriod(this.getActivity(), start, start + dayDuration);
         adapter = new WeekListAdapter(this.getActivity(), events);
         lv = (ListView)rootView.findViewById(R.id.week_table_day_2);
         lv.setAdapter(adapter);
@@ -117,7 +117,7 @@ public class ScreenWeek extends Fragment {
 
         // Среда
         start += dayDuration;
-        events = Common.calendarProvider.getAvilableEventsForPeriod(this.getActivity(), start, start + dayDuration);
+        events = Common.sCalendarProvider.getAvilableEventsForPeriod(this.getActivity(), start, start + dayDuration);
         adapter = new WeekListAdapter(this.getActivity(), events);
         lv = (ListView)rootView.findViewById(R.id.week_table_day_3);
         lv.setAdapter(adapter);
@@ -125,7 +125,7 @@ public class ScreenWeek extends Fragment {
 
         // Четверг
         start += dayDuration;
-        events = Common.calendarProvider.getAvilableEventsForPeriod(this.getActivity(), start, start + dayDuration);
+        events = Common.sCalendarProvider.getAvilableEventsForPeriod(this.getActivity(), start, start + dayDuration);
         adapter = new WeekListAdapter(this.getActivity(), events);
         lv = (ListView)rootView.findViewById(R.id.week_table_day_4);
         lv.setAdapter(adapter);
@@ -133,7 +133,7 @@ public class ScreenWeek extends Fragment {
 
         // Пятница
         start += dayDuration;
-        events = Common.calendarProvider.getAvilableEventsForPeriod(this.getActivity(), start, start + dayDuration);
+        events = Common.sCalendarProvider.getAvilableEventsForPeriod(this.getActivity(), start, start + dayDuration);
         adapter = new WeekListAdapter(this.getActivity(), events);
         lv = (ListView)rootView.findViewById(R.id.week_table_day_5);
         lv.setAdapter(adapter);
@@ -141,7 +141,7 @@ public class ScreenWeek extends Fragment {
 
         // Суббота
         start += dayDuration;
-        events = Common.calendarProvider.getAvilableEventsForPeriod(this.getActivity(), start, start + dayDuration);
+        events = Common.sCalendarProvider.getAvilableEventsForPeriod(this.getActivity(), start, start + dayDuration);
         adapter = new WeekListAdapter(this.getActivity(), events);
         lv = (ListView)rootView.findViewById(R.id.week_table_day_6);
         lv.setAdapter(adapter);
@@ -149,7 +149,7 @@ public class ScreenWeek extends Fragment {
 
         // Воскресенье
         start += dayDuration;
-        events = Common.calendarProvider.getAvilableEventsForPeriod(this.getActivity(), start, start + dayDuration);
+        events = Common.sCalendarProvider.getAvilableEventsForPeriod(this.getActivity(), start, start + dayDuration);
         adapter = new WeekListAdapter(this.getActivity(), events);
         lv = (ListView)rootView.findViewById(R.id.week_table_day_7);
         lv.setAdapter(adapter);

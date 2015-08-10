@@ -1,29 +1,21 @@
 package ru.levn.simpleplanner.adapter;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.provider.CalendarContract;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewManager;
-import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.TimeZone;
 
 import ru.levn.simpleplanner.R;
 import ru.levn.simpleplanner.calendar.CalendarProvider;
 import ru.levn.simpleplanner.calendar.Event;
 
 /**
- * Created by Levshin_N on 27.07.2015.
+ * Автор: Левшин Николай, 707 группа.
+ * Дата создания: 27.07.2015.
  */
 public class EventListAdapter extends BaseAdapter {
 
@@ -59,7 +51,7 @@ public class EventListAdapter extends BaseAdapter {
 
 
         editContentView(view.findViewById(R.id.event_content), event);
-        editColorView(view.findViewById(R.id.event_color), event.COLOR);
+        editColorView(view.findViewById(R.id.event_color), event.color);
         editTimeView(view.findViewById(R.id.time_view), event);
 
         return view;
@@ -73,28 +65,28 @@ public class EventListAdapter extends BaseAdapter {
         TextView location = (TextView)v.findViewById(R.id.event_location_description);
         View locView = v.findViewById(R.id.event_location);
 
-        id.setText(event.EVENT_ID);
+        id.setText(event.id);
 
-        if ( event.TITLE == null ) {
+        if ( event.title == null ) {
             ((ViewGroup) title.getParent()).removeView(title);
         } else {
-            title.setText(event.TITLE);
+            title.setText(event.title);
         }
 
-        if ( event.DESCRIPTION == null ) {
+        if ( event.description == null ) {
             ((ViewGroup) description.getParent()).removeView(description);
         } else {
-            String clear = event.DESCRIPTION.replaceAll("\\s+", "");
+            String clear = event.description.replaceAll("\\s+", "");
             if ( clear.equals("") ) {
                 ((ViewGroup) description.getParent()).removeView(description);
             }
-            else description.setText(event.DESCRIPTION);
+            else description.setText(event.description);
         }
 
-        if ( event.EVENT_LOC == null || event.EVENT_LOC.equals("") ) {
+        if ( event.location == null || event.location.equals("") ) {
             ((ViewGroup) locView.getParent()).removeView(locView);
         } else {
-            location.setText(event.EVENT_LOC);
+            location.setText(event.location);
         }
     }
 
@@ -105,15 +97,15 @@ public class EventListAdapter extends BaseAdapter {
     }
 
     private void editTimeView(View v, Event event) {
-        if ( event.ALL_DAY || event.DT_START == 0 ) {
+        if ( event.isAllDay || event.timeStart == 0 ) {
             ((ViewGroup) v.getParent()).removeView(v);
         } else {
-            ((TextView)v.findViewById(R.id.event_start_time)).setText(CalendarProvider.getTime(event.DT_START));
+            ((TextView)v.findViewById(R.id.event_start_time)).setText(CalendarProvider.getTime(event.timeStart));
 
-            if (event.DT_END != 0) {
-                ((TextView)v.findViewById(R.id.event_end_time)).setText(CalendarProvider.getTime(event.DT_END));
-            } else if ( event.DURATION > 0 ) {
-                ((TextView)v.findViewById(R.id.event_end_time)).setText(CalendarProvider.getTime(event.DT_START + event.DURATION));
+            if (event.timeEnd != 0) {
+                ((TextView)v.findViewById(R.id.event_end_time)).setText(CalendarProvider.getTime(event.timeEnd));
+            } else if ( event.duration > 0 ) {
+                ((TextView)v.findViewById(R.id.event_end_time)).setText(CalendarProvider.getTime(event.timeStart + event.duration));
             } else {
                 TextView tv = (TextView)v.findViewById(R.id.event_end_time);
                 ((ViewGroup) tv.getParent()).removeView(tv);

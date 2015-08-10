@@ -6,40 +6,41 @@ import java.util.Locale;
 import ru.levn.simpleplanner.Common;
 
 /**
- * Created by Levshin_N on 27.07.2015.
+ * Автор: Левшин Николай, 707 группа.
+ * Дата создания: 27.07.2015.
  */
 
 public class Event {
-    public String EVENT_ID;
-    public String CAL_ID;
-    public String ORIGINAL_ID;
-    public int COLOR;
-    public String TITLE;
-    public String DESCRIPTION;
-    public long DT_START;
-    public long DT_END;
-    public long DURATION;
-    public boolean ALL_DAY;
-    public String EVENT_LOC;
+    public String id;
+    public String calendarId;
+    public String originalId;
+    public int color;
+    public String title;
+    public String description;
+    public long timeStart;
+    public long timeEnd;
+    public long duration;
+    public boolean isAllDay;
+    public String location;
 
     public String getTextDate(boolean withDate) {
         String timeText = "";
 
         if (withDate) {
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault());
-            timeText += dateFormat.format(DT_START);
+            timeText += dateFormat.format(timeStart);
             timeText += ", ";
         }
 
-        if (ALL_DAY) {
+        if (isAllDay) {
             timeText += "ALL_DAY";
         } else {
-            timeText += CalendarProvider.getTime(DT_START);
+            timeText += CalendarProvider.getTime(timeStart);
 
-            if (DT_END != 0) {
-                timeText += " - " + CalendarProvider.getTime(DT_END);
-            } else if (DURATION != 0) {
-                timeText += " - " + CalendarProvider.getTime(DT_START + DURATION);
+            if (timeEnd != 0) {
+                timeText += " - " + CalendarProvider.getTime(timeEnd);
+            } else if (duration != 0) {
+                timeText += " - " + CalendarProvider.getTime(timeStart + duration);
             }
         }
 

@@ -9,13 +9,12 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.TextView;
 
-import ru.levn.simpleplanner.Common;
 import ru.levn.simpleplanner.R;
-import ru.levn.simpleplanner.calendar.CalendarProvider;
 import ru.levn.simpleplanner.calendar.Event;
 
 /**
- * Created by Levshin_N on 30.07.2015.
+ * Автор: Левшин Николай, 707 группа.
+ * Дата создания: 30.07.2015.
  */
 public class EventInfo extends DialogFragment implements View.OnClickListener {
 
@@ -31,7 +30,7 @@ public class EventInfo extends DialogFragment implements View.OnClickListener {
                              Bundle savedInstanceState) {
 
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-        View v = inflater.inflate(R.layout.event_info, null);
+        View v = inflater.inflate(R.layout.event_info, container, false);
 
         editTitle(v.findViewById(R.id.event_info_title_area));
         editBody(v.findViewById(R.id.event_info_body));
@@ -61,11 +60,11 @@ public class EventInfo extends DialogFragment implements View.OnClickListener {
 
 
     private void editTitle(View v) {
-        if (event.COLOR != 0) {
-            v.setBackgroundColor(0xff000000 + event.COLOR);
+        if (event.color != 0) {
+            v.setBackgroundColor(0xff000000 + event.color);
         }
 
-        ((TextView)v.findViewById(R.id.event_info_title)).setText(event.TITLE);
+        ((TextView)v.findViewById(R.id.event_info_title)).setText(event.title);
     }
 
     private void editBody(View v) {
@@ -78,12 +77,12 @@ public class EventInfo extends DialogFragment implements View.OnClickListener {
             ((ViewGroup) time.getParent()).removeView(time);
         } else { time.setText(timeDescription); }
 
-        if (event.EVENT_LOC == null || event.EVENT_LOC.equals("")) {
+        if (event.location == null || event.location.equals("")) {
             ((ViewGroup) location.getParent()).removeView(location);
-        } else { location.setText(event.EVENT_LOC); }
+        } else { location.setText(event.location); }
 
-        if (event.DESCRIPTION == null) {
+        if (event.description == null) {
             ((ViewGroup) description.getParent()).removeView(description);
-        } else { description.setText(event.DESCRIPTION); }
+        } else { description.setText(event.description); }
     }
 }

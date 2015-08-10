@@ -1,7 +1,6 @@
 package ru.levn.simpleplanner.calendar;
 
 import android.app.Activity;
-import android.app.Application;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -10,24 +9,16 @@ import android.provider.CalendarContract;
 import android.util.Log;
 import android.util.Pair;
 
-import java.lang.reflect.Array;
-import java.net.URI;
-import java.security.KeyException;
-import java.text.DateFormatSymbols;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 import java.util.TimeZone;
 
 import ru.levn.simpleplanner.Common;
 
 /**
- * Created by Levshin_N on 14.07.2015.
+ * Автор: Левшин Николай, 707 группа.
+ * Дата создания: 14.07.2015.
  */
 
 public class CalendarProvider {
@@ -78,8 +69,8 @@ public class CalendarProvider {
 
     private static final String[] projectionInstance = new String[] {
             CalendarContract.Instances.EVENT_ID,    // 0
-            CalendarContract.Instances.BEGIN,   // 1
-            CalendarContract.Instances.END      // 2
+            CalendarContract.Instances.BEGIN,       // 1
+            CalendarContract.Instances.END          // 2
     };
 
     private static final int PROJECTION_INSTANCE_EVENT_ID = 0;
@@ -87,31 +78,26 @@ public class CalendarProvider {
     private static final int PROJECTION_INSTANCE_END = 2;
 
 
+    private static HashMap<String, Boolean> mSelectedCalendarsIDs;
 
+    private static SQLiteDatabase mDataBase;
 
-
-    private static HashMap<String, Boolean> selectedCalendarsIDs;
-
-    private static CalendarDBHelper dbHelper;
-    private static SQLiteDatabase db;
-
-    public static void initCalendarProvider (Activity activity) {
+    public static void sInitCalendarProvider (Activity activity) {
         calendarsUri = Uri.parse("content://com.android.calendar/calendars");
         calendars = new ArrayList<>();
-        selectedCalendarsIDs = new HashMap<>();
+        mSelectedCalendarsIDs = new HashMap<>();
 
         // подключаемся к БД
-        dbHelper = new CalendarDBHelper(activity);
-        db = dbHelper.getWritableDatabase();
+        CalendarDBHelper dbHelper = new CalendarDBHelper(activity);
+        mDataBase = dbHelper.getWritableDatabase();
 
-        updateCalendars(activity);
+        sUpdateCalendars(activity);
     }
 
-    private static void LoadDB() {
+    private static void sLoadDB() {
         Log.d("Databse", "Loading...");
 
-        ContentValues cv = new ContentValues();
-        Cursor c = db.query(Common.ENABLED_CALENDARS_DB, null, null, null, null, null, null);
+        Cursor c = mDataBase.query(Common.ENABLED_CALENDARS_DB, null, null, null, null, null, null);
 
         if (c.moveToFirst()) {
 
@@ -120,41 +106,41 @@ public class CalendarProvider {
             int enabledColIndex = c.getColumnIndex("enabled");
 
             do {
-                selectedCalendarsIDs.put( c.getString(idColIndex), c.getInt(enabledColIndex) != 0 );
+                mSelectedCalendarsIDs.put( c.getString(idColIndex), c.getInt(enabledColIndex) != 0 );
             } while (c.moveToNext());
         } else
             Log.d("DATABASE", "database is empty");
         c.close();
     }
 
-    private static void SaveDB() {
+    private static void sSaveDB() {
         Log.d("Databse", "Saving...");
 
-        db.delete(Common.ENABLED_CALENDARS_DB, null, null);
+        mDataBase.delete(Common.ENABLED_CALENDARS_DB, null, null);
 
         // создаем объект для данных
         ContentValues cv = new ContentValues();
 
-        for ( Map.Entry<String, Boolean> row : selectedCalendarsIDs.entrySet()) {
+        for ( Map.Entry<String, Boolean> row : mSelectedCalendarsIDs.entrySet()) {
             cv.put("id", row.getKey());
             cv.put("enabled", row.getValue() ? 1 : 0);
-            db.insert(Common.ENABLED_CALENDARS_DB, null, cv);
+            mDataBase.insert(Common.ENABLED_CALENDARS_DB, null, cv);
         }
     }
 
-    public static void updateCalendars(Activity activity) {
+    public static void sUpdateCalendars(Activity activity) {
         calendars.clear();
 
-        LoadDB();
+        sLoadDB();
 
         // Пробегаемся по всей базе календарей
         Cursor managedCursor = activity.getContentResolver().query(calendarsUri, projectionCalendar, null, null, null);
         if (managedCursor != null && managedCursor.moveToFirst())
         {
-            String calendarID = null;
-            String calendarAccName = null;
-            String calendarDispName = null;
-            String calendarOwnerAcc = null;
+            String calendarID;
+            String calendarAccName;
+            String calendarDispName;
+            String calendarOwnerAcc;
 
             do
             {
@@ -166,17 +152,17 @@ public class CalendarProvider {
 
                 // Проверяем не новый ли календарь за счет того
                 // что ищем его в всписке выбранных/отключенных календарей
-                if (!selectedCalendarsIDs.containsKey(calendarID)) {
-                    selectedCalendarsIDs.put(calendarID, true);
+                if (!mSelectedCalendarsIDs.containsKey(calendarID)) {
+                    mSelectedCalendarsIDs.put(calendarID, true);
                 }
 
                 // Добавляем название в список
                 Calendar cal = new Calendar();
                 cal.id = calendarID;
-                cal.account_name = calendarAccName;
-                cal.display_name = calendarDispName;
-                cal.owner_account = calendarOwnerAcc;
-                cal.enabled = selectedCalendarsIDs.get(calendarID);
+                cal.accountName = calendarAccName;
+                cal.displayName = calendarDispName;
+                cal.ownerAccount = calendarOwnerAcc;
+                cal.enabled = mSelectedCalendarsIDs.get(calendarID);
 
                 calendars.add(cal);
 
@@ -184,25 +170,15 @@ public class CalendarProvider {
             managedCursor.close();
         }
 
-        SaveDB();
+        sSaveDB();
     }
 
     public static void changeCalendarSelection(String id, boolean enabled) {
-        if (!selectedCalendarsIDs.containsKey(id)) {
-            System.err.println("ERROR: No such key in selectedCalendarsIDs: " + id);
+        if (!mSelectedCalendarsIDs.containsKey(id)) {
+            System.err.println("ERROR: No such key in mSelectedCalendarsIDs: " + id);
         }
-        selectedCalendarsIDs.put(id, enabled);
-        SaveDB();
-    }
-
-    public static ArrayList<Calendar> getEnabledCalendarList () {
-        ArrayList<Calendar> enabledCalendarList = new ArrayList<>();
-        for (Calendar cal : calendars) {
-            if (selectedCalendarsIDs.get(cal.id)) {
-                enabledCalendarList.add(cal);
-            }
-        }
-        return enabledCalendarList;
+        mSelectedCalendarsIDs.put(id, enabled);
+        sSaveDB();
     }
 
     private static Event getEventById(Activity activity, String eventID) {
@@ -213,17 +189,19 @@ public class CalendarProvider {
 
         if (cEvent != null && cEvent.moveToFirst() ) {
             Event event = new Event();
-            event.CAL_ID = cEvent.getString(PROJECTION_EVENT_CALENDAR_ID_INDEX);
-            event.EVENT_ID = cEvent.getString(PROJECTION_EVENT_ID_INDEX);
-            event.COLOR = cEvent.getInt(PROJECTION_EVENT_COLOR);
-            event.TITLE = cEvent.getString(PROJECTION_EVENT_TITLE);
-            event.DESCRIPTION = cEvent.getString(PROJECTION_EVENT_DESCRIPTION);
-            event.DT_START = cEvent.getLong(PROJECTION_EVENT_DTSTART);
-            event.DT_END = cEvent.getLong(PROJECTION_EVENT_DTEND);
-            event.DURATION = cEvent.getLong(PROJECTION_EVENT_DURATION);
-            event.ALL_DAY = cEvent.getLong(PROJECTION_EVENT_ALL_DAY) > 0;
-            event.EVENT_LOC = cEvent.getString(PROJECTION_EVENT_LOCATION);
-            event.ORIGINAL_ID = cEvent.getString(PROJECTION_EVENT_ORIGINAL_ID);
+            event.calendarId = cEvent.getString(PROJECTION_EVENT_CALENDAR_ID_INDEX);
+            event.id = cEvent.getString(PROJECTION_EVENT_ID_INDEX);
+            event.color = cEvent.getInt(PROJECTION_EVENT_COLOR);
+            event.title = cEvent.getString(PROJECTION_EVENT_TITLE);
+            event.description = cEvent.getString(PROJECTION_EVENT_DESCRIPTION);
+            event.timeStart = cEvent.getLong(PROJECTION_EVENT_DTSTART);
+            event.timeEnd = cEvent.getLong(PROJECTION_EVENT_DTEND);
+            event.duration = cEvent.getLong(PROJECTION_EVENT_DURATION);
+            event.isAllDay = cEvent.getLong(PROJECTION_EVENT_ALL_DAY) > 0;
+            event.location = cEvent.getString(PROJECTION_EVENT_LOCATION);
+            event.originalId = cEvent.getString(PROJECTION_EVENT_ORIGINAL_ID);
+
+            cEvent.close();
 
             return event;
         }
@@ -251,9 +229,9 @@ public class CalendarProvider {
 
                 Event event = getEventById(activity, eventID);
 
-                if (event != null) {
-                    event.DT_START = eventStart;
-                    event.DT_END = eventEnd;
+                if (event != null && mSelectedCalendarsIDs.get(event.calendarId)) {
+                    event.timeStart = eventStart;
+                    event.timeEnd = eventEnd;
                     events.add(event);
                 }
             } while (c.moveToNext());
@@ -264,7 +242,7 @@ public class CalendarProvider {
 
     public static Pair<Long,Long> getDayPeriod() {
 
-        java.util.Calendar cal = (java.util.Calendar)Common.GetSelectedDate().clone();
+        java.util.Calendar cal = (java.util.Calendar)Common.sSelectedDate.getDate().clone();
 
 
 
@@ -279,7 +257,7 @@ public class CalendarProvider {
 
     public static Pair<Long,Long> getWeekPeriod() {
 
-        java.util.Calendar cal = (java.util.Calendar)Common.GetSelectedDate().clone();
+        java.util.Calendar cal = (java.util.Calendar)Common.sSelectedDate.getDate().clone();
 
         cal.set(java.util.Calendar.HOUR_OF_DAY, 0);
         cal.set(java.util.Calendar.MINUTE, 0);
