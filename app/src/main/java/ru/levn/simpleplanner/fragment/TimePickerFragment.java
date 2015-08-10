@@ -1,35 +1,34 @@
 package ru.levn.simpleplanner.fragment;
 
-import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
 
 /**
- * Created by Levshin_N on 06.08.2015.
+ * Автор: Левшин Николай, 707 группа.
+ * Дата создания: 06.08.2015.
  */
+
 public class TimePickerFragment extends DialogFragment {
 
-    TimePickerDialog.OnTimeSetListener ontimeSet;
+    TimePickerDialog.OnTimeSetListener mOnTimeSet;
 
-    public TimePickerFragment() {}
-
-    public void setCallBack(TimePickerDialog.OnTimeSetListener ontime) {
-        ontimeSet = ontime;
+    public void setCallBack(TimePickerDialog.OnTimeSetListener onTime) {
+        mOnTimeSet = onTime;
     }
 
-    private int hour, minute;
+    private int mHour, mMinute;
 
     @Override
     public void setArguments(Bundle args) {
         super.setArguments(args);
-        hour = args.getInt("hour");
-        minute = args.getInt("minute");
+        mHour = args.getInt("hour");
+        mMinute = args.getInt("minute");
     }
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        return new TimePickerDialog(getActivity(), ontimeSet, hour, minute, false);
+        return new TimePickerDialog(getActivity(), mOnTimeSet, mHour, mMinute, false);
     }
 }

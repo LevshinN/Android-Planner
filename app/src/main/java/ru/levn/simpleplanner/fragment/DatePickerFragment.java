@@ -6,30 +6,32 @@ import android.app.DialogFragment;
 import android.os.Bundle;
 
 /**
- * Created by Levshin_N on 21.07.2015.
+ * Автор: Левшин Николай, 707 группа.
+ * Дата создания: 21.07.2015.
  */
+
 public class DatePickerFragment extends DialogFragment {
-    DatePickerDialog.OnDateSetListener ondateSet;
+    DatePickerDialog.OnDateSetListener mOnDateSet;
 
     public DatePickerFragment() {
     }
 
     public void setCallBack(DatePickerDialog.OnDateSetListener ondate) {
-        ondateSet = ondate;
+        mOnDateSet = ondate;
     }
 
-    private int year, month, day;
+    private int mYear, mMonth, mDay;
 
     @Override
     public void setArguments(Bundle args) {
         super.setArguments(args);
-        year = args.getInt("year");
-        month = args.getInt("month");
-        day = args.getInt("day");
+        mYear = args.getInt("year");
+        mMonth = args.getInt("month");
+        mDay = args.getInt("day");
     }
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        return new DatePickerDialog(getActivity(), ondateSet, year, month, day);
+        return new DatePickerDialog(getActivity(), mOnDateSet, mYear, mMonth, mDay);
     }
 }

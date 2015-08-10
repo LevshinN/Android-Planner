@@ -2,7 +2,6 @@ package ru.levn.simpleplanner.adapter;
 
 import android.content.Context;
 import android.util.Log;
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,37 +10,37 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Map;
 
-import ru.levn.simpleplanner.Common;
 import ru.levn.simpleplanner.R;
 import ru.levn.simpleplanner.calendar.Calendar;
 import ru.levn.simpleplanner.calendar.CalendarProvider;
 
 /**
- * Created by Levshin_N on 14.07.2015.
+ * Автор: Левшин Николай, 707 группа.
+ * Дата создания: 14.07.2015.
  */
+
 public class CalendarsListAdapter extends BaseAdapter {
 
-    private LayoutInflater lInflater;
-    private ArrayList<Calendar> calendarList;
+    private LayoutInflater mLInflater;
+    private ArrayList<Calendar> mCalendarList;
 
     public CalendarsListAdapter(Context context, ArrayList<Calendar> calendars) {
-        calendarList = calendars;
-        lInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        mCalendarList = calendars;
+        mLInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     // количество элементов
     @Override
     public int getCount() {
-        return calendarList.size();
+        return mCalendarList.size();
     }
 
 
     // Получить элемент по позиции
     @Override
     public Object getItem(int position) {
-        return calendarList.get(position);
+        return mCalendarList.get(position);
     }
 
 
@@ -57,7 +56,7 @@ public class CalendarsListAdapter extends BaseAdapter {
 
         View view = convertView;
         if (view == null) {
-            view = lInflater.inflate(R.layout.calendar_representation, parent, false);
+            view = mLInflater.inflate(R.layout.calendar_representation, parent, false);
         }
 
         Calendar cal = (Calendar)getItem(position);

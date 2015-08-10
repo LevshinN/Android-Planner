@@ -8,8 +8,10 @@ import android.util.Log;
 import ru.levn.simpleplanner.Common;
 
 /**
- * Created by Levshin_N on 24.07.2015.
+ * Автор: Левшин Николай, 707 группа.
+ * Дата создания: 24.07.2015.
  */
+
 public class CalendarDBHelper extends SQLiteOpenHelper {
 
     public CalendarDBHelper(Context context) {

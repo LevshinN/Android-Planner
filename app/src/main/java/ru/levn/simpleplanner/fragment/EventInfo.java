@@ -18,7 +18,7 @@ import ru.levn.simpleplanner.calendar.Event;
  */
 public class EventInfo extends DialogFragment implements View.OnClickListener {
 
-    private Event event;
+    private Event mEvent;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -32,8 +32,8 @@ public class EventInfo extends DialogFragment implements View.OnClickListener {
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         View v = inflater.inflate(R.layout.event_info, container, false);
 
-        editTitle(v.findViewById(R.id.event_info_title_area));
-        editBody(v.findViewById(R.id.event_info_body));
+        mEditTitle(v.findViewById(R.id.event_info_title_area));
+        mEditBody(v.findViewById(R.id.event_info_body));
 
         return v;
     }
@@ -55,34 +55,34 @@ public class EventInfo extends DialogFragment implements View.OnClickListener {
     }
 
     public void setEvent(Event e) {
-        event = e;
+        mEvent = e;
     }
 
 
-    private void editTitle(View v) {
-        if (event.color != 0) {
-            v.setBackgroundColor(0xff000000 + event.color);
+    private void mEditTitle(View v) {
+        if (mEvent.color != 0) {
+            v.setBackgroundColor(0xff000000 + mEvent.color);
         }
 
-        ((TextView)v.findViewById(R.id.event_info_title)).setText(event.title);
+        ((TextView)v.findViewById(R.id.event_info_title)).setText(mEvent.title);
     }
 
-    private void editBody(View v) {
+    private void mEditBody(View v) {
         TextView time = (TextView)v.findViewById(R.id.event_info_time);
         TextView location = (TextView)v.findViewById(R.id.event_info_location);
         TextView description = (TextView)v.findViewById(R.id.event_info_description);
 
-        String timeDescription = event.getTextDate(true);
+        String timeDescription = mEvent.getTextDate(true);
         if (timeDescription.equals(" ")) {
             ((ViewGroup) time.getParent()).removeView(time);
         } else { time.setText(timeDescription); }
 
-        if (event.location == null || event.location.equals("")) {
+        if (mEvent.location == null || mEvent.location.equals("")) {
             ((ViewGroup) location.getParent()).removeView(location);
-        } else { location.setText(event.location); }
+        } else { location.setText(mEvent.location); }
 
-        if (event.description == null) {
+        if (mEvent.description == null) {
             ((ViewGroup) description.getParent()).removeView(description);
-        } else { description.setText(event.description); }
+        } else { description.setText(mEvent.description); }
     }
 }

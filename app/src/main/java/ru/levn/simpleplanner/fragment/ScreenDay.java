@@ -25,19 +25,16 @@ import ru.levn.simpleplanner.calendar.Event;
  */
 public class ScreenDay extends Fragment {
 
-    private View rootView;
-
-    public ScreenDay() {
-    }
+    private View mRootView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
 
-        rootView = inflater.inflate(R.layout.day, container, false);
+        mRootView = inflater.inflate(R.layout.day, container, false);
 
-        return rootView;
+        return mRootView;
     }
 
     @Override
@@ -49,7 +46,7 @@ public class ScreenDay extends Fragment {
         ArrayList<Event> events = CalendarProvider.getAvilableEventsForPeriod(this.getActivity(), period.first, period.second);
         EventListAdapter eventListAdapter = new EventListAdapter(this.getActivity(), events);
 
-        ListView eventList = (ListView)rootView.findViewById(R.id.day_event_list);
+        ListView eventList = (ListView)mRootView.findViewById(R.id.day_event_list);
         eventList.setAdapter(eventListAdapter);
         eventList.setOnItemClickListener(selectItemListener);
 

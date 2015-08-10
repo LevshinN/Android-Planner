@@ -27,24 +27,24 @@ import ru.levn.simpleplanner.R;
  */
 public class ColorListAdapter extends BaseAdapter {
 
-    private LayoutInflater lInflater;
-    private int[] colorList;
-    private String[] colorsNamesList;
+    private LayoutInflater mLInflater;
+    private int[] mColorList;
+    private String[] mColorNamesList;
 
     public ColorListAdapter(Context context, int[] colors, String[] colorsNames) {
-        colorList = colors;
-        colorsNamesList = colorsNames;
-        lInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        mColorList = colors;
+        mColorNamesList = colorsNames;
+        mLInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     @Override
     public int getCount() {
-        return colorList.length;
+        return mColorList.length;
     }
 
     @Override
     public Object getItem(int position) {
-        return colorList[position];
+        return mColorList[position];
     }
 
     @Override
@@ -57,7 +57,7 @@ public class ColorListAdapter extends BaseAdapter {
 
         View view = convertView;
         if (view == null) {
-            view = lInflater.inflate(R.layout.color_item, parent, false);
+            view = mLInflater.inflate(R.layout.color_item, parent, false);
         }
 
         ImageView circle = (ImageView)view.findViewById(R.id.color_sample);
@@ -65,8 +65,8 @@ public class ColorListAdapter extends BaseAdapter {
 
 
         GradientDrawable bgShape = (GradientDrawable)circle.getBackground();
-        bgShape.setColor(colorList[position]);
-        colorName.setText(colorsNamesList[position]);
+        bgShape.setColor(mColorList[position]);
+        colorName.setText(mColorNamesList[position]);
 
         return view;
     }

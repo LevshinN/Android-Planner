@@ -36,16 +36,16 @@ public class CreateEventFragment extends DialogFragment {
     private static final int DIALOG_TIME = 2;
 
 
-    private View rootView;
-    private int dateOnEdit;
+    private View mRootView;
+    private int mDateOnEdit;
 
-    private String editTime;
+    private String mEditTime;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-        rootView = inflater.inflate(R.layout.edit_create_event, container, false);
+        mRootView = inflater.inflate(R.layout.edit_create_event, container, false);
 
-        Spinner colorSelector = (Spinner)rootView.findViewById(R.id.edit_event_color);
+        Spinner colorSelector = (Spinner)mRootView.findViewById(R.id.edit_event_color);
 
         int[] colors = getResources().getIntArray(R.array.event_colors_values);
         String[] colorsNames = getResources().getStringArray(R.array.event_colors_names);
@@ -54,10 +54,10 @@ public class CreateEventFragment extends DialogFragment {
         colorSelector.setAdapter(colorAdapter);
         colorSelector.setOnItemSelectedListener(colorSelectorListener);
 
-        (rootView.findViewById(R.id.edit_event_start_button)).setOnClickListener(buttonListener);
-        (rootView.findViewById(R.id.edit_event_end_button)).setOnClickListener(buttonListener);
+        (mRootView.findViewById(R.id.edit_event_start_button)).setOnClickListener(buttonListener);
+        (mRootView.findViewById(R.id.edit_event_end_button)).setOnClickListener(buttonListener);
 
-        return rootView;
+        return mRootView;
     }
 
     Spinner.OnItemSelectedListener colorSelectorListener = new AdapterView.OnItemSelectedListener() {
@@ -65,7 +65,7 @@ public class CreateEventFragment extends DialogFragment {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             int selectedColor = (Integer)parent.getSelectedItem();
-            rootView.findViewById(R.id.edit_event_title_area).setBackgroundColor(selectedColor);
+            mRootView.findViewById(R.id.edit_event_title_area).setBackgroundColor(selectedColor);
         }
 
         @Override
@@ -75,7 +75,7 @@ public class CreateEventFragment extends DialogFragment {
     Button.OnClickListener buttonListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            dateOnEdit = v.getId();
+            mDateOnEdit = v.getId();
             showDatePicker(DIALOG_DATE);
         }
     };
@@ -112,7 +112,7 @@ public class CreateEventFragment extends DialogFragment {
     DatePickerDialog.OnDateSetListener ondate = new DatePickerDialog.OnDateSetListener() {
         @Override
         public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-            editTime =  "" + dayOfMonth + " " + new DateFormatSymbols().getShortMonths()[monthOfYear % 12] + " " + year;
+            mEditTime =  "" + dayOfMonth + " " + new DateFormatSymbols().getShortMonths()[monthOfYear % 12] + " " + year;
             showDatePicker(DIALOG_TIME);
         }
     };
@@ -120,10 +120,10 @@ public class CreateEventFragment extends DialogFragment {
     TimePickerDialog.OnTimeSetListener ontime = new TimePickerDialog.OnTimeSetListener() {
         @Override
         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-            editTime = "" + hourOfDay + ":" + minute + " " + editTime;
+            mEditTime = "" + hourOfDay + ":" + minute + " " + mEditTime;
 
             int editTextID = -1;
-            switch(dateOnEdit) {
+            switch(mDateOnEdit) {
                 case EDIT_START_DATE:
                     editTextID = R.id.edit_event_start_text;
                     break;
@@ -135,7 +135,7 @@ public class CreateEventFragment extends DialogFragment {
                     break;
             }
 
-            ((TextView)rootView.findViewById(editTextID)).setText(editTime);
+            ((TextView)mRootView.findViewById(editTextID)).setText(mEditTime);
         }
     };
 }

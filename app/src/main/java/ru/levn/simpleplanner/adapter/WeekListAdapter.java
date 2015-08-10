@@ -16,23 +16,24 @@ import ru.levn.simpleplanner.calendar.Event;
  * Автор: Левшин Николай, 707 группа.
  * Дата создания: 31.07.2015.
  */
+
 public class WeekListAdapter extends BaseAdapter {
-    private LayoutInflater lInflater;
-    private ArrayList<Event> weekEventList;
+    private LayoutInflater mLInflater;
+    private ArrayList<Event> mWeekEventList;
 
     public WeekListAdapter(Context context, ArrayList<Event> events) {
-        weekEventList = events;
-        lInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        mWeekEventList = events;
+        mLInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     @Override
     public int getCount() {
-        return weekEventList.size();
+        return mWeekEventList.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return weekEventList.get(position);
+        return mWeekEventList.get(position);
     }
 
     @Override
@@ -45,7 +46,7 @@ public class WeekListAdapter extends BaseAdapter {
 
         View view = convertView;
         if (view == null) {
-            view = lInflater.inflate(R.layout.event_small_representation, parent, false);
+            view = mLInflater.inflate(R.layout.event_small_representation, parent, false);
         }
 
         Event event = (Event) getItem(position);

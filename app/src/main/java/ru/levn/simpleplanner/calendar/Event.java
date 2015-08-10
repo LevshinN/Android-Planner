@@ -3,8 +3,6 @@ package ru.levn.simpleplanner.calendar;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
-import ru.levn.simpleplanner.Common;
-
 /**
  * Автор: Левшин Николай, 707 группа.
  * Дата создания: 27.07.2015.
