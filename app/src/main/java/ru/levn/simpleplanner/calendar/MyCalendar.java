@@ -5,7 +5,7 @@ package ru.levn.simpleplanner.calendar;
  * Дата создания: 24.07.2015.
  */
 
-public class Calendar {
+public class MyCalendar {
     public String id;
     public String accountName;
     public String displayName;

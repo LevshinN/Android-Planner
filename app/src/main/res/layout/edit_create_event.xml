@@ -91,18 +91,28 @@
                     android:id="@+id/edit_event_end_button" />
             </LinearLayout>
 
+            <EditText
+                android:id="@+id/edit_event_location_text"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Location"/>
+
             <LinearLayout
-                android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <EditText
-                    android:id="@+id/edit_event_location_text"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
+                <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1.0"
-                    android:hint="Location"/>
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="Calendar:"/>
+
+                <Spinner
+                    android:id="@+id/edie_event_calendar"
+                    android:layout_width="240dp"
+                    android:layout_height="wrap_content"/>
 
             </LinearLayout>
 
@@ -115,6 +125,7 @@
         android:layout_height="wrap_content">
 
         <Button
+            android:id="@+id/edit_event_cancel"
             style="@style/buttonTheme"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -122,6 +133,7 @@
             android:text="CANCEL" />
 
         <Button
+            android:id="@+id/edit_event_ok"
             style="@style/buttonTheme"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

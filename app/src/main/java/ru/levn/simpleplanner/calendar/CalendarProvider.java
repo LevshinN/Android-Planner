@@ -22,7 +22,7 @@ import ru.levn.simpleplanner.Common;
  */
 
 public class CalendarProvider {
-    public static ArrayList<Calendar> calendars;
+    public static ArrayList<MyCalendar> calendars;
 
     private static Uri calendarsUri;
 
@@ -157,7 +157,7 @@ public class CalendarProvider {
                 }
 
                 // Добавляем название в список
-                Calendar cal = new Calendar();
+                MyCalendar cal = new MyCalendar();
                 cal.id = calendarID;
                 cal.accountName = calendarAccName;
                 cal.displayName = calendarDispName;
