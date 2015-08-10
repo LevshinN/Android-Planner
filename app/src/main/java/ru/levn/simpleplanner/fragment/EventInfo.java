@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import ru.levn.simpleplanner.R;
@@ -35,6 +36,10 @@ public class EventInfo extends DialogFragment implements View.OnClickListener {
         mEditTitle(v.findViewById(R.id.event_info_title_area));
         mEditBody(v.findViewById(R.id.event_info_body));
 
+        ((ImageButton)v.findViewById(R.id.event_info_edit)).setOnClickListener(onEdit);
+
+
+
         return v;
     }
 
@@ -57,7 +62,6 @@ public class EventInfo extends DialogFragment implements View.OnClickListener {
     public void setEvent(Event e) {
         mEvent = e;
     }
-
 
     private void mEditTitle(View v) {
         if (mEvent.color != 0) {
@@ -85,4 +89,15 @@ public class EventInfo extends DialogFragment implements View.OnClickListener {
             ((ViewGroup) description.getParent()).removeView(description);
         } else { description.setText(mEvent.description); }
     }
+
+    private View.OnClickListener onEdit = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            android.app.DialogFragment editEventDialog = CreateEventFragment.newInstance(0, mEvent);
+            editEventDialog.setStyle(android.app.DialogFragment.STYLE_NORMAL, R.style.full_screen_dialog);
+            editEventDialog.setCancelable(true);
+            editEventDialog.show(getActivity().getFragmentManager(), "edit_event");
+            dismiss();
+        }
+    };
 }

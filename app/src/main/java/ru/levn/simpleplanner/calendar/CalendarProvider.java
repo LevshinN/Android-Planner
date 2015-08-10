@@ -244,7 +244,10 @@ public class CalendarProvider {
 
         java.util.Calendar cal = (java.util.Calendar)Common.sSelectedDate.getDate().clone();
 
-
+        cal.set(java.util.Calendar.HOUR_OF_DAY, 0);
+        cal.set(java.util.Calendar.MINUTE, 0);
+        cal.set(java.util.Calendar.SECOND, 0);
+        cal.set(java.util.Calendar.MILLISECOND, 0);
 
         long start = cal.getTimeInMillis();
 

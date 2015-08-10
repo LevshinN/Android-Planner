@@ -72,7 +72,7 @@ public class ScreenWeek extends Fragment {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             Event event = (Event)parent.getItemAtPosition(position);
-            DialogFragment event_info = EventInfo.newInstance(0, event);
+            EventInfo event_info = EventInfo.newInstance(0, event);
             event_info.show(getFragmentManager(), "event_info");
         }
     };

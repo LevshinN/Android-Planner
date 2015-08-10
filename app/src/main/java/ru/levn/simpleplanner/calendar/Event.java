@@ -21,6 +21,22 @@ public class Event {
     public boolean isAllDay;
     public String location;
 
+    public Event() {}
+
+    public Event (Event e) {
+        id = e.id;
+        calendarId = e.calendarId;
+        originalId = e.originalId;
+        color = e.color;
+        title = e.title;
+        description = e.description;
+        timeStart = e.timeStart;
+        timeEnd = e.timeEnd;
+        duration = e.duration;
+        isAllDay = e.isAllDay;
+        location = e.location;
+    }
+
     public String getTextDate(boolean withDate) {
         String timeText = "";
 

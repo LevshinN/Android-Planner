@@ -3,7 +3,6 @@ package ru.levn.simpleplanner.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.util.Pair;
 import android.view.LayoutInflater;
@@ -59,7 +58,7 @@ public class ScreenDay extends Fragment {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             Event event = (Event)parent.getItemAtPosition(position);
-            DialogFragment event_info = EventInfo.newInstance(0, event);
+            EventInfo event_info = EventInfo.newInstance(0, event);
             event_info.show(getFragmentManager(), "event_info");
         }
     };

@@ -5,22 +5,29 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/event_info_title_area"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/grey"
-        android:padding="@dimen/abc_control_padding_material">
+        android:padding="@dimen/abc_dialog_padding_material">
 
         <TextView
             android:id="@+id/event_info_title"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1.0"
             android:text="Event title"
             android:textStyle="bold"
             android:textSize="@dimen/abc_text_size_headline_material" />
 
-    </RelativeLayout>
+        <ImageButton
+            android:id="@+id/event_info_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:drawable/ic_menu_edit"/>
+
+    </LinearLayout>
 
     <ScrollView
         android:layout_width="match_parent"

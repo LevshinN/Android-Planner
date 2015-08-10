@@ -1,29 +1,20 @@
 package ru.levn.simpleplanner.adapter;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.ShapeDrawable;
-import android.graphics.drawable.shapes.Shape;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-
-import org.w3c.dom.Text;
-
-import java.util.ArrayList;
 
 import ru.levn.simpleplanner.R;
 
 
 /**
- * Created by Levshin_N on 04.08.2015.
+ * Автор: Левшин Николай, 707 группа.
+ * Дата создания: 04.08.2015.
  */
 public class ColorListAdapter extends BaseAdapter {
 
@@ -69,5 +60,27 @@ public class ColorListAdapter extends BaseAdapter {
         colorName.setText(mColorNamesList[position]);
 
         return view;
+    }
+
+    @Override
+    public View getDropDownView(int position, View convertView, ViewGroup parent)
+    {
+        View v = null;
+
+        // If this is the initial dummy entry, make it hidden
+        if (position == 0) {
+            TextView tv = new TextView(mLInflater.getContext());
+            tv.setHeight(0);
+            tv.setVisibility(View.GONE);
+            v = tv;
+        }
+        else {
+            // Pass convertView as null to prevent reuse of special case views
+            v = super.getDropDownView(position, null, parent);
+        }
+
+        // Hide scroll bar because it appears sometimes unnecessarily, this does not prevent scrolling
+        parent.setVerticalScrollBarEnabled(false);
+        return v;
     }
 }
