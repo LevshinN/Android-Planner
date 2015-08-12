@@ -15,11 +15,18 @@ public class Event {
     public int color;
     public String title;
     public String description;
-    public long timeStart;
-    public long timeEnd;
+    public long timeOriginalStart;  // Какое время начала сохранено в базе событий
+    public long timeOriginalEnd;    // Какое время конца сохранено в базе событий
+    public long timeStart;  // Во сколько начинается событие по факту
+    public long timeEnd;    // Во сколько заканчивается событие по факту
     public long duration;
     public boolean isAllDay;
     public String location;
+    public String rrule;
+    public String rdate;
+    public String exrule;
+    public String exdate;
+    public long originalInstanceTime;
 
     public Event() {}
 
@@ -27,14 +34,26 @@ public class Event {
         id = e.id;
         calendarId = e.calendarId;
         originalId = e.originalId;
+
         color = e.color;
         title = e.title;
         description = e.description;
+        location = e.location;
+
+        isAllDay = e.isAllDay;
+
+
         timeStart = e.timeStart;
         timeEnd = e.timeEnd;
+
+        timeOriginalStart = e.timeOriginalStart;
+        timeOriginalEnd = e.timeOriginalEnd;
+
         duration = e.duration;
-        isAllDay = e.isAllDay;
-        location = e.location;
+
+        rrule = e.rrule;
+
+        originalInstanceTime = e.originalInstanceTime;
     }
 
     public String getTextDate(boolean withDate) {

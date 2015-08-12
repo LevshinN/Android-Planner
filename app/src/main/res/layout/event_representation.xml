@@ -2,35 +2,45 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="56dp">
 
-    <ImageView
-        android:id="@+id/event_color"
-        android:layout_width="15dp"
-        android:layout_height="match_parent"
-        android:background="@color/grey"/>
+    <RelativeLayout
+        android:layout_width="72dp"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:id="@+id/event_color"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/color_circle">
+
+            <TextView
+                android:id="@+id/event_letter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white"
+                android:fontFamily="sans-serif"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:textAppearance="@android:style/TextAppearance.Large"/>
+
+        </RelativeLayout>
+    </RelativeLayout>
 
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1.0"
         android:orientation="vertical"
-        android:padding="@dimen/abc_button_padding_horizontal_material"
         android:id="@+id/event_content">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/abc_text_size_body_1_material"
-            android:textStyle="bold"
-            android:text="Event ID"
-            android:id="@+id/event_id" />
-
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/abc_text_size_body_1_material"
+            android:textSize="@dimen/abc_text_size_large_material"
             android:textStyle="bold"
             android:text="Event Title"
             android:id="@+id/event_title" />
@@ -41,30 +51,6 @@
             android:textSize="@dimen/abc_text_size_body_1_material"
             android:text="Event Description"
             android:id="@+id/event_description" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:id="@+id/event_location">
-
-            <ImageView
-                android:layout_width="16dp"
-                android:layout_height="16dp"
-                android:scaleType="fitCenter"
-                android:background="@drawable/ic_action_place"
-                android:id="@+id/event_location_icon"/>
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1.0"
-                android:textSize="@dimen/abc_text_size_body_1_material"
-                android:textStyle="italic"
-                android:text="Event location"
-                android:id="@+id/event_location_description"/>
-
-        </LinearLayout>
 
 
     </LinearLayout>

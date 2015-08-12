@@ -58,14 +58,6 @@ public class ScreenWeek extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         mRefreshView();
-
-        // Настраиваем календарь
-        mCalendarView = (CalendarView)mRootView.findViewById(R.id.navigation_calendar);
-        mCalendarView.setDate(Common.sSelectedDate.getDate().getTimeInMillis());
-        mCalendarView.setFirstDayOfWeek(Common.sSelectedDate.getDate().getFirstDayOfWeek());
-        mCalendarView.setOnDateChangeListener(selectDateListener);
-
-        mCalendarDate = mCalendarView.getDate();
     }
 
     AdapterView.OnItemClickListener mSelectItemListener = new AdapterView.OnItemClickListener() {
@@ -74,20 +66,6 @@ public class ScreenWeek extends Fragment {
             Event event = (Event)parent.getItemAtPosition(position);
             EventInfo event_info = EventInfo.newInstance(0, event);
             event_info.show(getFragmentManager(), "event_info");
-        }
-    };
-
-    CalendarView.OnDateChangeListener selectDateListener = new CalendarView.OnDateChangeListener() {
-        @Override
-        public void onSelectedDayChange(CalendarView view, int year, int month, int dayOfMonth) {
-            if (mCalendarView.getDate() != mCalendarDate) {
-
-                mCalendarDate = mCalendarView.getDate();
-                Common.sSelectedDate.setDate(year, month, dayOfMonth);
-                Common.sUpdateTitle();
-                Toast.makeText(view.getContext(), "Year=" + year + " Month=" + month + " Day=" + dayOfMonth, Toast.LENGTH_LONG).show();
-                mRefreshView();
-            }
         }
     };
 
@@ -100,7 +78,7 @@ public class ScreenWeek extends Fragment {
         long dayDuration = (end - start) / 7;
 
         for (int i = 0; i < 7; ++i) {
-            ArrayList<Event> events = CalendarProvider.getAvilableEventsForPeriod(this.getActivity(), start, start + dayDuration);
+            ArrayList<Event> events = CalendarProvider.getAvilableEventsForPeriod(start, start + dayDuration);
             EventWeekAdapter adapter = new EventWeekAdapter(this.getActivity(), events);
             ListView lv = (ListView)mRootView.findViewById(mDayViewIds[i]);
             lv.setAdapter(adapter);
@@ -130,7 +108,7 @@ class EventWeekAdapter extends EventAdapter {
             (view.findViewById(R.id.event_small_area)).setBackgroundColor(0xff000000 + event.color);
         }
 
-        ((TextView)view.findViewById(R.id.event_info_title)).setText(event.title);
+        ((TextView)view.findViewById(R.id.event_info_title)).setText(event.title + " " + event.id);
         ((TextView)view.findViewById(R.id.event_info_time)).setText(event.getTextDate(false));
 
         return view;

@@ -4,8 +4,11 @@ import android.app.DatePickerDialog;
 import android.app.DialogFragment;
 import android.app.TimePickerDialog;
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.CalendarContract;
 import android.util.Log;
@@ -36,6 +39,8 @@ import ru.levn.simpleplanner.adapter.ColorListAdapter;
 import ru.levn.simpleplanner.calendar.CalendarProvider;
 import ru.levn.simpleplanner.calendar.Event;
 import ru.levn.simpleplanner.calendar.MyCalendar;
+import ru.levn.simpleplanner.calendar.common.accounts.GenericAccountService;
+import ru.levn.simpleplanner.calendar.syncadapter.SyncUtils;
 
 /**
  * Автор: Левшин Николай, 707 группа.
@@ -64,6 +69,7 @@ public class CreateEventFragment extends DialogFragment {
     private int mSelectedHour;
     private int mSelectedMinute;
 
+    private Event mOriginalEvent;
     private Event mNewEvent;
 
     static CreateEventFragment newInstance(int num, Event event) {
@@ -79,7 +85,7 @@ public class CreateEventFragment extends DialogFragment {
     }
 
     private void setEvent(Event e) {
-        mNewEvent = new Event(e);
+        mOriginalEvent = new Event(e);
         isEdit = true;
     }
 
@@ -87,9 +93,7 @@ public class CreateEventFragment extends DialogFragment {
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         mRootView = inflater.inflate(R.layout.edit_create_event, container, false);
 
-        if (mNewEvent == null) {
-            mNewEvent = new Event();
-        }
+        mNewEvent = new Event(mOriginalEvent);
 
         Spinner colorSelector = (Spinner)mRootView.findViewById(R.id.edit_event_color);
 
@@ -119,15 +123,15 @@ public class CreateEventFragment extends DialogFragment {
     }
 
     private void mUpdateDialog() {
-        ((EditText)mRootView.findViewById(R.id.edit_event_title)).setText(mNewEvent.title);
-        ((EditText)mRootView.findViewById(R.id.edit_event_description)).setText(mNewEvent.description);
-        ((EditText)mRootView.findViewById(R.id.edit_event_location_text)).setText(mNewEvent.location);
+        ((EditText)mRootView.findViewById(R.id.edit_event_title)).setText(mOriginalEvent.title);
+        ((EditText)mRootView.findViewById(R.id.edit_event_description)).setText(mOriginalEvent.description);
+        ((EditText)mRootView.findViewById(R.id.edit_event_location_text)).setText(mOriginalEvent.location);
 
-        mRootView.findViewById(R.id.edit_event_title_area).setBackgroundColor(mNewEvent.color);
+        mRootView.findViewById(R.id.edit_event_title_area).setBackgroundColor(mOriginalEvent.color);
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm, dd MMMM yyyy", Locale.getDefault());
-        ((TextView)mRootView.findViewById(R.id.edit_event_start_text)).setText(dateFormat.format(mNewEvent.timeStart));
-        ((TextView)mRootView.findViewById(R.id.edit_event_end_text)).setText(dateFormat.format(mNewEvent.timeEnd));
+        ((TextView)mRootView.findViewById(R.id.edit_event_start_text)).setText(dateFormat.format(mOriginalEvent.timeStart));
+        ((TextView)mRootView.findViewById(R.id.edit_event_end_text)).setText(dateFormat.format(mOriginalEvent.timeEnd));
     }
 
     Spinner.OnItemSelectedListener colorSelectorListener = new AdapterView.OnItemSelectedListener() {
@@ -172,7 +176,7 @@ public class CreateEventFragment extends DialogFragment {
                     mShowDatePicker(DIALOG_DATE);
                     break;
                 case R.id.edit_event_ok:
-                    mSaveEvent();
+                    mOnFinishEdit();
                     break;
                 case R.id.edit_event_cancel:
                     dismiss();
@@ -263,8 +267,8 @@ public class CreateEventFragment extends DialogFragment {
 
     }
 
-    private void mSaveEvent() {
 
+    private void mOnFinishEdit() {
         EditText titleView = (EditText)mRootView.findViewById(R.id.edit_event_title);
         EditText descriptionView = (EditText)mRootView.findViewById(R.id.edit_event_description);
         EditText locationView = (EditText)mRootView.findViewById(R.id.edit_event_location_text);
@@ -273,19 +277,14 @@ public class CreateEventFragment extends DialogFragment {
         mNewEvent.description = descriptionView.getText().toString();
         mNewEvent.location = locationView.getText().toString();
 
-        ContentResolver cr = mRootView.getContext().getContentResolver();
-        ContentValues values = new ContentValues();
-        values.put(CalendarContract.Events.DTSTART, mNewEvent.timeStart);
-        values.put(CalendarContract.Events.DTEND, mNewEvent.timeEnd);
-        values.put(CalendarContract.Events.TITLE, mNewEvent.title);
-        values.put(CalendarContract.Events.DESCRIPTION, mNewEvent.description);
-        values.put(CalendarContract.Events.EVENT_LOCATION, mNewEvent.location);
-        values.put(CalendarContract.Events.EVENT_COLOR, mNewEvent.color);
-        values.put(CalendarContract.Events.CALENDAR_ID, mNewEvent.calendarId);
-        values.put(CalendarContract.Events.EVENT_TIMEZONE, Calendar.getInstance().getTimeZone().getDisplayName()); // TODO Добавить таймзоны
-        cr.insert(CalendarContract.Events.CONTENT_URI, values);
+        if (isEdit) {
+            CalendarProvider.editEvent(mOriginalEvent, mNewEvent);
+        } else {
+            CalendarProvider.saveNewEvent(mNewEvent);
+        }
 
         dismiss();
+
     }
 }
 

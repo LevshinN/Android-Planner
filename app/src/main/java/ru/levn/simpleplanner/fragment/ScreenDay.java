@@ -2,6 +2,7 @@ package ru.levn.simpleplanner.fragment;
 
 
 import android.content.Context;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Pair;
@@ -42,9 +43,9 @@ public class ScreenDay extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        Pair<Long,Long> period = CalendarProvider.getDayPeriod();
+        Pair<Long,Long> period = CalendarProvider.getWeekPeriod(); // TODO вернуть на место метод getDayPeriod()
 
-        ArrayList<Event> events = CalendarProvider.getAvilableEventsForPeriod(this.getActivity(), period.first, period.second);
+        ArrayList<Event> events = CalendarProvider.getAvilableEventsForPeriod(period.first, period.second);
         EventDayAdapter eventListAdapter = new EventDayAdapter(this.getActivity(), events);
 
         ListView eventList = (ListView)mRootView.findViewById(R.id.day_event_list);
@@ -74,12 +75,15 @@ class EventDayAdapter extends EventAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        View view = mLInflater.inflate(R.layout.event_representation, parent, false);
+        View view = convertView;
+
+        if (view == null) {
+            view = mLInflater.inflate(R.layout.event_representation, parent, false);
+        }
 
         Event event = (Event) getItem(position);
 
-
-        editContentView(view.findViewById(R.id.event_content), event);
+        editContentView(view, event);
         editColorView(view.findViewById(R.id.event_color), event.color);
         editTimeView(view.findViewById(R.id.time_view), event);
 
@@ -88,46 +92,47 @@ class EventDayAdapter extends EventAdapter {
 
     private void editContentView(View v, Event event) {
 
-        TextView id = (TextView)v.findViewById(R.id.event_id);
         TextView title = (TextView)v.findViewById(R.id.event_title);
         TextView description = (TextView)v.findViewById(R.id.event_description);
-        TextView location = (TextView)v.findViewById(R.id.event_location_description);
-        View locView = v.findViewById(R.id.event_location);
+        TextView firstLetter = (TextView)v.findViewById(R.id.event_letter);
 
-        id.setText(event.id);
 
-        if ( event.title == null ) {
-            ((ViewGroup) title.getParent()).removeView(title);
-        } else {
+        if ( event.title != null ) {
             title.setText(event.title);
+            String letter = String.valueOf(event.title.toUpperCase().charAt(0));
+            firstLetter.setText(letter);
         }
 
-        if ( event.description == null ) {
-            ((ViewGroup) description.getParent()).removeView(description);
-        } else {
-            String clear = event.description.replaceAll("\\s+", "");
-            if ( clear.equals("") ) {
-                ((ViewGroup) description.getParent()).removeView(description);
-            }
-            else description.setText(event.description);
-        }
+        String descrText = "";
 
-        if ( event.location == null || event.location.equals("") ) {
-            ((ViewGroup) locView.getParent()).removeView(locView);
-        } else {
-            location.setText(event.location);
-        }
+//        if (event.rrule != null)  descrText += event.rrule;
+//        if (event.rdate != null)    descrText += event.rdate;
+//        if (event.exrule != null)   descrText += event.exrule;
+//        if (event.exdate != null)   descrText += event.exdate;
+
+        if (event.originalId != null) descrText += event.originalId;
+        if (event.originalInstanceTime != 0) descrText += " " + String.valueOf(event.originalInstanceTime);
+
+        description.setText(descrText);
+
+//        if ( event.description != null ) {
+//            String clear = event.description.replaceAll("\\s+", "");
+//            if ( !clear.equals("") ) {
+//                description.setText(event.description);
+//            }
+//        }
     }
 
     private void editColorView(View v, int color) {
         if (color != 0) {
-            v.setBackgroundColor(0xff000000 + color);
+            GradientDrawable bgShape = (GradientDrawable)v.getBackground();
+            bgShape.setColor(0xff000000 + color);
         }
     }
 
     private void editTimeView(View v, Event event) {
         if ( event.isAllDay || event.timeStart == 0 ) {
-            ((ViewGroup) v.getParent()).removeView(v);
+            //((ViewGroup) v.getParent()).removeView(v);
         } else {
             ((TextView)v.findViewById(R.id.event_start_time)).setText(CalendarProvider.getTime(event.timeStart));
 

@@ -80,16 +80,8 @@
             style="@style/WeekTableDayHeaderPort"
             android:text="КАЛЕНДАРЬ"/>
 
-        <CalendarView
-            style="@style/WeekModeCellStyle"
-            android:id="@+id/navigation_calendar"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1.0"
-            android:selectedWeekBackgroundColor="@color/yellow"
-            android:weekNumberColor="@color/orange"
-            android:shownWeekCount="4"
-            android:padding="1dp"/>
+        <Space
+            style="@style/SmallEventListStylePort" />
 
     </LinearLayout>
 

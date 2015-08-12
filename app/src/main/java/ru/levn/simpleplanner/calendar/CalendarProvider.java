@@ -1,6 +1,8 @@
 package ru.levn.simpleplanner.calendar;
 
 import android.app.Activity;
+import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -10,11 +12,14 @@ import android.util.Log;
 import android.util.Pair;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TimeZone;
 
 import ru.levn.simpleplanner.Common;
+import ru.levn.simpleplanner.calendar.common.accounts.GenericAccountService;
+import ru.levn.simpleplanner.calendar.syncadapter.SyncUtils;
 
 /**
  * Автор: Левшин Николай, 707 группа.
@@ -49,8 +54,13 @@ public class CalendarProvider {
             CalendarContract.Events.DTEND,          // 6
             CalendarContract.Events.DURATION,       // 7
             CalendarContract.Events.ALL_DAY,        // 8
-            CalendarContract.Events.EVENT_LOCATION,  // 9
-            CalendarContract.Events.ORIGINAL_ID     // 10
+            CalendarContract.Events.EVENT_LOCATION, // 9
+            CalendarContract.Events.ORIGINAL_ID,    // 10
+            CalendarContract.Events.RRULE,          // 11
+            CalendarContract.Events.RDATE,          // 12
+            CalendarContract.Events.EXRULE,         // 13
+            CalendarContract.Events.EXDATE,          // 14
+            CalendarContract.Events.ORIGINAL_INSTANCE_TIME
     };
 
     // The indices for the projection array above.
@@ -65,7 +75,11 @@ public class CalendarProvider {
     private static final int PROJECTION_EVENT_ALL_DAY = 8;
     private static final int PROJECTION_EVENT_LOCATION = 9;
     private static final int PROJECTION_EVENT_ORIGINAL_ID = 10;
-
+    private static final int PROJECTION_EVENT_RRULE = 11;
+    private static final int PROJECTION_EVENT_RDATE = 12;
+    private static final int PROJECTION_EVENT_EXRULE = 13;
+    private static final int PROJECTION_EVENT_EXDATE = 14;
+    private static final int PROJECTION_EVENT_INSTANCE_TIME = 15;
 
     private static final String[] projectionInstance = new String[] {
             CalendarContract.Instances.EVENT_ID,    // 0
@@ -82,6 +96,8 @@ public class CalendarProvider {
 
     private static SQLiteDatabase mDataBase;
 
+    private static ContentResolver mContentResolver;
+
     public static void sInitCalendarProvider (Activity activity) {
         calendarsUri = Uri.parse("content://com.android.calendar/calendars");
         calendars = new ArrayList<>();
@@ -90,8 +106,9 @@ public class CalendarProvider {
         // подключаемся к БД
         CalendarDBHelper dbHelper = new CalendarDBHelper(activity);
         mDataBase = dbHelper.getWritableDatabase();
+        mContentResolver = activity.getContentResolver();
 
-        sUpdateCalendars(activity);
+        sUpdateCalendars();
     }
 
     private static void sLoadDB() {
@@ -128,13 +145,13 @@ public class CalendarProvider {
         }
     }
 
-    public static void sUpdateCalendars(Activity activity) {
+    public static void sUpdateCalendars() {
         calendars.clear();
 
         sLoadDB();
 
         // Пробегаемся по всей базе календарей
-        Cursor managedCursor = activity.getContentResolver().query(calendarsUri, projectionCalendar, null, null, null);
+        Cursor managedCursor = mContentResolver.query(calendarsUri, projectionCalendar, null, null, null);
         if (managedCursor != null && managedCursor.moveToFirst())
         {
             String calendarID;
@@ -181,11 +198,11 @@ public class CalendarProvider {
         sSaveDB();
     }
 
-    private static Event getEventById(Activity activity, String eventID) {
+    private static Event getEventById(String eventID) {
         String selection = "(" + CalendarContract.Events._ID    + " = ?)";
         String[] selectionArgs = new String[] { eventID };
 
-        Cursor cEvent = activity.getContentResolver().query(CalendarContract.Events.CONTENT_URI, projectionEvent, selection, selectionArgs, null);
+        Cursor cEvent = mContentResolver.query(CalendarContract.Events.CONTENT_URI, projectionEvent, selection, selectionArgs, null);
 
         if (cEvent != null && cEvent.moveToFirst() ) {
             Event event = new Event();
@@ -194,12 +211,17 @@ public class CalendarProvider {
             event.color = cEvent.getInt(PROJECTION_EVENT_COLOR);
             event.title = cEvent.getString(PROJECTION_EVENT_TITLE);
             event.description = cEvent.getString(PROJECTION_EVENT_DESCRIPTION);
-            event.timeStart = cEvent.getLong(PROJECTION_EVENT_DTSTART);
-            event.timeEnd = cEvent.getLong(PROJECTION_EVENT_DTEND);
+            event.timeOriginalStart = cEvent.getLong(PROJECTION_EVENT_DTSTART);
+            event.timeOriginalEnd = cEvent.getLong(PROJECTION_EVENT_DTEND);
             event.duration = cEvent.getLong(PROJECTION_EVENT_DURATION);
             event.isAllDay = cEvent.getLong(PROJECTION_EVENT_ALL_DAY) > 0;
             event.location = cEvent.getString(PROJECTION_EVENT_LOCATION);
             event.originalId = cEvent.getString(PROJECTION_EVENT_ORIGINAL_ID);
+            event.rrule = cEvent.getString(PROJECTION_EVENT_RRULE);
+            event.exrule = cEvent.getString(PROJECTION_EVENT_EXRULE);
+            event.rdate = cEvent.getString(PROJECTION_EVENT_RDATE);
+            event.exdate = cEvent.getString(PROJECTION_EVENT_EXDATE);
+            event.originalInstanceTime = cEvent.getLong(PROJECTION_EVENT_INSTANCE_TIME);
 
             cEvent.close();
 
@@ -209,10 +231,10 @@ public class CalendarProvider {
         return null;
     }
 
-    public static ArrayList<Event> getAvilableEventsForPeriod(Activity activity, long UTCStart, long UTCEnd) {
+    public static ArrayList<Event> getAvilableEventsForPeriod(long UTCStart, long UTCEnd) {
         ArrayList<Event> events = new ArrayList<>();
 
-        Cursor c = CalendarContract.Instances.query(activity.getContentResolver(), projectionInstance, UTCStart, UTCEnd);
+        Cursor c = CalendarContract.Instances.query(mContentResolver, projectionInstance, UTCStart, UTCEnd);
 
         if (c != null && c.moveToFirst()) {
             do {
@@ -227,7 +249,7 @@ public class CalendarProvider {
                     continue;
                 }
 
-                Event event = getEventById(activity, eventID);
+                Event event = getEventById(eventID);
 
                 if (event != null && mSelectedCalendarsIDs.get(event.calendarId)) {
                     event.timeStart = eventStart;
@@ -284,5 +306,62 @@ public class CalendarProvider {
         cal.setTimeInMillis(UTCTime);
 
         return String.format("%02d:%02d", cal.get(java.util.Calendar.HOUR_OF_DAY), cal.get(java.util.Calendar.MINUTE));
+    }
+
+    public static Uri asSyncAdapter(Uri uri, String account, String accountType) {
+        return uri
+                .buildUpon()
+                .appendQueryParameter(android.provider.CalendarContract.CALLER_IS_SYNCADAPTER, "true")
+                .appendQueryParameter(CalendarContract.Calendars.ACCOUNT_NAME, account)
+                .appendQueryParameter(CalendarContract.Calendars.ACCOUNT_TYPE, accountType)
+                .build();
+    }
+
+    public static void saveNewEvent( Event event ) {
+        ContentResolver cr = mContentResolver;
+        ContentValues values = new ContentValues();
+        values.put(CalendarContract.Events.DTSTART, event.timeStart);
+        values.put(CalendarContract.Events.DTEND, event.timeEnd);
+        values.put(CalendarContract.Events.TITLE, event.title);
+        values.put(CalendarContract.Events.DESCRIPTION, event.description);
+        values.put(CalendarContract.Events.EVENT_LOCATION, event.location);
+        values.put(CalendarContract.Events.EVENT_COLOR, event.color);
+        values.put(CalendarContract.Events.CALENDAR_ID, event.calendarId);
+        values.put(CalendarContract.Events.EVENT_TIMEZONE, Calendar.getInstance().getTimeZone().getDisplayName()); // TODO Добавить таймзоны
+
+        if (!event.originalId.isEmpty()) {
+            values.put(CalendarContract.Events.ORIGINAL_ID, event.originalId);
+            values.put(CalendarContract.Events.ORIGINAL_INSTANCE_TIME, event.originalInstanceTime);
+        }
+
+        cr.insert(CalendarContract.Events.CONTENT_URI, values);
+    }
+
+    public static void editEvent( Event originalEvent, Event newEvent ) {
+        // Если событие - часть рекурентной цепочки
+        if ( originalEvent.rrule != null ) {
+            newEvent.originalId = originalEvent.id;
+            newEvent.originalInstanceTime = originalEvent.timeStart;
+            saveNewEvent(newEvent);
+
+        } else { // Если событие одиночное и ни к каким другим не привязано
+
+            ContentResolver cr = mContentResolver;
+            ContentValues values = new ContentValues();
+            values.put(CalendarContract.Events.DTSTART, newEvent.timeStart);
+            values.put(CalendarContract.Events.DTEND, newEvent.timeEnd);
+            values.put(CalendarContract.Events.TITLE, newEvent.title);
+            values.put(CalendarContract.Events.DESCRIPTION, newEvent.description);
+            values.put(CalendarContract.Events.EVENT_LOCATION, newEvent.location);
+            values.put(CalendarContract.Events.EVENT_COLOR, newEvent.color);
+            values.put(CalendarContract.Events.CALENDAR_ID, newEvent.calendarId);
+            values.put(CalendarContract.Events.EVENT_TIMEZONE, Calendar.getInstance().getTimeZone().getDisplayName()); // TODO Добавить таймзоны
+
+            Uri syncUri = CalendarProvider.asSyncAdapter(CalendarContract.Events.CONTENT_URI, GenericAccountService.ACCOUNT_NAME, SyncUtils.ACCOUNT_TYPE);
+            Uri updateUri = ContentUris.withAppendedId(syncUri, Integer.valueOf(newEvent.id));
+
+            cr.update(updateUri, values, null, null);
+
+        }
     }
 }

@@ -3,6 +3,7 @@ package ru.levn.simpleplanner;
 
 import android.app.DatePickerDialog;
 import android.app.DialogFragment;
+import android.content.Context;
 import android.content.res.Configuration;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -16,6 +17,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -25,6 +28,7 @@ import android.widget.Toast;
 
 
 import ru.levn.simpleplanner.calendar.CalendarProvider;
+import ru.levn.simpleplanner.calendar.syncadapter.SyncUtils;
 import ru.levn.simpleplanner.fragment.CreateEventFragment;
 import ru.levn.simpleplanner.fragment.DatePickerFragment;
 import ru.levn.simpleplanner.fragment.ScreenCalendars;
@@ -45,6 +49,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        SyncUtils.CreateSyncAccount(this);
 
         DisplayMetrics displayMetrics = getApplicationContext().getResources().getDisplayMetrics();
         float dpHeight = displayMetrics.heightPixels / displayMetrics.density;
@@ -166,7 +172,7 @@ public class MainActivity extends AppCompatActivity {
                 fragment = new ScreenCalendars();
 
                 // Обновляем список календарей
-                CalendarProvider.sUpdateCalendars(this);
+                CalendarProvider.sUpdateCalendars();
 
                 if (mCurrentMode != null) {
                     mCurrentMode.setPressed(false);
