@@ -266,20 +266,20 @@ public class CalendarProvider {
 
     public static Pair<Long,Long> getDayPeriod() {
 
-        java.util.Calendar cal = (java.util.Calendar)Common.sSelectedDate.getDate().clone();
+        Calendar cal = (Calendar)Common.sSelectedDate.getDate().clone();
 
-        cal.set(java.util.Calendar.HOUR_OF_DAY, 0);
-        cal.set(java.util.Calendar.MINUTE, 0);
-        cal.set(java.util.Calendar.SECOND, 0);
-        cal.set(java.util.Calendar.MILLISECOND, 0);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
 
-        long start = cal.getTimeInMillis();
+        long start = cal.getTimeInMillis() + cal.get(Calendar.ZONE_OFFSET);
 
-        cal.add(java.util.Calendar.DAY_OF_MONTH, 1);
+        cal.add(Calendar.DAY_OF_MONTH, 1);
 
-        long finish = cal.getTimeInMillis();
+        long finish = cal.getTimeInMillis() + cal.get(Calendar.ZONE_OFFSET);
 
-        return new Pair<>(start, finish - 1);
+        return new Pair<>(start, finish);
     }
 
     public static Pair<Long,Long> getDayPeriod(long UtcTime) {
@@ -288,50 +288,83 @@ public class CalendarProvider {
 
         cal.setTimeInMillis(UtcTime);
 
-        cal.set(java.util.Calendar.HOUR_OF_DAY, 0);
-        cal.set(java.util.Calendar.MINUTE, 0);
-        cal.set(java.util.Calendar.SECOND, 0);
-        cal.set(java.util.Calendar.MILLISECOND, 0);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
 
-        long start = cal.getTimeInMillis();
+        long start = cal.getTimeInMillis() + cal.get(Calendar.ZONE_OFFSET);
 
-        cal.add(java.util.Calendar.DAY_OF_MONTH, 1);
+        cal.add(Calendar.DAY_OF_MONTH, 1);
 
-        long finish = cal.getTimeInMillis();
-
-        return new Pair<>(start, finish - 1);
-    }
-
-    public static Pair<Long,Long> getWeekPeriod() {
-
-        java.util.Calendar cal = (java.util.Calendar)Common.sSelectedDate.getDate().clone();
-
-        cal.set(java.util.Calendar.HOUR_OF_DAY, 0);
-        cal.set(java.util.Calendar.MINUTE, 0);
-        cal.set(java.util.Calendar.SECOND, 0);
-        cal.set(java.util.Calendar.MILLISECOND, 0);
-
-        cal.set(java.util.Calendar.DAY_OF_WEEK, java.util.Calendar.MONDAY);
-
-        long start = cal.getTimeInMillis() + cal.get(java.util.Calendar.ZONE_OFFSET);
-
-
-        cal.add(java.util.Calendar.WEEK_OF_YEAR, 1);
-        long finish = cal.getTimeInMillis() + cal.get(java.util.Calendar.ZONE_OFFSET);
+        long finish = cal.getTimeInMillis() + cal.get(Calendar.ZONE_OFFSET);
 
         return new Pair<>(start, finish);
     }
 
+    public static Pair<Long,Long> getWeekPeriod() {
+
+        Calendar cal = (Calendar)Common.sSelectedDate.getDate().clone();
+
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+
+        cal.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+
+        long start = cal.getTimeInMillis() + cal.get(Calendar.ZONE_OFFSET);
+
+
+        cal.add(Calendar.WEEK_OF_YEAR, 1);
+        long finish = cal.getTimeInMillis() + cal.get(Calendar.ZONE_OFFSET);
+
+        return new Pair<>(start, finish);
+    }
+
+    public static long getNextPeriod(boolean forward) {
+
+        int diff = forward ? 1 : -1;
+
+        Calendar cal = (Calendar)Common.sSelectedDate.getDate().clone();
+
+        switch (Common.sCurrentMode) {
+            case Common.DAY_MODE:
+                cal.add(Calendar.DAY_OF_MONTH, diff);
+                return cal.getTimeInMillis();
+            case Common.WEEK_MODE:
+                cal.add(Calendar.WEEK_OF_YEAR, diff);
+                return cal.getTimeInMillis();
+        }
+
+        return 0;
+    }
+
+    public static void moveSelectedDate(boolean forward) {
+        int diff = forward ? 1 : -1;
+
+        Calendar cal = Common.sSelectedDate.getDate();
+
+        switch (Common.sCurrentMode) {
+            case Common.DAY_MODE:
+                cal.add(Calendar.DAY_OF_MONTH, diff);
+                break;
+            case Common.WEEK_MODE:
+                cal.add(Calendar.WEEK_OF_YEAR, diff);
+                break;
+        }
+    }
+
     public static String getTime(long UTCTime) {
-        java.util.Calendar cal = java.util.Calendar.getInstance();
+        Calendar cal = Calendar.getInstance();
         cal.setTimeZone(TimeZone.getDefault());
         cal.setTimeInMillis(UTCTime);
 
-        return String.format("%02d:%02d", cal.get(java.util.Calendar.HOUR_OF_DAY), cal.get(java.util.Calendar.MINUTE));
+        return String.format("%02d:%02d", cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE));
     }
 
     public static String getDate(long UtcTime) {
-        java.util.Calendar cal = java.util.Calendar.getInstance();
+        Calendar cal = Calendar.getInstance();
         cal.setTimeZone(TimeZone.getDefault());
         cal.setTimeInMillis(UtcTime);
 

@@ -1,26 +1,27 @@
 package ru.levn.simpleplanner.fragment;
 
 
-import android.content.Context;
-import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Pair;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
+
+import com.antonyt.infiniteviewpager.InfinitePagerAdapter;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import ru.levn.simpleplanner.Common;
+import ru.levn.simpleplanner.MainActivity;
 import ru.levn.simpleplanner.R;
-import ru.levn.simpleplanner.adapter.EventAdapter;
 import ru.levn.simpleplanner.calendar.CalendarProvider;
-import ru.levn.simpleplanner.calendar.Event;
+
 
 /**
  * Автор: Левшин Николай, 707 группа.
@@ -28,156 +29,98 @@ import ru.levn.simpleplanner.calendar.Event;
  */
 public class ScreenDay extends Fragment {
 
-    private View mRootView;
+    public static final int NUM_PAGES = 5;
+    private int mCurrentPosition;
+    private int mChangedPosition;
+
+    ViewPager mPager;
+    PagerAdapter mPagerAdapter;
+    InfinitePagerAdapter mInfPagerAdapter;
+
+    PageDay[] pages = {null, null, null, null, null};
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        View mRootView = inflater.inflate(R.layout.day, container, false);
 
-        mRootView = inflater.inflate(R.layout.day, container, false);
+        mCurrentPosition = 0;
+
+        for (int i = 0; i < 5; ++i) {
+            pages[i] = PageDay.newInstance(mGetNextDate( (i + 2) % 5 - 2 ));
+        }
+
+        mPager = (ViewPager) mRootView.findViewById(R.id.pager);
+        mPagerAdapter = new MyFragmentPagerAdapter(getActivity().getSupportFragmentManager());
+        mInfPagerAdapter = new InfinitePagerAdapter(mPagerAdapter);
+        mPager.setAdapter(mInfPagerAdapter);
+
+        mPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+
+            @Override
+            public void onPageSelected(int position) {
+                int backPosition = (position + NUM_PAGES - 1) % NUM_PAGES;
+                int nextPosition = (position + NUM_PAGES + 1) % NUM_PAGES;
+
+                if (mCurrentPosition == backPosition) {
+                    CalendarProvider.moveSelectedDate(true);
+                    long nextDate = CalendarProvider.getNextPeriod(true);
+                    pages[nextPosition] = PageDay.newInstance(nextDate);
+                    mChangedPosition = nextPosition;
+
+                } else {
+                    CalendarProvider.moveSelectedDate(false);
+                    long backDate = CalendarProvider.getNextPeriod(false);
+                    pages[backPosition] = PageDay.newInstance(backDate);
+                    mChangedPosition = backPosition;
+                }
+
+                mPagerAdapter.notifyDataSetChanged();
+                Common.sUpdateTitle();
+                mCurrentPosition = position % NUM_PAGES;
+            }
+
+            @Override
+            public void onPageScrolled(int position, float positionOffset,
+                                       int positionOffsetPixels) {
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+            }
+        });
 
         return mRootView;
     }
 
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    private class MyFragmentPagerAdapter extends FragmentStatePagerAdapter {
 
-        Pair<Long,Long> period = CalendarProvider.getDayPeriod();
-
-        ArrayList<Event> events = CalendarProvider.getAvilableEventsForPeriod(period.first, period.second);
-
-        if (events.isEmpty()) {
-            mRootView.findViewById(R.id.day_text_info).setVisibility(View.VISIBLE);
+        public MyFragmentPagerAdapter(FragmentManager fm) {
+            super(fm);
         }
 
-        EventDayAdapter eventListAdapter = new EventDayAdapter(this.getActivity(), events);
-
-        ListView eventList = (ListView)mRootView.findViewById(R.id.day_event_list);
-        eventList.setAdapter(eventListAdapter);
-        eventList.setOnItemClickListener(selectItemListener);
-
-        Toast.makeText(this.getActivity(), "" + events.size(), Toast.LENGTH_SHORT).show();
-    }
-
-    AdapterView.OnItemClickListener selectItemListener = new AdapterView.OnItemClickListener() {
         @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            Event event = (Event)parent.getItemAtPosition(position);
-            EventInfo event_info = EventInfo.newInstance(0, event);
-            event_info.show(getFragmentManager(), "event_info");
-        }
-    };
-}
-
-class EventDayAdapter extends EventAdapter {
-
-    public EventDayAdapter(Context context, ArrayList<Event> events) {
-        mEventList = events;
-        mLInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-
-        View view = convertView;
-
-        if (view == null) {
-            view = mLInflater.inflate(R.layout.event_representation, parent, false);
+        public Fragment getItem(int position) {
+            return pages[position];
         }
 
-        Event event = (Event) getItem(position);
+        @Override
+        public int getCount() {
+            return NUM_PAGES;
+        }
 
-        editContentView(view, event);
-        editColorView(view.findViewById(R.id.event_color), event.color);
-        editTimeView(view.findViewById(R.id.time_view), event);
-
-        return view;
-    }
-
-    private void editContentView(View v, Event event) {
-
-        TextView title = (TextView)v.findViewById(R.id.event_title);
-        TextView description = (TextView)v.findViewById(R.id.event_description);
-        TextView firstLetter = (TextView)v.findViewById(R.id.event_letter);
-        TextView location = (TextView)v.findViewById(R.id.event_location);
-
-
-        if ( event.title != null ) {
-            title.setText(event.title);
-            String letter = String.valueOf(event.title.toUpperCase().charAt(0));
-            firstLetter.setText(letter);
-        } else title.setText("");
-
-
-        if ( event.description != null ) {
-            String[] lines = event.description.split("\n");
-            description.setText(lines[0]);
-        } else description.setText("");
-
-
-        if (event.location != null ) {
-            String[] lines = event.location.split("\n");
-            location.setText(lines[0]);
-        } else location.setText("");
-    }
-
-    private void editColorView(View v, int color) {
-        if (color != 0) {
-            GradientDrawable bgShape = (GradientDrawable)v.getBackground();
-            bgShape.setColor(0xff000000 + color);
+        @Override
+        public int getItemPosition(Object object) {
+                return POSITION_UNCHANGED;
         }
     }
 
-    private void editTimeView(View v, Event event) {
-        TextView timeText1 = (TextView)v.findViewById(R.id.event_time_1);
-        TextView timeText2 = (TextView)v.findViewById(R.id.event_time_2);
-
-        // Будем использовать промежуток выбранного дня, чтобы для событий,
-        // которые начинаются раньше текущего дня (заканчиваются позже
-        // текущего дня), отображались, писалась дата начала и конца
-
-        Pair<Long,Long> dayPeriod = CalendarProvider.getDayPeriod(Calendar.getInstance().getTimeInMillis());
-
-        if ( event.isAllDay || event.timeStart == 0 ) {
-            timeText1.setText("");
-            timeText2.setText("ALL DAY");
-        } else {
-
-            long timeEnd;
-            if (event.timeEnd != 0) {
-                timeEnd = event.timeEnd;
-            } else {
-                timeEnd = event.timeStart + event.duration;
-            }
-
-            // Если событие происходит не только внутри текущего периода
-            if (event.timeStart < dayPeriod.first || event.timeEnd > dayPeriod.second) {
-
-                // Если событие начинается раньше или позже текущего периода
-                if ( event.timeStart < dayPeriod.first || event.timeStart > dayPeriod.second ) {
-                    timeText1.setText(CalendarProvider.getDate(event.timeStart)
-                            + ", " + CalendarProvider.getTime(event.timeStart));
-                } else {
-                    timeText1.setText("Today"
-                            + ", " + CalendarProvider.getTime(event.timeStart));
-                }
-
-                // Если событие заканчивается позже или раньше текущего периода
-                if ( timeEnd > dayPeriod.second || timeEnd < dayPeriod.first ) {
-                    timeText2.setText(CalendarProvider.getDate(timeEnd)
-                            + ", " + CalendarProvider.getTime(timeEnd));
-                } else {
-                    timeText2.setText("Today"
-                            + ", " + CalendarProvider.getTime(timeEnd));
-                }
-            } else {
-                // Когда всё событие происходит внутри рассматриваемого периода
-                timeText1.setText("Today");
-                timeText2.setText(CalendarProvider.getTime(event.timeStart)
-                        + " - " + CalendarProvider.getTime(timeEnd));
-            }
-        }
+    private long mGetNextDate(int move) {
+        Calendar cal = (Calendar)Common.sSelectedDate.getDate().clone();
+        cal.add(Calendar.DAY_OF_MONTH, move);
+        return cal.getTimeInMillis();
     }
+
 }
