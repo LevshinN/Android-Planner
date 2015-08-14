@@ -3,4 +3,12 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="button_toolbar_tex_size">12sp</dimen>
+
+    <!-- Размеры для отображения одного события из режима дня. -->
+    <dimen name="day_list_item">72dp</dimen>
+    <dimen name="day_circle_size">40dp</dimen>
+    <dimen name="day_item_padding">16dp</dimen>
+    <dimen name="day_content_margin">72dp</dimen>
+
+
 </resources>

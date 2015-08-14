@@ -56,7 +56,7 @@ public class CreateEventFragment extends DialogFragment {
     private static final int DIALOG_DATE = 1;
     private static final int DIALOG_TIME = 2;
 
-    private boolean isEdit = false;
+    private boolean isEdit;
     private boolean isFirstColorSelect = true;
 
 
@@ -89,11 +89,16 @@ public class CreateEventFragment extends DialogFragment {
         isEdit = true;
     }
 
+    public CreateEventFragment() {
+        isEdit = false;
+    }
+
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         mRootView = inflater.inflate(R.layout.edit_create_event, container, false);
 
-        mNewEvent = new Event(mOriginalEvent);
+        if (isEdit) mNewEvent = new Event(mOriginalEvent);
+        else mNewEvent = new Event();
 
         Spinner colorSelector = (Spinner)mRootView.findViewById(R.id.edit_event_color);
 

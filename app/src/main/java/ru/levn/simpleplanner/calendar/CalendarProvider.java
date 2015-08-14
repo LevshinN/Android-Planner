@@ -11,9 +11,11 @@ import android.provider.CalendarContract;
 import android.util.Log;
 import android.util.Pair;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 
@@ -47,7 +49,7 @@ public class CalendarProvider {
     private static final String[] projectionEvent = new String[] {
             CalendarContract.Events._ID,            // 0
             CalendarContract.Events.CALENDAR_ID,    // 1
-            CalendarContract.Events.EVENT_COLOR,    // 2
+            CalendarContract.Events.DISPLAY_COLOR,  // 2
             CalendarContract.Events.TITLE,          // 3
             CalendarContract.Events.DESCRIPTION,    // 4
             CalendarContract.Events.DTSTART,        // 5
@@ -59,8 +61,8 @@ public class CalendarProvider {
             CalendarContract.Events.RRULE,          // 11
             CalendarContract.Events.RDATE,          // 12
             CalendarContract.Events.EXRULE,         // 13
-            CalendarContract.Events.EXDATE,          // 14
-            CalendarContract.Events.ORIGINAL_INSTANCE_TIME
+            CalendarContract.Events.EXDATE,         // 14
+            CalendarContract.Events.ORIGINAL_INSTANCE_TIME  // 15
     };
 
     // The indices for the projection array above.
@@ -280,6 +282,26 @@ public class CalendarProvider {
         return new Pair<>(start, finish - 1);
     }
 
+    public static Pair<Long,Long> getDayPeriod(long UtcTime) {
+
+        Calendar cal = Calendar.getInstance();
+
+        cal.setTimeInMillis(UtcTime);
+
+        cal.set(java.util.Calendar.HOUR_OF_DAY, 0);
+        cal.set(java.util.Calendar.MINUTE, 0);
+        cal.set(java.util.Calendar.SECOND, 0);
+        cal.set(java.util.Calendar.MILLISECOND, 0);
+
+        long start = cal.getTimeInMillis();
+
+        cal.add(java.util.Calendar.DAY_OF_MONTH, 1);
+
+        long finish = cal.getTimeInMillis();
+
+        return new Pair<>(start, finish - 1);
+    }
+
     public static Pair<Long,Long> getWeekPeriod() {
 
         java.util.Calendar cal = (java.util.Calendar)Common.sSelectedDate.getDate().clone();
@@ -306,6 +328,15 @@ public class CalendarProvider {
         cal.setTimeInMillis(UTCTime);
 
         return String.format("%02d:%02d", cal.get(java.util.Calendar.HOUR_OF_DAY), cal.get(java.util.Calendar.MINUTE));
+    }
+
+    public static String getDate(long UtcTime) {
+        java.util.Calendar cal = java.util.Calendar.getInstance();
+        cal.setTimeZone(TimeZone.getDefault());
+        cal.setTimeInMillis(UtcTime);
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault());
+        return dateFormat.format(cal.getTimeInMillis());
     }
 
     public static Uri asSyncAdapter(Uri uri, String account, String accountType) {

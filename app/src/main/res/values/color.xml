@@ -20,6 +20,11 @@
     <color name="brown">#795548</color>
     <color name="grey">#9E9E9E</color>
     <color name="blue_grey">#607D8B</color>
+    
+    Переопределяем цвета для диалогов выбора даты и времени
+
+    <color name="mdtp_accent_color">@color/yellow</color>
+    <color name="mdtp_accent_color_dark">@color/amber</color>
 
 
 </resources>

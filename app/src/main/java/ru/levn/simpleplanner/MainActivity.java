@@ -1,9 +1,7 @@
 package ru.levn.simpleplanner;
 
 
-import android.app.DatePickerDialog;
 import android.app.DialogFragment;
-import android.content.Context;
 import android.content.res.Configuration;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -17,8 +15,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -26,6 +22,10 @@ import android.widget.DatePicker;
 import android.widget.ListView;
 import android.widget.Toast;
 
+
+import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
+
+import java.util.Calendar;
 
 import ru.levn.simpleplanner.calendar.CalendarProvider;
 import ru.levn.simpleplanner.calendar.syncadapter.SyncUtils;
@@ -123,7 +123,6 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_add:
                 DialogFragment editEventDialog = new CreateEventFragment();
                 editEventDialog.setStyle(DialogFragment.STYLE_NORMAL, R.style.full_screen_dialog);
-                editEventDialog.setCancelable(true);
                 editEventDialog.show(getFragmentManager(), "create_new_event");
                 return true;
             case R.id.action_upload:
@@ -278,22 +277,21 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void mShowDatePicker() {
-        DatePickerFragment date = new DatePickerFragment();
 
-        Bundle args = new Bundle();
-        java.util.Calendar selectedDate = Common.sSelectedDate.getDate();
-        args.putInt("year", selectedDate.get(java.util.Calendar.YEAR));
-        args.putInt("month", selectedDate.get(java.util.Calendar.MONTH));
-        args.putInt("day", selectedDate.get(java.util.Calendar.DAY_OF_MONTH));
-        date.setArguments(args);
+        Calendar selectedDate = Common.sSelectedDate.getDate();
 
-        date.setCallBack(mOnDate);
-        date.show(getFragmentManager(), "Date Picker");
+        DatePickerDialog dpd = DatePickerDialog.newInstance(
+                mOnDate,
+                selectedDate.get(java.util.Calendar.YEAR),
+                selectedDate.get(java.util.Calendar.MONTH),
+                selectedDate.get(java.util.Calendar.DAY_OF_MONTH)
+        );
+        dpd.show(getFragmentManager(), "Date Picker");
     }
 
     DatePickerDialog.OnDateSetListener mOnDate = new DatePickerDialog.OnDateSetListener() {
         @Override
-        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+        public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
             Common.sSelectedDate.setDate(year, monthOfYear, dayOfMonth);
             mSelectItem(Common.sCurrentMode);
         }

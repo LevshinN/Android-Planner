@@ -2,32 +2,30 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="56dp">
+    android:layout_height="@dimen/day_list_item">
+
 
     <RelativeLayout
-        android:layout_width="72dp"
-        android:layout_height="match_parent">
+        android:id="@+id/event_color"
+        android:layout_width="@dimen/day_circle_size"
+        android:layout_height="@dimen/day_circle_size"
+        android:layout_margin="@dimen/day_item_padding"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:background="@drawable/color_circle">
 
-        <RelativeLayout
-            android:id="@+id/event_color"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+        <TextView
+            android:id="@+id/event_letter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/white"
+            android:fontFamily="sans-serif"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
-            android:background="@drawable/color_circle">
+            android:textAppearance="@android:style/TextAppearance.Large"/>
 
-            <TextView
-                android:id="@+id/event_letter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@android:color/white"
-                android:fontFamily="sans-serif"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
-                android:textAppearance="@android:style/TextAppearance.Large"/>
-
-        </RelativeLayout>
     </RelativeLayout>
+
 
     <LinearLayout
         android:layout_width="0dp"
@@ -38,69 +36,62 @@
 
 
         <TextView
+            android:id="@+id/event_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/abc_text_size_large_material"
-            android:textStyle="bold"
-            android:text="Event Title"
-            android:id="@+id/event_title" />
+            android:textSize="@dimen/abc_text_size_medium_material"
+            android:fontFamily="sans-serif-bold"
+            android:text="Event Title" />
 
         <TextView
+            android:id="@+id/event_description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/abc_text_size_body_1_material"
-            android:text="Event Description"
-            android:id="@+id/event_description" />
+            android:textSize="@dimen/abc_text_size_medium_material"
+            android:fontFamily="sans-serif-thin"
+            android:text="Event Description" />
+
+        <TextView
+            android:id="@+id/event_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-thin"
+            android:text="Event Description" />
 
 
     </LinearLayout>
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="@dimen/abc_button_padding_horizontal_material">
+        android:layout_height="match_parent">
 
-        <TextView
+        <LinearLayout
+            android:id="@+id/time_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text=" "/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=" "/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:minHeight="@dimen/abc_action_button_min_height_material"
-        android:orientation="vertical"
-        android:padding="@dimen/abc_button_padding_horizontal_material"
-        android:id="@+id/time_view">
+            android:layout_centerVertical="true"
+            android:orientation="vertical"
+            android:paddingRight="@dimen/day_item_padding">
 
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="top"
-            android:id="@+id/event_start_time"
-            android:text = "event_start"/>
+            <TextView
+                android:id="@+id/event_time_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-thin"
 
-        <Space
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_weight="1.0"/>
+                android:text = "event_time"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:id="@+id/event_end_time"
-            android:text = "event_end"/>
+            <TextView
+                android:id="@+id/event_time_2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:fontFamily="sans-serif-thin"
 
-    </LinearLayout>
+                android:text = "event_time"/>
 
+
+        </LinearLayout>
+    </RelativeLayout>
 </LinearLayout>

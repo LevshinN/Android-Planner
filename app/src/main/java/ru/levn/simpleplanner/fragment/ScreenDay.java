@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import ru.levn.simpleplanner.R;
 import ru.levn.simpleplanner.adapter.EventAdapter;
@@ -43,9 +44,14 @@ public class ScreenDay extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        Pair<Long,Long> period = CalendarProvider.getWeekPeriod(); // TODO вернуть на место метод getDayPeriod()
+        Pair<Long,Long> period = CalendarProvider.getDayPeriod();
 
         ArrayList<Event> events = CalendarProvider.getAvilableEventsForPeriod(period.first, period.second);
+
+        if (events.isEmpty()) {
+            mRootView.findViewById(R.id.day_text_info).setVisibility(View.VISIBLE);
+        }
+
         EventDayAdapter eventListAdapter = new EventDayAdapter(this.getActivity(), events);
 
         ListView eventList = (ListView)mRootView.findViewById(R.id.day_event_list);
@@ -95,32 +101,26 @@ class EventDayAdapter extends EventAdapter {
         TextView title = (TextView)v.findViewById(R.id.event_title);
         TextView description = (TextView)v.findViewById(R.id.event_description);
         TextView firstLetter = (TextView)v.findViewById(R.id.event_letter);
+        TextView location = (TextView)v.findViewById(R.id.event_location);
 
 
         if ( event.title != null ) {
             title.setText(event.title);
             String letter = String.valueOf(event.title.toUpperCase().charAt(0));
             firstLetter.setText(letter);
-        }
+        } else title.setText("");
 
-        String descrText = "";
 
-//        if (event.rrule != null)  descrText += event.rrule;
-//        if (event.rdate != null)    descrText += event.rdate;
-//        if (event.exrule != null)   descrText += event.exrule;
-//        if (event.exdate != null)   descrText += event.exdate;
+        if ( event.description != null ) {
+            String[] lines = event.description.split("\n");
+            description.setText(lines[0]);
+        } else description.setText("");
 
-        if (event.originalId != null) descrText += event.originalId;
-        if (event.originalInstanceTime != 0) descrText += " " + String.valueOf(event.originalInstanceTime);
 
-        description.setText(descrText);
-
-//        if ( event.description != null ) {
-//            String clear = event.description.replaceAll("\\s+", "");
-//            if ( !clear.equals("") ) {
-//                description.setText(event.description);
-//            }
-//        }
+        if (event.location != null ) {
+            String[] lines = event.location.split("\n");
+            location.setText(lines[0]);
+        } else location.setText("");
     }
 
     private void editColorView(View v, int color) {
@@ -131,18 +131,52 @@ class EventDayAdapter extends EventAdapter {
     }
 
     private void editTimeView(View v, Event event) {
-        if ( event.isAllDay || event.timeStart == 0 ) {
-            //((ViewGroup) v.getParent()).removeView(v);
-        } else {
-            ((TextView)v.findViewById(R.id.event_start_time)).setText(CalendarProvider.getTime(event.timeStart));
+        TextView timeText1 = (TextView)v.findViewById(R.id.event_time_1);
+        TextView timeText2 = (TextView)v.findViewById(R.id.event_time_2);
 
+        // Будем использовать промежуток выбранного дня, чтобы для событий,
+        // которые начинаются раньше текущего дня (заканчиваются позже
+        // текущего дня), отображались, писалась дата начала и конца
+
+        Pair<Long,Long> dayPeriod = CalendarProvider.getDayPeriod(Calendar.getInstance().getTimeInMillis());
+
+        if ( event.isAllDay || event.timeStart == 0 ) {
+            timeText1.setText("");
+            timeText2.setText("ALL DAY");
+        } else {
+
+            long timeEnd;
             if (event.timeEnd != 0) {
-                ((TextView)v.findViewById(R.id.event_end_time)).setText(CalendarProvider.getTime(event.timeEnd));
-            } else if ( event.duration > 0 ) {
-                ((TextView)v.findViewById(R.id.event_end_time)).setText(CalendarProvider.getTime(event.timeStart + event.duration));
+                timeEnd = event.timeEnd;
             } else {
-                TextView tv = (TextView)v.findViewById(R.id.event_end_time);
-                ((ViewGroup) tv.getParent()).removeView(tv);
+                timeEnd = event.timeStart + event.duration;
+            }
+
+            // Если событие происходит не только внутри текущего периода
+            if (event.timeStart < dayPeriod.first || event.timeEnd > dayPeriod.second) {
+
+                // Если событие начинается раньше или позже текущего периода
+                if ( event.timeStart < dayPeriod.first || event.timeStart > dayPeriod.second ) {
+                    timeText1.setText(CalendarProvider.getDate(event.timeStart)
+                            + ", " + CalendarProvider.getTime(event.timeStart));
+                } else {
+                    timeText1.setText("Today"
+                            + ", " + CalendarProvider.getTime(event.timeStart));
+                }
+
+                // Если событие заканчивается позже или раньше текущего периода
+                if ( timeEnd > dayPeriod.second || timeEnd < dayPeriod.first ) {
+                    timeText2.setText(CalendarProvider.getDate(timeEnd)
+                            + ", " + CalendarProvider.getTime(timeEnd));
+                } else {
+                    timeText2.setText("Today"
+                            + ", " + CalendarProvider.getTime(timeEnd));
+                }
+            } else {
+                // Когда всё событие происходит внутри рассматриваемого периода
+                timeText1.setText("Today");
+                timeText2.setText(CalendarProvider.getTime(event.timeStart)
+                        + " - " + CalendarProvider.getTime(timeEnd));
             }
         }
     }
