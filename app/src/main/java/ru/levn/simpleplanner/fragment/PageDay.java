@@ -116,22 +116,14 @@ class EventDayAdapter extends EventAdapter {
 
 
         if ( event.title != null ) {
-            title.setText(event.title);
+            title.setText(cutString(event.title));
             String letter = String.valueOf(event.title.toUpperCase().charAt(0));
             firstLetter.setText(letter);
         } else title.setText("");
 
 
-        if ( event.description != null  && !event.description.equals("") ) {
-            String[] lines = event.description.split("\n");
-            description.setText(lines[0]);
-        } else description.setText("");
-
-
-        if (event.location != null ) {
-            String[] lines = event.location.split("\n");
-            location.setText(lines[0]);
-        } else location.setText("");
+        description.setText(cutString(event.description));
+        location.setText(cutString(event.location));
     }
 
     private void editColorView(View v, int color) {
@@ -190,5 +182,16 @@ class EventDayAdapter extends EventAdapter {
                         + " - " + CalendarProvider.getTime(timeEnd));
             }
         }
+    }
+
+    private String cutString( String original ) {
+        if (original != null) {
+            String[] lines = original.split("\n");
+            if (lines.length != 0) {
+                return lines[0];
+            } else {
+                return "";
+            }
+        } else return "";
     }
 }

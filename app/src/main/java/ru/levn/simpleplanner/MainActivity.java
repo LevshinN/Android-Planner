@@ -4,10 +4,8 @@ package ru.levn.simpleplanner;
 import android.app.DialogFragment;
 import android.content.res.Configuration;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -21,7 +19,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -39,11 +36,14 @@ import ru.levn.simpleplanner.fragment.ScreenMonth;
 import ru.levn.simpleplanner.fragment.ScreenWeek;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements
+    CreateEventFragment.OnUpdateEventsListener{
 
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
     private ActionBarDrawerToggle mDrawerToggle;
+
+    private static FragmentActivity mCurrentActivity;
 
     private View mCurrentMode;
 
@@ -53,6 +53,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         SyncUtils.CreateSyncAccount(this);
+
+        mCurrentActivity = this;
 
         DisplayMetrics displayMetrics = getApplicationContext().getResources().getDisplayMetrics();
         float dpHeight = displayMetrics.heightPixels / displayMetrics.density;
@@ -137,6 +139,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onUpdate() {
+        mSelectItem(Common.sCurrentMode);
+    }
 
 
     /* The click listener for ListView in the navigation drawer */
@@ -151,26 +157,26 @@ public class MainActivity extends AppCompatActivity {
     private void mSelectItem(int position) {
         // Update the main content by replacing fragments
         Common.sCurrentMode = position;
-        Fragment fragment = null;
+        Fragment mNewFragment = null;
         View pressedButton = null;
         switch (position) {
             case Common.DAY_MODE:
-                fragment = new ScreenDay();
+                mNewFragment = new ScreenDay();
                 pressedButton = findViewById(R.id.btn_day_mode);
                 break;
 
             case Common.WEEK_MODE:
-                fragment = new ScreenWeek();
+                mNewFragment = new ScreenWeek();
                 pressedButton = findViewById(R.id.btn_week_mode);
                 break;
 
             case Common.MONTH_MODE:
-                fragment = new ScreenMonth();
+                mNewFragment = new ScreenMonth();
                 pressedButton = findViewById(R.id.btn_month_mode);
                 break;
 
             case 3:
-                fragment = new ScreenCalendars();
+                mNewFragment = new ScreenCalendars();
 
                 // Обновляем список календарей
                 CalendarProvider.sUpdateCalendars();
@@ -185,13 +191,15 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // Insert the fragment by replacing any existing fragment
-        if (fragment != null) {
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
+        if (mNewFragment != null) {
+
+            FragmentManager fragmentManager = mCurrentActivity.getSupportFragmentManager();
+            fragmentManager.beginTransaction().replace(R.id.content_frame, mNewFragment).commit();
 
             // Highlight the selected item, update the title, and close the drawer
             mDrawerList.setItemChecked(position, true);
             mDrawerLayout.closeDrawer(mDrawerList);
+
         } else {
             // Error
             Log.e(this.getClass().getName(), "Error. Fragment is not created");

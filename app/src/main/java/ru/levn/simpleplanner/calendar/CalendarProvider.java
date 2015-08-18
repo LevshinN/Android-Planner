@@ -393,7 +393,7 @@ public class CalendarProvider {
         values.put(CalendarContract.Events.CALENDAR_ID, event.calendarId);
         values.put(CalendarContract.Events.EVENT_TIMEZONE, Calendar.getInstance().getTimeZone().getDisplayName()); // TODO Добавить таймзоны
 
-        if (!event.originalId.isEmpty()) {
+        if (event.originalId != null) {
             values.put(CalendarContract.Events.ORIGINAL_ID, event.originalId);
             values.put(CalendarContract.Events.ORIGINAL_INSTANCE_TIME, event.originalInstanceTime);
         }

@@ -9,14 +9,14 @@
         android:id="@+id/event_info_title_area"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/grey"
-        android:padding="@dimen/abc_dialog_padding_material">
+        android:background="@color/grey">
 
         <TextView
             android:id="@+id/event_info_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1.0"
+            android:layout_margin="16dp"
             android:text="Event title"
             android:textStyle="bold"
             android:textSize="@dimen/abc_text_size_headline_material" />
@@ -25,39 +25,87 @@
             android:id="@+id/event_info_edit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@android:drawable/ic_menu_edit"/>
+            android:layout_margin="16dp"
+            android:background="@drawable/ic_mode_edit_black_24dp"/>
 
     </LinearLayout>
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:foreground="?android:windowContentOverlay"
-        android:padding="@dimen/abc_dialog_padding_material">
+        android:foreground="?android:windowContentOverlay">
 
         <LinearLayout
             android:id="@+id/event_info_body"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/event_info_time"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="today, 2 august, 12.00"/>
+                android:layout_weight="1">
 
-            <TextView
-                android:id="@+id/event_info_location"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Moscow"/>
+                <ImageView
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_margin="16dp"
+                    android:background="@drawable/ic_schedule_black_24dp"/>
 
-            <TextView
-                android:id="@+id/event_info_description"
+                <TextView
+                    android:id="@+id/event_info_time"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="today, 2 august, 12.00"
+                    android:textSize="@dimen/abc_text_size_medium_material"
+                    android:layout_margin="16dp"/>
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Very important meeting"/>
+                android:layout_weight="1">
+
+                <ImageView
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_margin="16dp"
+                    android:background="@drawable/ic_room_black_24dp"/>
+
+                <TextView
+                    android:id="@+id/event_info_location"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Moscow"
+                    android:textSize="@dimen/abc_text_size_medium_material"
+                    android:layout_margin="16dp"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <ImageView
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_margin="16dp"
+                    android:background="@drawable/ic_description_black_24dp"/>
+
+                <TextView
+                    android:id="@+id/event_info_description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Very important meeting"
+                    android:textSize="@dimen/abc_text_size_medium_material"
+                    android:layout_margin="16dp"/>
+
+            </LinearLayout>
+
+
+
+
+
 
         </LinearLayout>
 

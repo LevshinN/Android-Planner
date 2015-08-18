@@ -1,5 +1,6 @@
 package ru.levn.simpleplanner.fragment;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.DialogFragment;
 import android.app.TimePickerDialog;
@@ -33,6 +34,7 @@ import java.util.GregorianCalendar;
 import java.util.Locale;
 
 import ru.levn.simpleplanner.Common;
+import ru.levn.simpleplanner.MainActivity;
 import ru.levn.simpleplanner.R;
 import ru.levn.simpleplanner.adapter.CalendarAdapter;
 import ru.levn.simpleplanner.adapter.ColorListAdapter;
@@ -71,6 +73,13 @@ public class CreateEventFragment extends DialogFragment {
 
     private Event mOriginalEvent;
     private Event mNewEvent;
+
+    private OnUpdateEventsListener mUpdateEvents;
+
+    // Container Activity must implement this interface
+    public interface OnUpdateEventsListener {
+        public void onUpdate();
+    }
 
     static CreateEventFragment newInstance(int num, Event event) {
         CreateEventFragment fragment = new CreateEventFragment();
@@ -125,6 +134,20 @@ public class CreateEventFragment extends DialogFragment {
         }
 
         return mRootView;
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+        // This makes sure that the container activity has implemented
+        // the callback interface. If not, it throws an exception
+        try {
+            mUpdateEvents = (OnUpdateEventsListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnHeadlineSelectedListener");
+        }
     }
 
     private void mUpdateDialog() {
@@ -288,6 +311,7 @@ public class CreateEventFragment extends DialogFragment {
             CalendarProvider.saveNewEvent(mNewEvent);
         }
 
+        mUpdateEvents.onUpdate();
         dismiss();
 
     }
