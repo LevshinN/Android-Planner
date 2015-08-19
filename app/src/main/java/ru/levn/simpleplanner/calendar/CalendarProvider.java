@@ -14,6 +14,7 @@ import android.util.Pair;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -200,6 +201,34 @@ public class CalendarProvider {
         sSaveDB();
     }
 
+    public static ArrayList<Event> getDayEvents(long UtcTime) {
+        ArrayList<Event> dayEvents = new ArrayList<>();
+
+        Pair<Long, Long> period = getDayPeriod(UtcTime);
+        ArrayList<Event> events = getAvilableEventsForPeriod(period.first, period.second);
+
+        // Отсеиваем события на весь день, которые из за сдвига часовых поясов попали в промежуток
+
+        // Получаем текущий день месыца
+        Calendar c = new GregorianCalendar();
+        c.setTimeInMillis(UtcTime);
+
+        int selectedDay = c.get(Calendar.DAY_OF_MONTH);
+
+        for (Event event : events) {
+            if (!event.isAllDay) {
+                dayEvents.add(event);
+            } else {
+                c.setTimeInMillis(event.timeStart);
+                int eventDay = c.get(Calendar.DAY_OF_MONTH);
+                if (selectedDay == eventDay) {
+                    dayEvents.add(event);
+                }
+            }
+        }
+        return dayEvents;
+    }
+
     private static Event getEventById(String eventID) {
         String selection = "(" + CalendarContract.Events._ID    + " = ?)";
         String[] selectionArgs = new String[] { eventID };
@@ -233,7 +262,7 @@ public class CalendarProvider {
         return null;
     }
 
-    public static ArrayList<Event> getAvilableEventsForPeriod(long UTCStart, long UTCEnd) {
+    private static ArrayList<Event> getAvilableEventsForPeriod(long UTCStart, long UTCEnd) {
         ArrayList<Event> events = new ArrayList<>();
 
         Cursor c = CalendarContract.Instances.query(mContentResolver, projectionInstance, UTCStart, UTCEnd);
@@ -261,25 +290,9 @@ public class CalendarProvider {
             } while (c.moveToNext());
         }
 
+        if (c != null) c.close();
+
         return events;
-    }
-
-    public static Pair<Long,Long> getDayPeriod() {
-
-        Calendar cal = (Calendar)Common.sSelectedDate.getDate().clone();
-
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
-        cal.set(Calendar.MILLISECOND, 0);
-
-        long start = cal.getTimeInMillis() + cal.get(Calendar.ZONE_OFFSET);
-
-        cal.add(Calendar.DAY_OF_MONTH, 1);
-
-        long finish = cal.getTimeInMillis() + cal.get(Calendar.ZONE_OFFSET);
-
-        return new Pair<>(start, finish);
     }
 
     public static Pair<Long,Long> getDayPeriod(long UtcTime) {
@@ -293,11 +306,11 @@ public class CalendarProvider {
         cal.set(Calendar.SECOND, 0);
         cal.set(Calendar.MILLISECOND, 0);
 
-        long start = cal.getTimeInMillis() + cal.get(Calendar.ZONE_OFFSET);
+        long start = cal.getTimeInMillis();
 
         cal.add(Calendar.DAY_OF_MONTH, 1);
 
-        long finish = cal.getTimeInMillis() + cal.get(Calendar.ZONE_OFFSET);
+        long finish = cal.getTimeInMillis();
 
         return new Pair<>(start, finish);
     }
@@ -360,7 +373,7 @@ public class CalendarProvider {
         cal.setTimeZone(TimeZone.getDefault());
         cal.setTimeInMillis(UTCTime);
 
-        return String.format("%02d:%02d", cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE));
+        return String.format("%02d:%02d", cal.get(Calendar.HOUR_OF_DAY) , cal.get(Calendar.MINUTE));
     }
 
     public static String getDate(long UtcTime) {

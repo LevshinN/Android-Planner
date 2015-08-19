@@ -20,6 +20,8 @@
     <color name="brown">#795548</color>
     <color name="grey">#9E9E9E</color>
     <color name="blue_grey">#607D8B</color>
+
+    <color name="default_color">@color/grey</color>
     
     Переопределяем цвета для диалогов выбора даты и времени
 

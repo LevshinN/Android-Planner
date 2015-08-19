@@ -93,6 +93,10 @@ public class Common {
             mDate.getTime();
         }
 
+        public void  setDate( Calendar sourceDate ) {
+            mDate = sourceDate;
+        }
+
         public Calendar getDate() { return mDate; }
     }
 }

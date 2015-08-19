@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -64,15 +65,13 @@ public class PageDay extends Fragment {
         //mRootView = inflater.inflate(R.layout.day_page, container, false);
         View mRootView = inflater.inflate(R.layout.day_page, container, false);
 
-        Pair<Long,Long> period = CalendarProvider.getDayPeriod(representTime);
-
-        ArrayList<Event> mEvents = CalendarProvider.getAvilableEventsForPeriod(period.first, period.second);
+        ArrayList<Event> mEvents = CalendarProvider.getDayEvents(representTime);
 
         if (mEvents.isEmpty()) {
             mRootView.findViewById(R.id.day_text_info).setVisibility(View.VISIBLE);
         }
 
-        EventDayAdapter mAdapter = new EventDayAdapter(this.getActivity(), mEvents);
+        EventDayAdapter mAdapter = new EventDayAdapter(this.getActivity(), mEvents, representTime);
 
         ListView eventList = (ListView)mRootView.findViewById(R.id.day_event_list);
         eventList.setAdapter(mAdapter);
@@ -84,9 +83,13 @@ public class PageDay extends Fragment {
 
 class EventDayAdapter extends EventAdapter {
 
-    public EventDayAdapter(Context context, ArrayList<Event> events) {
+    long mRepresentTime;
+
+    public EventDayAdapter(Context context, ArrayList<Event> events, long representTime) {
         mEventList = events;
         mLInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        mRepresentTime = representTime;
+
     }
 
     @Override
@@ -127,9 +130,11 @@ class EventDayAdapter extends EventAdapter {
     }
 
     private void editColorView(View v, int color) {
+        GradientDrawable bgShape = (GradientDrawable)v.getBackground();
         if (color != 0) {
-            GradientDrawable bgShape = (GradientDrawable)v.getBackground();
             bgShape.setColor(0xff000000 + color);
+        } else {
+            bgShape.setColor(v.getContext().getResources().getColor(R.color.default_color));
         }
     }
 
@@ -141,45 +146,46 @@ class EventDayAdapter extends EventAdapter {
         // которые начинаются раньше текущего дня (заканчиваются позже
         // текущего дня), отображались, писалась дата начала и конца
 
-        Pair<Long,Long> dayPeriod = CalendarProvider.getDayPeriod(Calendar.getInstance().getTimeInMillis());
+        Pair<Long,Long> dayPeriod = CalendarProvider.getDayPeriod(mRepresentTime);
 
         if ( event.isAllDay || event.timeStart == 0 ) {
-            timeText1.setText("");
-            timeText2.setText("ALL DAY");
+            v.setLayoutParams(new LinearLayout.LayoutParams(0,0));
         } else {
+            v.setLayoutParams(new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT));
 
+            long timeStart = event.timeStart;
             long timeEnd;
+
             if (event.timeEnd != 0) {
                 timeEnd = event.timeEnd;
             } else {
                 timeEnd = event.timeStart + event.duration;
             }
 
-            // Если событие происходит не только внутри текущего периода
-            if (event.timeStart < dayPeriod.first || event.timeEnd > dayPeriod.second) {
+            // Если событие начинается раньше выбранного дня
+            if (timeStart < dayPeriod.first) {
+                timeStart = dayPeriod.first;
+            }
 
-                // Если событие начинается раньше или позже текущего периода
-                if ( event.timeStart < dayPeriod.first || event.timeStart > dayPeriod.second ) {
-                    timeText1.setText(CalendarProvider.getDate(event.timeStart)
-                            + ", " + CalendarProvider.getTime(event.timeStart));
-                } else {
-                    timeText1.setText("Today"
-                            + ", " + CalendarProvider.getTime(event.timeStart));
-                }
 
-                // Если событие заканчивается позже или раньше текущего периода
-                if ( timeEnd > dayPeriod.second || timeEnd < dayPeriod.first ) {
-                    timeText2.setText(CalendarProvider.getDate(timeEnd)
-                            + ", " + CalendarProvider.getTime(timeEnd));
-                } else {
-                    timeText2.setText("Today"
-                            + ", " + CalendarProvider.getTime(timeEnd));
-                }
+            // Если событие заканчивается позже выбранного дняж
+            if (timeEnd >= dayPeriod.second) {
+                timeEnd = dayPeriod.second - 1;
+            }
+
+            // Если событие происходит на протяжении всего дня
+            if (timeStart == dayPeriod.first && timeEnd == dayPeriod.second - 1) {
+                v.setLayoutParams(new LinearLayout.LayoutParams(0,0));
             } else {
-                // Когда всё событие происходит внутри рассматриваемого периода
-                timeText1.setText("Today");
-                timeText2.setText(CalendarProvider.getTime(event.timeStart)
-                        + " - " + CalendarProvider.getTime(timeEnd));
+                v.setLayoutParams(new LinearLayout.LayoutParams(
+                        ViewGroup.LayoutParams.WRAP_CONTENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT));
+
+                timeText1.setText(CalendarProvider.getTime(timeStart));
+                timeText2.setText(CalendarProvider.getTime(timeEnd));
+
             }
         }
     }
@@ -190,8 +196,8 @@ class EventDayAdapter extends EventAdapter {
             if (lines.length != 0) {
                 return lines[0];
             } else {
-                return "";
+                return null;
             }
-        } else return "";
+        } else return null;
     }
 }

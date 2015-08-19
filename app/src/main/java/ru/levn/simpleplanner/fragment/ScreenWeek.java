@@ -78,7 +78,7 @@ public class ScreenWeek extends Fragment {
         long dayDuration = (end - start) / 7;
 
         for (int i = 0; i < 7; ++i) {
-            ArrayList<Event> events = CalendarProvider.getAvilableEventsForPeriod(start, start + dayDuration);
+            ArrayList<Event> events = CalendarProvider.getDayEvents(start);
             EventWeekAdapter adapter = new EventWeekAdapter(this.getActivity(), events);
             ListView lv = (ListView)mRootView.findViewById(mDayViewIds[i]);
             lv.setAdapter(adapter);

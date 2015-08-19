@@ -131,8 +131,8 @@ public class MainActivity extends AppCompatActivity implements
                 return true;
             case R.id.action_upload:
                 // Show toast about click.
-
-                Toast.makeText(this, "upload", Toast.LENGTH_SHORT).show();
+                Common.sSelectedDate.setDate(Calendar.getInstance());
+                onUpdate();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
