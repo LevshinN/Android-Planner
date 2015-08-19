@@ -15,6 +15,13 @@
     <string name="mode_week">Week</string>
     <string name="mode_month">Month</string>
 
+    <string name="all_day">All day</string>
+    <string name="no_events">No events</string>
+
+    <string name="btn_edit">EDIT</string>
+    <string name="btn_close">CLOSE</string>
+    <string name="btn_save">SAVE</string>
+
 
     <string-array name="screen_array">
         <item>Day</item>

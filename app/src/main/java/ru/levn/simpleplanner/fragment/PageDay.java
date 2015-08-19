@@ -14,7 +14,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 
 import ru.levn.simpleplanner.R;
 import ru.levn.simpleplanner.adapter.EventAdapter;
@@ -130,7 +129,7 @@ class EventDayAdapter extends EventAdapter {
     }
 
     private void editColorView(View v, int color) {
-        GradientDrawable bgShape = (GradientDrawable)v.getBackground();
+        GradientDrawable bgShape = (GradientDrawable) v.getBackground();
         if (color != 0) {
             bgShape.setColor(0xff000000 + color);
         } else {

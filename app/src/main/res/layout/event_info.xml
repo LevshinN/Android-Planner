@@ -1,39 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
-    <LinearLayout
-        android:id="@+id/event_info_title_area"
+    <TextView
+        android:id="@+id/event_info_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/grey">
-
-        <TextView
-            android:id="@+id/event_info_title"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1.0"
-            android:layout_margin="16dp"
-            android:text="Event title"
-            android:textStyle="bold"
-            android:textSize="@dimen/abc_text_size_headline_material" />
-
-        <ImageButton
-            android:id="@+id/event_info_edit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:background="@drawable/ic_mode_edit_black_24dp"/>
-
-    </LinearLayout>
+        android:padding="16dp"
+        android:text="Event title"
+        android:fontFamily="sans-serif"
+        android:textStyle="bold"
+        android:textSize="@dimen/abc_text_size_headline_material" />
 
     <ScrollView
+        android:id="@+id/event_info_scroll"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:foreground="?android:windowContentOverlay">
+        android:layout_height="0dp"
+        android:layout_weight="1.0"
+        android:layout_below="@id/event_info_title"
+        android:background="@drawable/drawer_shadow">
 
         <LinearLayout
             android:id="@+id/event_info_body"
@@ -43,8 +31,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1">
+                android:layout_height="wrap_content">
 
                 <ImageView
                     android:layout_height="wrap_content"
@@ -58,13 +45,14 @@
                     android:layout_height="wrap_content"
                     android:text="today, 2 august, 12.00"
                     android:textSize="@dimen/abc_text_size_medium_material"
+                    android:fontFamily="sans-serif-light"
                     android:layout_margin="16dp"/>
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/event_info_location_line"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1">
+                android:layout_height="wrap_content">
 
                 <ImageView
                     android:layout_height="wrap_content"
@@ -78,13 +66,14 @@
                     android:layout_height="wrap_content"
                     android:text="Moscow"
                     android:textSize="@dimen/abc_text_size_medium_material"
+                    android:fontFamily="sans-serif-light"
                     android:layout_margin="16dp"/>
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/event_info_description_line"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1">
+                android:layout_height="wrap_content">
 
                 <ImageView
                     android:layout_height="wrap_content"
@@ -98,17 +87,65 @@
                     android:layout_height="wrap_content"
                     android:text="Very important meeting"
                     android:textSize="@dimen/abc_text_size_medium_material"
+                    android:fontFamily="sans-serif-light"
                     android:layout_margin="16dp"/>
 
             </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/event_info_calendar_line"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
+                <ImageView
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_margin="16dp"
+                    android:background="@drawable/ic_account_box_black_24dp"/>
 
+                <TextView
+                    android:id="@+id/event_info_calendar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Google calendar"
+                    android:textSize="@dimen/abc_text_size_medium_material"
+                    android:fontFamily="sans-serif-light"
+                    android:layout_margin="16dp"/>
 
-
+            </LinearLayout>
 
         </LinearLayout>
 
     </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/event_info_button_box"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:padding="8dp">
+
+        <Button
+            android:id="@+id/event_info_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="8dp"
+            style="@style/buttonTheme"
+            android:text="@string/btn_edit"/>
+
+        <Button
+            android:id="@+id/event_info_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/buttonTheme"
+            android:text="@string/btn_close"/>
+
+
+
+    </LinearLayout>
+
+
 
 </LinearLayout>

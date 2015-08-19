@@ -3,16 +3,17 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="@dimen/day_list_item"
-    android:paddingRight="16dp">
+    android:paddingRight="8dp"
+    android:paddingLeft="8dp">
 
 
     <RelativeLayout
         android:id="@+id/event_color"
         android:layout_width="@dimen/day_circle_size"
         android:layout_height="@dimen/day_circle_size"
-        android:layout_margin="@dimen/day_item_padding"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
+        android:layout_marginRight="@dimen/day_item_padding"
+        android:layout_marginTop="@dimen/day_item_padding"
+        android:layout_marginBottom="@dimen/day_item_padding"
         android:background="@drawable/color_circle">
 
         <TextView
@@ -44,7 +45,8 @@
             android:lines="1"
             android:ellipsize="end"
             android:singleLine="true"
-            android:fontFamily="sans-serif-bold"
+            android:fontFamily="sans-serif"
+            android:textStyle="bold"
             android:text="Event Title" />
 
         <LinearLayout
@@ -66,7 +68,7 @@
                     android:lines="1"
                     android:ellipsize="end"
                     android:singleLine="true"
-                    android:fontFamily="sans-serif-thin"
+                    android:fontFamily="sans-serif-light"
                     android:text="Event Description" />
 
                 <TextView
@@ -92,7 +94,7 @@
                     android:id="@+id/event_time_1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif-thin"
+                    android:fontFamily="sans-serif-light"
                     android:layout_gravity="end"
 
                     android:text = "event_time"/>
@@ -101,7 +103,7 @@
                     android:id="@+id/event_time_2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif-thin"
+                    android:fontFamily="sans-serif-light"
                     android:layout_gravity="end"
 
                     android:text = "event_time"/>

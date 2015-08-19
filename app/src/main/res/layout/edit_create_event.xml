@@ -5,26 +5,22 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+
     <LinearLayout
         android:id="@+id/edit_event_title_area"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="@dimen/abc_dialog_padding_material"
-        android:weightSum="1.0">
+        android:padding="8dp"
+        android:background="@color/default_color">
 
         <EditText
             android:id="@+id/edit_event_title"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1.0"
+            android:fontFamily="sans-serif"
             android:textStyle="bold"
-            android:hint="TITLE" />
-
-        <Spinner
-            android:id="@+id/edit_event_color"
-            android:layout_width="130dp"
-            android:layout_height="wrap_content"/>
+            android:textSize="@dimen/abc_text_size_headline_material"
+            android:hint="Title"/>
 
     </LinearLayout>
 
@@ -38,80 +34,122 @@
             android:id="@+id/edit_event_body_area"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="@dimen/abc_dialog_padding_material">
-
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textMultiLine"
-                android:hint="DESCRIPTION"
-                android:ems="10"
-                android:id="@+id/edit_event_description" />
+            android:orientation="vertical">
 
             <LinearLayout
-                android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <TextView
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:layout_width="0dp"
+                <ImageView
                     android:layout_height="wrap_content"
-                    android:layout_weight="1.0"
-                    android:text="TIME START"
-                    android:id="@+id/edit_event_start_text" />
-
-                <Button
-                    style="@style/buttonTheme"
-                    android:id="@+id/edit_event_start_button"
                     android:layout_width="wrap_content"
+                    android:layout_margin="16dp"
+                    android:background="@drawable/ic_schedule_black_24dp"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Change" />
+                    android:orientation="vertical"
+                    android:layout_margin="16dp">
+
+                    <TextView
+                        android:id="@+id/edit_event_start_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/abc_text_size_medium_material"
+                        android:fontFamily="sans-serif-light"
+                        android:text="TIME START"/>
+
+                    <TextView
+                        android:id="@+id/edit_event_end_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/abc_text_size_medium_material"
+                        android:fontFamily="sans-serif-light"
+                        android:text="TIME END"/>
+
+                </LinearLayout>
+
             </LinearLayout>
 
             <LinearLayout
-                android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <TextView
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:layout_width="0dp"
+                <ImageView
                     android:layout_height="wrap_content"
-                    android:layout_weight="1.0"
-                    android:text="TIME END"
-                    android:id="@+id/edit_event_end_text" />
-
-                <Button
-                    style="@style/buttonTheme"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Change"
-                    android:id="@+id/edit_event_end_button" />
-            </LinearLayout>
+                    android:layout_margin="16dp"
+                    android:background="@drawable/ic_room_black_24dp"/>
 
-            <EditText
-                android:id="@+id/edit_event_location_text"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Location"/>
+                <EditText
+                    android:id="@+id/edit_event_location_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:textSize="@dimen/abc_text_size_medium_material"
+                    android:fontFamily="sans-serif-light"
+                    android:hint="Location"/>
+
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <TextView
-                    android:layout_width="wrap_content"
+                <ImageView
                     android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="Calendar:"/>
+                    android:layout_width="wrap_content"
+                    android:layout_margin="16dp"
+                    android:background="@drawable/ic_description_black_24dp"/>
+
+                <EditText
+                    android:id="@+id/edit_event_description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:inputType="textMultiLine"
+                    android:hint="Description"
+                    android:ems="10"
+                    android:textSize="@dimen/abc_text_size_medium_material"
+                    android:fontFamily="sans-serif-light"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_margin="16dp"
+                    android:background="@drawable/ic_account_box_black_24dp"/>
 
                 <Spinner
                     android:id="@+id/edie_event_calendar"
                     android:layout_width="200dp"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"/>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_margin="16dp"
+                    android:background="@drawable/ic_palette_black_24dp"/>
+
+                <Spinner
+                    android:id="@+id/edit_event_color"
+                    android:layout_width="130dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"/>
 
             </LinearLayout>
 
@@ -120,24 +158,30 @@
     </ScrollView>
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:id="@+id/event_info_button_box"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:padding="8dp">
 
         <Button
             android:id="@+id/edit_event_cancel"
-            style="@style/buttonTheme"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1.0"
-            android:text="CANCEL" />
+            android:layout_marginRight="8dp"
+            android:padding="8dp"
+            style="@style/buttonTheme"
+            android:text="@string/mdtp_cancel"/>
 
         <Button
             android:id="@+id/edit_event_ok"
-            style="@style/buttonTheme"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1.0"
-            android:text="OK"/>
+            android:padding="8dp"
+            style="@style/buttonTheme"
+            android:text="@string/mdtp_ok"/>
 
     </LinearLayout>
 

@@ -1,18 +1,11 @@
 package ru.levn.simpleplanner.fragment;
 
 import android.app.Activity;
-import android.app.DatePickerDialog;
 import android.app.DialogFragment;
-import android.app.TimePickerDialog;
-import android.content.ContentResolver;
-import android.content.ContentUris;
-import android.content.ContentValues;
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.CalendarContract;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +20,10 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
+import com.wdullaer.materialdatetimepicker.time.RadialPickerLayout;
+import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -34,15 +31,12 @@ import java.util.GregorianCalendar;
 import java.util.Locale;
 
 import ru.levn.simpleplanner.Common;
-import ru.levn.simpleplanner.MainActivity;
 import ru.levn.simpleplanner.R;
 import ru.levn.simpleplanner.adapter.CalendarAdapter;
 import ru.levn.simpleplanner.adapter.ColorListAdapter;
 import ru.levn.simpleplanner.calendar.CalendarProvider;
 import ru.levn.simpleplanner.calendar.Event;
 import ru.levn.simpleplanner.calendar.MyCalendar;
-import ru.levn.simpleplanner.calendar.common.accounts.GenericAccountService;
-import ru.levn.simpleplanner.calendar.syncadapter.SyncUtils;
 
 /**
  * Автор: Левшин Николай, 707 группа.
@@ -51,8 +45,8 @@ import ru.levn.simpleplanner.calendar.syncadapter.SyncUtils;
 
 public class CreateEventFragment extends DialogFragment {
 
-    private static final int EDIT_START_DATE = R.id.edit_event_start_button;
-    private static final int EDIT_END_DATE = R.id.edit_event_end_button;
+    private static final int EDIT_START_DATE = R.id.edit_event_start_text;
+    private static final int EDIT_END_DATE = R.id.edit_event_end_text;
 
 
     private static final int DIALOG_DATE = 1;
@@ -124,8 +118,8 @@ public class CreateEventFragment extends DialogFragment {
         calendarSelector.setAdapter(calendarsListAdapter);
         calendarSelector.setOnItemSelectedListener(calendarSelectorListener);
 
-        (mRootView.findViewById(R.id.edit_event_start_button)).setOnClickListener(buttonListener);
-        (mRootView.findViewById(R.id.edit_event_end_button)).setOnClickListener(buttonListener);
+        (mRootView.findViewById(R.id.edit_event_start_text)).setOnClickListener(buttonListener);
+        (mRootView.findViewById(R.id.edit_event_end_text)).setOnClickListener(buttonListener);
         (mRootView.findViewById(R.id.edit_event_cancel)).setOnClickListener(buttonListener);
         (mRootView.findViewById(R.id.edit_event_ok)).setOnClickListener(buttonListener);
 
@@ -148,6 +142,15 @@ public class CreateEventFragment extends DialogFragment {
             throw new ClassCastException(activity.toString()
                     + " must implement OnHeadlineSelectedListener");
         }
+    }
+
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        Window window = getDialog().getWindow();
+        window.setLayout(Common.sScreenWidth * 4 / 5, LinearLayout.LayoutParams.WRAP_CONTENT);
+        window.setGravity(Gravity.CENTER);
     }
 
     private void mUpdateDialog() {
@@ -197,10 +200,10 @@ public class CreateEventFragment extends DialogFragment {
             mDateOnEdit = v.getId();
 
             switch (mDateOnEdit) {
-                case R.id.edit_event_start_button:
+                case R.id.edit_event_start_text:
                     mShowDatePicker(DIALOG_DATE);
                     break;
-                case R.id.edit_event_end_button:
+                case R.id.edit_event_end_text:
                     mShowDatePicker(DIALOG_DATE);
                     break;
                 case R.id.edit_event_ok:
@@ -218,35 +221,33 @@ public class CreateEventFragment extends DialogFragment {
     private void mShowDatePicker(int mode) {
         if (mode == DIALOG_DATE) {
 
-            DatePickerFragment date = new DatePickerFragment();
-
-            Bundle args = new Bundle();
             Calendar selectedDate = Common.sSelectedDate.getDate();
-            args.putInt("year", selectedDate.get(Calendar.YEAR));
-            args.putInt("month", selectedDate.get(Calendar.MONTH));
-            args.putInt("day", selectedDate.get(Calendar.DAY_OF_MONTH));
-            date.setArguments(args);
-            date.setCallBack(mOnDate);
-            date.show(getFragmentManager(), "Date Picker");
+
+            DatePickerDialog dpd = DatePickerDialog.newInstance(
+                    mOnDate,
+                    selectedDate.get(Calendar.YEAR),
+                    selectedDate.get(Calendar.MONTH),
+                    selectedDate.get(Calendar.DAY_OF_MONTH)
+            );
+            dpd.show(getFragmentManager(), "Date Picker");
         }
 
         else if (mode == DIALOG_TIME) {
-            TimePickerFragment time = new TimePickerFragment();
 
-            Bundle args = new Bundle();
             Calendar currentTime = Calendar.getInstance();
-            args.putInt("hour", currentTime.get(Calendar.HOUR_OF_DAY));
-            args.putInt("minute", currentTime.get(Calendar.MINUTE));
 
-            time.setArguments(args);
-            time.setCallBack(mOnTime);
-            time.show(getFragmentManager(), "Time Picker");
+            TimePickerDialog dpd = TimePickerDialog.newInstance(
+                    mOnTime,
+                    currentTime.get(Calendar.HOUR_OF_DAY),
+                    currentTime.get(Calendar.MINUTE),
+                    true);
+            dpd.show(getFragmentManager(), "Time Picker");
         }
     }
 
     DatePickerDialog.OnDateSetListener mOnDate = new DatePickerDialog.OnDateSetListener() {
         @Override
-        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+        public void onDateSet(DatePickerDialog datePickerDialog, int year, int monthOfYear, int dayOfMonth) {
             mSelectedYear = year;
             mSelectedMonth = monthOfYear;
             mSelectedDay = dayOfMonth;
@@ -258,7 +259,7 @@ public class CreateEventFragment extends DialogFragment {
 
     TimePickerDialog.OnTimeSetListener mOnTime = new TimePickerDialog.OnTimeSetListener() {
         @Override
-        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+        public void onTimeSet(RadialPickerLayout radialPickerLayout, int hourOfDay, int minute) {
             mSelectedHour = hourOfDay;
             mSelectedMinute = minute;
 

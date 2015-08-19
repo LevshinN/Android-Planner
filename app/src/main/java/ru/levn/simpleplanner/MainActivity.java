@@ -57,6 +57,9 @@ public class MainActivity extends AppCompatActivity implements
         mCurrentActivity = this;
 
         DisplayMetrics displayMetrics = getApplicationContext().getResources().getDisplayMetrics();
+        Common.sScreenWidth = displayMetrics.widthPixels;
+        Common.sScreenHeight = displayMetrics.heightPixels;
+
         float dpHeight = displayMetrics.heightPixels / displayMetrics.density;
         float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
 
@@ -126,7 +129,6 @@ public class MainActivity extends AppCompatActivity implements
         switch(item.getItemId()) {
             case R.id.action_add:
                 DialogFragment editEventDialog = new CreateEventFragment();
-                editEventDialog.setStyle(DialogFragment.STYLE_NORMAL, R.style.full_screen_dialog);
                 editEventDialog.show(getFragmentManager(), "create_new_event");
                 return true;
             case R.id.action_upload:

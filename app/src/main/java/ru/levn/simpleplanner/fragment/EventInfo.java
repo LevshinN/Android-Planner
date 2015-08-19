@@ -3,15 +3,21 @@ package ru.levn.simpleplanner.fragment;
 
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import ru.levn.simpleplanner.Common;
 import ru.levn.simpleplanner.R;
+import ru.levn.simpleplanner.calendar.CalendarProvider;
 import ru.levn.simpleplanner.calendar.Event;
+import ru.levn.simpleplanner.calendar.MyCalendar;
 
 /**
  * Автор: Левшин Николай, 707 группа.
@@ -33,14 +39,22 @@ public class EventInfo extends DialogFragment implements View.OnClickListener {
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         View v = inflater.inflate(R.layout.event_info, container, false);
 
-        mEditTitle(v.findViewById(R.id.event_info_title_area));
+        mEditTitle(v.findViewById(R.id.event_info_title));
         mEditBody(v.findViewById(R.id.event_info_body));
 
-        ((ImageButton)v.findViewById(R.id.event_info_edit)).setOnClickListener(onEdit);
-
-
+        (v.findViewById(R.id.event_info_edit)).setOnClickListener(onClick);
+        (v.findViewById(R.id.event_info_close)).setOnClickListener(onClick);
 
         return v;
+    }
+
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        Window window = getDialog().getWindow();
+        window.setLayout(Common.sScreenWidth * 4 / 5, LinearLayout.LayoutParams.WRAP_CONTENT);
+        window.setGravity(Gravity.CENTER);
     }
 
     @Override
@@ -66,38 +80,91 @@ public class EventInfo extends DialogFragment implements View.OnClickListener {
     private void mEditTitle(View v) {
         if (mEvent.color != 0) {
             v.setBackgroundColor(0xff000000 + mEvent.color);
+        } else {
+            v.setBackgroundColor(v.getContext().getResources().getColor(R.color.default_color));
         }
 
-        ((TextView)v.findViewById(R.id.event_info_title)).setText(mEvent.title);
+        ((TextView)v).setText(mEvent.title);
     }
 
     private void mEditBody(View v) {
-        TextView time = (TextView)v.findViewById(R.id.event_info_time);
-        TextView location = (TextView)v.findViewById(R.id.event_info_location);
-        TextView description = (TextView)v.findViewById(R.id.event_info_description);
-
-        String timeDescription = mEvent.getTextDate(true);
-        if (timeDescription.equals(" ")) {
-            ((ViewGroup) time.getParent()).removeView(time);
-        } else { time.setText(timeDescription); }
-
-        if (mEvent.location == null || mEvent.location.equals("")) {
-            ((ViewGroup) location.getParent()).removeView(location);
-        } else { location.setText(mEvent.location); }
-
-        if (mEvent.description == null) {
-            ((ViewGroup) description.getParent()).removeView(description);
-        } else { description.setText(mEvent.description); }
+        mEditTime(v);
+        mEditLocation(v.findViewById(R.id.event_info_location_line));
+        mEditDescription(v.findViewById(R.id.event_info_description_line));
+        mEditCalendar(v.findViewById(R.id.event_info_calendar_line));
     }
 
-    private View.OnClickListener onEdit = new View.OnClickListener() {
+    private void mEditTime(View v) {
+        TextView time = (TextView)v.findViewById(R.id.event_info_time);
+        if (mEvent.isAllDay) {
+            time.setText(CalendarProvider.getDate(mEvent.timeStart)
+                    + ", "
+                    + getResources().getString(R.string.all_day));
+        } else {
+            long timeEnd = mEvent.timeEnd;
+            if (timeEnd == 0) {
+                timeEnd = mEvent.timeStart + mEvent.duration;
+            }
+
+            String timeDescription;
+            timeDescription = CalendarProvider.getTime(mEvent.timeStart)
+                    + ", "
+                    + CalendarProvider.getDate(mEvent.timeStart)
+                    + " - \n"
+                    + CalendarProvider.getTime(timeEnd) + ", " + CalendarProvider.getDate(timeEnd);
+
+            time.setText(timeDescription);
+        }
+    }
+
+    private void mEditLocation(View v){
+        if (mEvent.location == null || mEvent.location.equals("")) {
+            v.setLayoutParams(new LinearLayout.LayoutParams(0, 0));
+        } else {
+            ((TextView)v.findViewById(R.id.event_info_location)).setText(mEvent.location);
+        }
+    }
+
+    private void mEditDescription(View v){
+        if (mEvent.description == null || mEvent.description.equals("")) {
+            v.setLayoutParams(new LinearLayout.LayoutParams(0,0));
+        } else {
+            ((TextView)v.findViewById(R.id.event_info_description)).setText(mEvent.description);
+        }
+    }
+
+    private void mEditCalendar(View v) {
+        MyCalendar eventCalendar = null;
+        for (MyCalendar c : CalendarProvider.calendars) {
+            if (c.id.equals(mEvent.calendarId)) {
+                eventCalendar = c;
+                break;
+            }
+        }
+        if (eventCalendar != null) {
+            ((TextView)v.findViewById(R.id.event_info_calendar)).setText( eventCalendar.displayName
+                    + " ("
+                    + eventCalendar.accountName
+                    + ")" );
+        }
+
+    }
+
+    private View.OnClickListener onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            android.app.DialogFragment editEventDialog = CreateEventFragment.newInstance(0, mEvent);
-            editEventDialog.setStyle(android.app.DialogFragment.STYLE_NORMAL, R.style.full_screen_dialog);
-            editEventDialog.setCancelable(true);
-            editEventDialog.show(getActivity().getFragmentManager(), "edit_event");
-            dismiss();
+            int id = v.getId();
+
+            switch(id) {
+                case R.id.event_info_close:
+                    dismiss();
+                    break;
+                case R.id.event_info_edit:
+                    android.app.DialogFragment editEventDialog = CreateEventFragment.newInstance(0, mEvent);
+                    editEventDialog.show(getActivity().getFragmentManager(), "edit_event");
+                    dismiss();
+                    break;
+            }
         }
     };
 }

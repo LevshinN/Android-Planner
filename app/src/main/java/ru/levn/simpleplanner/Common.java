@@ -20,6 +20,9 @@ public class Common {
     public static final int WEEK_MODE = 1;
     public static final int MONTH_MODE = 2;
 
+    public static int sScreenWidth;
+    public static int sScreenHeight;
+
     public static final String ENABLED_CALENDARS_DB = "enabledcaldb";
 
     public static SelectedDate sSelectedDate;
