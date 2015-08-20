@@ -23,7 +23,9 @@
 
     <color name="default_color">@color/grey</color>
     
-    <color name="btn_pressed">#229E9E9E</color>
+    <color name="btn_pressed_background">#229E9E9E</color>
+    <color name="btn_background">@android:color/transparent</color>
+    <color name="btn_text_color">@color/orange</color>
     
     Переопределяем цвета для диалогов выбора даты и времени
 

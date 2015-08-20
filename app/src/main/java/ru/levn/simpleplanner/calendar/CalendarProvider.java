@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.TimeZone;
 
 import ru.levn.simpleplanner.Common;
+import ru.levn.simpleplanner.R;
 import ru.levn.simpleplanner.calendar.common.accounts.GenericAccountService;
 import ru.levn.simpleplanner.calendar.syncadapter.SyncUtils;
 
@@ -50,7 +51,7 @@ public class CalendarProvider {
     private static final String[] projectionEvent = new String[] {
             CalendarContract.Events._ID,            // 0
             CalendarContract.Events.CALENDAR_ID,    // 1
-            CalendarContract.Events.DISPLAY_COLOR,  // 2
+            CalendarContract.Events.EVENT_COLOR,    // 2
             CalendarContract.Events.TITLE,          // 3
             CalendarContract.Events.DESCRIPTION,    // 4
             CalendarContract.Events.DTSTART,        // 5
@@ -96,6 +97,7 @@ public class CalendarProvider {
 
 
     private static HashMap<String, Boolean> mSelectedCalendarsIDs;
+    private static int[] mColors;
 
     private static SQLiteDatabase mDataBase;
 
@@ -110,6 +112,7 @@ public class CalendarProvider {
         CalendarDBHelper dbHelper = new CalendarDBHelper(activity);
         mDataBase = dbHelper.getWritableDatabase();
         mContentResolver = activity.getContentResolver();
+        mColors = activity.getResources().getIntArray(R.array.event_colors_values);
 
         sUpdateCalendars();
     }
@@ -191,6 +194,14 @@ public class CalendarProvider {
         }
 
         sSaveDB();
+    }
+
+    public static void sInsertColorsToCalendars() {
+        for(MyCalendar calendar : calendars) {
+            for (int color : mColors) {
+                //TODO
+            }
+        }
     }
 
     public static void changeCalendarSelection(String id, boolean enabled) {

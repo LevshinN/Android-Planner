@@ -20,6 +20,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -59,6 +60,7 @@ public class MainActivity extends AppCompatActivity implements
         DisplayMetrics displayMetrics = getApplicationContext().getResources().getDisplayMetrics();
         Common.sScreenWidth = displayMetrics.widthPixels;
         Common.sScreenHeight = displayMetrics.heightPixels;
+        Common.sScreenDensity = displayMetrics.density;
 
         float dpHeight = displayMetrics.heightPixels / displayMetrics.density;
         float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
@@ -111,34 +113,13 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Pass the event to ActionBarDrawerToggle, if it returns
         // true, then it has handled the app icon touch event
         if (mDrawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
-
-        // Handle action buttons
-        switch(item.getItemId()) {
-            case R.id.action_add:
-                DialogFragment editEventDialog = new CreateEventFragment();
-                editEventDialog.show(getFragmentManager(), "create_new_event");
-                return true;
-            case R.id.action_upload:
-                // Show toast about click.
-                Common.sSelectedDate.setDate(Calendar.getInstance());
-                onUpdate();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -218,7 +199,7 @@ public class MainActivity extends AppCompatActivity implements
             mCurrentMode = pressedButton;
         }
 
-        ((Button)findViewById(R.id.btn_current_date)).setText(Common.sGetCurrentDateAsText(Common.sCurrentMode));
+        ((TextView)findViewById(R.id.btn_current_date)).setText(Common.sGetCurrentDateAsText(Common.sCurrentMode));
     }
 
     /**
@@ -265,6 +246,16 @@ public class MainActivity extends AppCompatActivity implements
                         mShowDatePicker();
                         break;
 
+                    case R.id.btn_add:
+                        DialogFragment editEventDialog = new CreateEventFragment();
+                        editEventDialog.show(getFragmentManager(), "create_new_event");
+                        break;
+
+                    case R.id.btn_today:
+                        Common.sSelectedDate.setDate(Calendar.getInstance());
+                        onUpdate();
+                        break;
+
                     default:
                         break;
                 }
@@ -272,14 +263,16 @@ public class MainActivity extends AppCompatActivity implements
         };
 
 
-        Common.sBtnCurrentDate = (Button)findViewById(R.id.btn_current_date);
+        Common.sBtnCurrentDate = findViewById(R.id.btn_current_date);
         Common.sBtnCurrentDate.setOnClickListener(listener);
         Common.sUpdateTitle();
 
+        findViewById(R.id.btn_add).setOnClickListener(listener);
+        findViewById(R.id.btn_today).setOnClickListener(listener);
 
-        Button btnDay = (Button)findViewById(R.id.btn_day_mode);
-        Button btnWeek = (Button)findViewById(R.id.btn_week_mode);
-        Button btnMonth = (Button)findViewById(R.id.btn_month_mode);
+        View btnDay = findViewById(R.id.btn_day_mode);
+        View btnWeek = findViewById(R.id.btn_week_mode);
+        View btnMonth = findViewById(R.id.btn_month_mode);
 
         if (btnDay != null && btnWeek != null && btnMonth != null) {
             btnDay.setOnClickListener(listener);

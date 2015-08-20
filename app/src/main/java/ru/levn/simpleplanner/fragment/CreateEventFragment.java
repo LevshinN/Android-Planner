@@ -13,12 +13,10 @@ import android.view.Window;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.TimePicker;
 
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 import com.wdullaer.materialdatetimepicker.time.RadialPickerLayout;
@@ -123,6 +121,9 @@ public class CreateEventFragment extends DialogFragment {
         (mRootView.findViewById(R.id.edit_event_cancel)).setOnClickListener(buttonListener);
         (mRootView.findViewById(R.id.edit_event_ok)).setOnClickListener(buttonListener);
 
+        (mRootView.findViewById(R.id.edit_event_cancel)).setOnTouchListener(Common.onTouch);
+        (mRootView.findViewById(R.id.edit_event_ok)).setOnTouchListener(Common.onTouch);
+
         if (isEdit) {
             mUpdateDialog();
         }
@@ -155,14 +156,22 @@ public class CreateEventFragment extends DialogFragment {
 
     private void mUpdateDialog() {
         ((EditText)mRootView.findViewById(R.id.edit_event_title)).setText(mOriginalEvent.title);
-        ((EditText)mRootView.findViewById(R.id.edit_event_description)).setText(mOriginalEvent.description);
-        ((EditText)mRootView.findViewById(R.id.edit_event_location_text)).setText(mOriginalEvent.location);
+        ((EditText)mRootView.findViewById(R.id.edit_event_description))
+                .setText(mOriginalEvent.description);
+        ((EditText)mRootView.findViewById(R.id.edit_event_location_text))
+                .setText(mOriginalEvent.location);
 
-        mRootView.findViewById(R.id.edit_event_title_area).setBackgroundColor(mOriginalEvent.color);
+        mRootView.findViewById(R.id.edit_event_title_area).setBackgroundColor( 0xff000000 + mOriginalEvent.color );
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm, dd MMMM yyyy", Locale.getDefault());
-        ((TextView)mRootView.findViewById(R.id.edit_event_start_text)).setText(dateFormat.format(mOriginalEvent.timeStart));
-        ((TextView)mRootView.findViewById(R.id.edit_event_end_text)).setText(dateFormat.format(mOriginalEvent.timeEnd));
+        SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm, dd MMMM yyyy",
+                Locale.getDefault());
+        ((TextView)mRootView.findViewById(R.id.edit_event_start_text))
+                .setText(dateFormat.format(mOriginalEvent.timeStart));
+        ((TextView)mRootView.findViewById(R.id.edit_event_end_text))
+                .setText(dateFormat.format(mOriginalEvent.timeEnd));
+
+        mRootView.findViewById(R.id.edit_event_calendar_line)
+                .setLayoutParams(new LinearLayout.LayoutParams(0,0));
     }
 
     Spinner.OnItemSelectedListener colorSelectorListener = new AdapterView.OnItemSelectedListener() {
@@ -174,7 +183,7 @@ public class CreateEventFragment extends DialogFragment {
                 return;
             }
             mNewEvent.color = (Integer)parent.getSelectedItem();
-            mRootView.findViewById(R.id.edit_event_title_area).setBackgroundColor(mNewEvent.color);
+            mRootView.findViewById(R.id.edit_event_title_area).setBackgroundColor(0xff000000 + mNewEvent.color);
         }
 
         @Override

@@ -1,10 +1,13 @@
 package ru.levn.simpleplanner.fragment;
 
 
+import android.animation.ObjectAnimator;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.widget.CardView;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -26,6 +29,8 @@ import ru.levn.simpleplanner.calendar.MyCalendar;
 public class EventInfo extends DialogFragment implements View.OnClickListener {
 
     private Event mEvent;
+    private CardView mButtonEdit;
+    private CardView mButtonExit;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -44,6 +49,9 @@ public class EventInfo extends DialogFragment implements View.OnClickListener {
 
         (v.findViewById(R.id.event_info_edit)).setOnClickListener(onClick);
         (v.findViewById(R.id.event_info_close)).setOnClickListener(onClick);
+
+        (v.findViewById(R.id.event_info_edit)).setOnTouchListener(Common.onTouch);
+        (v.findViewById(R.id.event_info_close)).setOnTouchListener(Common.onTouch);
 
         return v;
     }

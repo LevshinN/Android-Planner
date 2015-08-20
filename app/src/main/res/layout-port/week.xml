@@ -3,8 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal"
-    android:background="@color/material_blue_grey_950">
+    android:orientation="horizontal">
 
     <LinearLayout
         android:layout_width="0dp"
@@ -12,37 +11,115 @@
         android:layout_weight="1.0"
         android:orientation="vertical">
 
-        <TextView
-            style="@style/WeekTableDayHeaderPort"
-            android:text="ПН"/>
+        <android.support.v7.widget.CardView
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:card_view="http://schemas.android.com/apk/res-auto"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1.0"
+            card_view:cardCornerRadius="2dp"
+            card_view:cardElevation="2dp">
 
-        <ListView
-            android:id="@+id/week_table_day_1"
-            style="@style/SmallEventListStylePort"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
-        <TextView
-            style="@style/WeekTableDayHeaderPort"
-            android:text="СР"/>
+                <TextView
+                    style="@style/WeekTableDayHeaderPort"
+                    android:text="ПН"/>
 
-        <ListView
-            android:id="@+id/week_table_day_3"
-            style="@style/SmallEventListStylePort"/>
+                <ListView
+                    android:id="@+id/week_table_day_1"
+                    style="@style/SmallEventListStylePort"/>
 
-        <TextView
-            style="@style/WeekTableDayHeaderPort"
-            android:text="ПТ"/>
+            </LinearLayout>
+        </android.support.v7.widget.CardView>
 
-        <ListView
-            android:id="@+id/week_table_day_5"
-            style="@style/SmallEventListStylePort"/>
+        <android.support.v7.widget.CardView
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:card_view="http://schemas.android.com/apk/res-auto"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1.0"
+            card_view:cardCornerRadius="2dp"
+            card_view:cardElevation="2dp">
 
-        <TextView
-            style="@style/WeekTableDayHeaderPort"
-            android:text="ВС"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
-        <ListView
-            android:id="@+id/week_table_day_7"
-            style="@style/SmallEventListStylePort"/>
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:text="СР"/>
+
+                <ListView
+                    android:id="@+id/week_table_day_3"
+                    style="@style/SmallEventListStylePort"/>
+
+            </LinearLayout>
+
+
+
+
+
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:card_view="http://schemas.android.com/apk/res-auto"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1.0"
+            card_view:cardCornerRadius="2dp"
+            card_view:cardElevation="2dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/WeekTableDayHeaderPort"
+                    android:text="ПТ"/>
+
+                <ListView
+                    android:id="@+id/week_table_day_5"
+                    style="@style/SmallEventListStylePort"/>
+
+            </LinearLayout>
+
+
+
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:card_view="http://schemas.android.com/apk/res-auto"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1.0"
+            card_view:cardCornerRadius="2dp"
+            card_view:cardElevation="2dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/WeekTableDayHeaderPort"
+                    android:text="ВС"/>
+
+                <ListView
+                    android:id="@+id/week_table_day_7"
+                    style="@style/SmallEventListStylePort"/>
+
+            </LinearLayout>
+
+        </android.support.v7.widget.CardView>
 
     </LinearLayout>
 
@@ -52,36 +129,114 @@
         android:layout_weight="1.0"
         android:orientation="vertical">
 
-        <TextView
-            style="@style/WeekTableDayHeaderPort"
-            android:text="ВТ"/>
+        <android.support.v7.widget.CardView
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:card_view="http://schemas.android.com/apk/res-auto"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1.0"
+            card_view:cardCornerRadius="2dp"
+            card_view:cardElevation="2dp">
 
-        <ListView
-            android:id="@+id/week_table_day_2"
-            style="@style/SmallEventListStylePort"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
-        <TextView
-            style="@style/WeekTableDayHeaderPort"
-            android:text="ЧТ"/>
+                <TextView
+                    style="@style/WeekTableDayHeaderPort"
+                    android:text="ВТ"/>
 
-        <ListView
-            android:id="@+id/week_table_day_4"
-            style="@style/SmallEventListStylePort"/>
+                <ListView
+                    android:id="@+id/week_table_day_2"
+                    style="@style/SmallEventListStylePort"/>
 
-        <TextView
-            style="@style/WeekTableDayHeaderPort"
-            android:text="СБ"/>
+            </LinearLayout>
 
-        <ListView
-            android:id="@+id/week_table_day_6"
-            style="@style/SmallEventListStylePort"/>
 
-        <TextView
-            style="@style/WeekTableDayHeaderPort"
-            android:text="КАЛЕНДАРЬ"/>
 
-        <Space
-            style="@style/SmallEventListStylePort" />
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:card_view="http://schemas.android.com/apk/res-auto"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1.0"
+            card_view:cardCornerRadius="2dp"
+            card_view:cardElevation="2dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/WeekTableDayHeaderPort"
+                    android:text="ЧТ"/>
+
+                <ListView
+                    android:id="@+id/week_table_day_4"
+                    style="@style/SmallEventListStylePort"/>
+
+            </LinearLayout>
+
+
+
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:card_view="http://schemas.android.com/apk/res-auto"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1.0"
+            card_view:cardCornerRadius="2dp"
+            card_view:cardElevation="2dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/WeekTableDayHeaderPort"
+                    android:text="СБ"/>
+
+                <ListView
+                    android:id="@+id/week_table_day_6"
+                    style="@style/SmallEventListStylePort"/>
+
+            </LinearLayout>
+
+
+
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:card_view="http://schemas.android.com/apk/res-auto"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1.0"
+            card_view:cardCornerRadius="2dp"
+            card_view:cardElevation="2dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/WeekTableDayHeaderPort"
+                    android:text="КАЛЕНДАРЬ"/>
+
+                <Space
+                    style="@style/SmallEventListStylePort" />
+
+            </LinearLayout>
+
+        </android.support.v7.widget.CardView>
 
     </LinearLayout>
 

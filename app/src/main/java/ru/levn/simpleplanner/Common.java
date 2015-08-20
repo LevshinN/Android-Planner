@@ -1,6 +1,10 @@
 package ru.levn.simpleplanner;
 
+import android.animation.ObjectAnimator;
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
@@ -22,6 +26,7 @@ public class Common {
 
     public static int sScreenWidth;
     public static int sScreenHeight;
+    public static float sScreenDensity;
 
     public static final String ENABLED_CALENDARS_DB = "enabledcaldb";
 
@@ -29,7 +34,7 @@ public class Common {
     public static CalendarProvider sCalendarProvider;
 
     public static int sCurrentMode;
-    public static Button sBtnCurrentDate;
+    public static View sBtnCurrentDate;
 
     public static void init() {
         sSelectedDate = new SelectedDate();
@@ -37,7 +42,7 @@ public class Common {
 
 
     public static void sUpdateTitle() {
-        sBtnCurrentDate.setText(sGetCurrentDateAsText(sCurrentMode));
+        ((TextView)sBtnCurrentDate).setText(sGetCurrentDateAsText(sCurrentMode));
     }
 
     public static String sGetCurrentDateAsText(int mode) {
@@ -102,5 +107,28 @@ public class Common {
 
         public Calendar getDate() { return mDate; }
     }
+
+    public static View.OnTouchListener onTouch = new View.OnTouchListener() {
+
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    ObjectAnimator o1 = ObjectAnimator.ofFloat(v, "cardElevation",
+                            2 * Common.sScreenDensity ,
+                            8 * Common.sScreenDensity ).setDuration(80);
+                    o1.start();
+                    break;
+                case MotionEvent.ACTION_CANCEL:
+                case MotionEvent.ACTION_UP:
+                    ObjectAnimator o2 = ObjectAnimator.ofFloat(v, "cardElevation",
+                            8 * Common.sScreenDensity ,
+                            2 * Common.sScreenDensity ).setDuration(80);
+                    o2.start();
+                    break;
+            }
+            return false;
+        }
+    };
 }
 

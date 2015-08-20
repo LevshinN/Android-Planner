@@ -35,7 +35,7 @@ public class ColorListAdapter extends BaseAdapter {
 
     @Override
     public Object getItem(int position) {
-        return mColorList[position];
+        return mColorList[position] - 0xff000000;
     }
 
     @Override

@@ -4,13 +4,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/toolbar_actionbar"
     android:layout_width="match_parent"
-    android:layout_height="?android:actionBarSize"
+    android:layout_height="?actionBarSize"
     android:background="@color/yellow"
     app:theme="@style/Theme.AppCompat.Light.DarkActionBar">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="horizontal">
 
         <RelativeLayout
@@ -18,30 +18,61 @@
             android:layout_height="match_parent"
             android:layout_weight="1.0">
 
-            <Button
-                style="@style/ButtonModeToolbarTheme"
+            <TextView
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
-                android:id="@+id/btn_current_date"/>
+                android:id="@+id/btn_current_date"
+                android:text="CERRENT DATE"
+                android:fontFamily="sans-serif"
+                android:textSize="@dimen/abc_text_size_medium_material"
+                android:paddingBottom="8dp"
+                android:background="@drawable/spinner_backgroung"/>
 
         </RelativeLayout>
 
-        <Button
-            style="@style/ButtonModeToolbarTheme"
+        <TextView
+            style="@style/ButtonToolbarTheme"
             android:id="@+id/btn_day_mode"
-            android:text="@string/mode_day"
-            android:fontFamily="sans-serif" />
+            android:text="@string/mode_day" />
 
-        <Button
-            style="@style/ButtonModeToolbarTheme"
+        <TextView
+            style="@style/ButtonToolbarTheme"
             android:id="@+id/btn_week_mode"
-            android:text="@string/mode_week"
-            android:fontFamily="sans-serif" />
-        <Button
-            style="@style/ButtonModeToolbarTheme"
+            android:text="@string/mode_week" />
+
+        <TextView
+            style="@style/ButtonToolbarTheme"
             android:id="@+id/btn_month_mode"
-            android:text="@string/mode_month"
-            android:fontFamily="sans-serif" />
+            android:text="@string/mode_month" />
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_margin="8dp">
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/btn_add"
+                android:layout_centerVertical="true"
+                android:background="@drawable/ic_add_black_24dp"/>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_margin="8dp">
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/btn_today"
+                android:layout_centerVertical="true"
+                android:background="@drawable/ic_today_black_24dp"/>
+        </RelativeLayout>
 
     </LinearLayout>
 
