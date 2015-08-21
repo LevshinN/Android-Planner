@@ -23,7 +23,7 @@ import ru.levn.simpleplanner.calendar.MyCalendar;
  * Дата создания: 14.07.2015.
  */
 
-public class ScreenCalendars extends Fragment {
+public class ScreenCalendars extends ModeFragment {
 
     private ListView mCalendarsList;
 
@@ -45,6 +45,16 @@ public class ScreenCalendars extends Fragment {
         final CalendarListAdapter mListAdapter = new CalendarListAdapter(this.getActivity(), CalendarProvider.calendars);
         Toast.makeText(this.getActivity(), "" + mListAdapter.getCount(), Toast.LENGTH_SHORT).show();
         mCalendarsList.setAdapter(mListAdapter);
+    }
+
+    @Override
+    public void onUpdate() {
+        //TODO
+    }
+
+    @Override
+    public void onBuild() {
+        // TODO
     }
 }
 

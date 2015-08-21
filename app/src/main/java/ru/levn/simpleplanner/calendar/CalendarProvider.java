@@ -326,9 +326,11 @@ public class CalendarProvider {
         return new Pair<>(start, finish);
     }
 
-    public static Pair<Long,Long> getWeekPeriod() {
+    public static Pair<Long,Long> getWeekPeriod(long UtcTime) {
 
-        Calendar cal = (Calendar)Common.sSelectedDate.getDate().clone();
+        Calendar cal = Calendar.getInstance();
+
+        cal.setTimeInMillis(UtcTime);
 
         cal.set(Calendar.HOUR_OF_DAY, 0);
         cal.set(Calendar.MINUTE, 0);
@@ -337,11 +339,11 @@ public class CalendarProvider {
 
         cal.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
 
-        long start = cal.getTimeInMillis() + cal.get(Calendar.ZONE_OFFSET);
+        long start = cal.getTimeInMillis();
 
 
         cal.add(Calendar.WEEK_OF_YEAR, 1);
-        long finish = cal.getTimeInMillis() + cal.get(Calendar.ZONE_OFFSET);
+        long finish = cal.getTimeInMillis();
 
         return new Pair<>(start, finish);
     }

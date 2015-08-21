@@ -66,12 +66,12 @@ public class CreateEventFragment extends DialogFragment {
     private Event mOriginalEvent;
     private Event mNewEvent;
 
-    private OnUpdateEventsListener mUpdateEvents;
+    private OnUpdateEventsInterface mUpdateEvents;
 
-    // Container Activity must implement this interface
-    public interface OnUpdateEventsListener {
+    public interface OnUpdateEventsInterface {
         public void onUpdate();
     }
+
 
     static CreateEventFragment newInstance(int num, Event event) {
         CreateEventFragment fragment = new CreateEventFragment();
@@ -138,7 +138,7 @@ public class CreateEventFragment extends DialogFragment {
         // This makes sure that the container activity has implemented
         // the callback interface. If not, it throws an exception
         try {
-            mUpdateEvents = (OnUpdateEventsListener) activity;
+            mUpdateEvents = (OnUpdateEventsInterface) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnHeadlineSelectedListener");
@@ -194,7 +194,7 @@ public class CreateEventFragment extends DialogFragment {
 
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-            mNewEvent.calendarId = ((MyCalendar)parent.getSelectedItem()).id;
+            if (!isEdit) mNewEvent.calendarId = ((MyCalendar)parent.getSelectedItem()).id;
         }
 
         @Override

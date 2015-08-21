@@ -97,7 +97,7 @@ class EventDayAdapter extends EventAdapter {
         View view = convertView;
 
         if (view == null) {
-            view = mLInflater.inflate(R.layout.event_representation, parent, false);
+            view = mLInflater.inflate(R.layout.day_event, parent, false);
         }
 
         Event event = (Event) getItem(position);

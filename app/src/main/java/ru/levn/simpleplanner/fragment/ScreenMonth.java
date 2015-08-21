@@ -13,7 +13,7 @@ import ru.levn.simpleplanner.R;
  * Автор: Левшин Николай, 707 группа.
  * Дата создания: 14.07.2015.
  */
-public class ScreenMonth extends Fragment {
+public class ScreenMonth extends ModeFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -22,5 +22,15 @@ public class ScreenMonth extends Fragment {
         View rootView = inflater.inflate(R.layout.month, container, false);
 
         return rootView;
+    }
+
+    @Override
+    public void onUpdate() {
+        // TODO
+    }
+
+    @Override
+    public void onBuild() {
+        // TODO
     }
 }

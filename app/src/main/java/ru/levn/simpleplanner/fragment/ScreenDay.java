@@ -2,6 +2,7 @@ package ru.levn.simpleplanner.fragment;
 
 
 import android.app.Activity;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -12,6 +13,7 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 
 import com.antonyt.infiniteviewpager.InfinitePagerAdapter;
 
@@ -28,7 +30,7 @@ import ru.levn.simpleplanner.calendar.CalendarProvider;
  * Автор: Левшин Николай, 707 группа.
  * Дата создания: 14.07.2015.
  */
-public class ScreenDay extends Fragment {
+public class ScreenDay extends ModeFragment {
 
     public static final int NUM_PAGES = 5;
     private int mCurrentPosition;
@@ -94,6 +96,18 @@ public class ScreenDay extends Fragment {
         });
 
         return mRootView;
+    }
+
+
+
+    @Override
+    public void onUpdate() {
+        //TODO
+    }
+
+    @Override
+    public void onBuild() {
+        //TODO
     }
 
     private class MyFragmentPagerAdapter extends FragmentStatePagerAdapter {

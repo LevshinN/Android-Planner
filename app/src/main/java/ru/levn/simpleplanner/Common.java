@@ -28,6 +28,9 @@ public class Common {
     public static int sScreenHeight;
     public static float sScreenDensity;
 
+    public static int sFragWidth;
+    public static int sFragHeight;
+
     public static final String ENABLED_CALENDARS_DB = "enabledcaldb";
 
     public static SelectedDate sSelectedDate;
@@ -35,6 +38,8 @@ public class Common {
 
     public static int sCurrentMode;
     public static View sBtnCurrentDate;
+
+    public static boolean sIsDrawerClosed;
 
     public static void init() {
         sSelectedDate = new SelectedDate();

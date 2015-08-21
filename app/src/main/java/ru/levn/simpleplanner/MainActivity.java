@@ -3,7 +3,6 @@ package ru.levn.simpleplanner;
 
 import android.app.DialogFragment;
 import android.content.res.Configuration;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
@@ -13,15 +12,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
@@ -31,20 +27,22 @@ import java.util.Calendar;
 import ru.levn.simpleplanner.calendar.CalendarProvider;
 import ru.levn.simpleplanner.calendar.syncadapter.SyncUtils;
 import ru.levn.simpleplanner.fragment.CreateEventFragment;
+import ru.levn.simpleplanner.fragment.ModeFragment;
 import ru.levn.simpleplanner.fragment.ScreenCalendars;
 import ru.levn.simpleplanner.fragment.ScreenDay;
 import ru.levn.simpleplanner.fragment.ScreenMonth;
 import ru.levn.simpleplanner.fragment.ScreenWeek;
 
 
-public class MainActivity extends AppCompatActivity implements
-    CreateEventFragment.OnUpdateEventsListener{
+public class MainActivity extends AppCompatActivity
+        implements CreateEventFragment.OnUpdateEventsInterface{
 
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
     private ActionBarDrawerToggle mDrawerToggle;
 
     private static FragmentActivity mCurrentActivity;
+    private static ModeFragment mCurrentFragment;
 
     private View mCurrentMode;
 
@@ -56,6 +54,7 @@ public class MainActivity extends AppCompatActivity implements
         SyncUtils.CreateSyncAccount(this);
 
         mCurrentActivity = this;
+        Common.sIsDrawerClosed = true;
 
         DisplayMetrics displayMetrics = getApplicationContext().getResources().getDisplayMetrics();
         Common.sScreenWidth = displayMetrics.widthPixels;
@@ -90,6 +89,17 @@ public class MainActivity extends AppCompatActivity implements
                 R.string.drawer_open, /* "open drawer" description */
                 R.string.drawer_close /* "close drawer" description */
                 ) {
+            /** Called when a drawer has settled in a completely closed state. */
+            public void onDrawerClosed(View view) {
+                super.onDrawerClosed(view);
+                Common.sIsDrawerClosed = true;
+                mCurrentFragment.onUpdate();
+                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+            }
+
+            public void onDrawerOpened(View view) {
+                Common.sIsDrawerClosed = false;
+            }
         };
 
         // Set the drawer toggle as the DrawerListener
@@ -140,26 +150,26 @@ public class MainActivity extends AppCompatActivity implements
     private void mSelectItem(int position) {
         // Update the main content by replacing fragments
         Common.sCurrentMode = position;
-        Fragment mNewFragment = null;
+        mCurrentFragment = null;
         View pressedButton = null;
         switch (position) {
             case Common.DAY_MODE:
-                mNewFragment = new ScreenDay();
+                mCurrentFragment = new ScreenDay();
                 pressedButton = findViewById(R.id.btn_day_mode);
                 break;
 
             case Common.WEEK_MODE:
-                mNewFragment = new ScreenWeek();
+                mCurrentFragment = new ScreenWeek();
                 pressedButton = findViewById(R.id.btn_week_mode);
                 break;
 
             case Common.MONTH_MODE:
-                mNewFragment = new ScreenMonth();
+                mCurrentFragment = new ScreenMonth();
                 pressedButton = findViewById(R.id.btn_month_mode);
                 break;
 
             case 3:
-                mNewFragment = new ScreenCalendars();
+                mCurrentFragment = new ScreenCalendars();
 
                 // Обновляем список календарей
                 CalendarProvider.sUpdateCalendars();
@@ -174,10 +184,10 @@ public class MainActivity extends AppCompatActivity implements
         }
 
         // Insert the fragment by replacing any existing fragment
-        if (mNewFragment != null) {
+        if (mCurrentFragment != null) {
 
             FragmentManager fragmentManager = mCurrentActivity.getSupportFragmentManager();
-            fragmentManager.beginTransaction().replace(R.id.content_frame, mNewFragment).commit();
+            fragmentManager.beginTransaction().replace(R.id.content_frame, mCurrentFragment).commit();
 
             // Highlight the selected item, update the title, and close the drawer
             mDrawerList.setItemChecked(position, true);
