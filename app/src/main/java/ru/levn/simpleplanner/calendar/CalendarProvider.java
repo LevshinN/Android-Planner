@@ -273,7 +273,7 @@ public class CalendarProvider {
         return null;
     }
 
-    private static ArrayList<Event> getAvilableEventsForPeriod(long UTCStart, long UTCEnd) {
+    public static ArrayList<Event> getAvilableEventsForPeriod(long UTCStart, long UTCEnd) {
         ArrayList<Event> events = new ArrayList<>();
 
         Cursor c = CalendarContract.Instances.query(mContentResolver, projectionInstance, UTCStart, UTCEnd);
