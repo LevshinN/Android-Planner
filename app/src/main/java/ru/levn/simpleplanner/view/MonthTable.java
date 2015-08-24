@@ -4,10 +4,13 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.text.Layout;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.wdullaer.materialdatetimepicker.date.MonthAdapter;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -35,10 +38,19 @@ public class MonthTable {
     private View cellView;
     private int cellWidth;
     private int cellHeight;
+    private int screenUp;
+    private int screenDown;
 
     private int cellActiveColor;
     private int cellPassiveColor;
+    private int cellPressedBackground;
+    private int cellReleasedBackground;
     private int weekColor;
+
+    public int lineSize;
+    public int weekOffset;
+
+    private Pair<Integer, Integer> touchedCell;
 
     // Размер окна, в месяцах, в рамках которого подгружаются события
     public static final int EVENTS_WINDOW = 3;
@@ -52,7 +64,13 @@ public class MonthTable {
         cellActiveColor = context.getResources().getColor(android.R.color.black);
         cellPassiveColor = context.getResources().getColor(R.color.grey);
         weekColor = context.getResources().getColor(R.color.red);
+        cellPressedBackground = context.getResources().getColor(R.color.yellow);
+        cellReleasedBackground = context.getResources().getColor(android.R.color.transparent);
+
         representTime = (Calendar)time.clone();
+        representTime.set(Calendar.DAY_OF_MONTH, 15);
+        representTime.getTimeInMillis();
+
         updateEvents();
     }
 
@@ -71,7 +89,7 @@ public class MonthTable {
         cal.add(Calendar.MONTH, EVENTS_WINDOW * 2);
         this.timeEnd = cal.getTimeInMillis();
 
-        this.events = CalendarProvider.getAvilableEventsForPeriod(this.timeStart, this.timeEnd);
+        //this.events = CalendarProvider.getAvilableEventsForPeriod(this.timeStart, this.timeEnd); //TODO
     }
 
     public void initializeTable(float measureWidth, float measureHeight){
@@ -80,11 +98,31 @@ public class MonthTable {
             updateEvents();
         }
 
+        cellWidth = (int)(measureWidth / COLUMNS);
+        cellHeight = (int)(measureHeight / ROWS);
+
+        lineSize = cellHeight;
+
+        cells = new DayCell[COLUMNS * ROWS];
+
+        for (int i = 0; i < ROWS; ++i) {
+            for (int j = 0; j < COLUMNS; ++j) {
+                DayCell cell = new DayCell();
+                if (j == 0) cell.isWeekNumber = true;
+                cell.setBounds(cellWidth * j, cellWidth * ( j + 1 ),
+                        cellHeight * i, cellHeight * ( i + 1 ));
+                cells[ i * COLUMNS + j ] = cell;
+            }
+        }
+        updateCells();
+    }
+
+    public void updateCells() {
         Calendar cal = (Calendar)representTime.clone();
 
         int currentMonth = cal.get(Calendar.MONTH);
 
-        cal.set(Calendar.DAY_OF_MONTH, 1);
+        cal.add(Calendar.WEEK_OF_YEAR, -2);
         cal.getTimeInMillis();
 
         cal.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
@@ -95,25 +133,21 @@ public class MonthTable {
 
         cal.getTimeInMillis();
 
-        cellWidth = (int)(measureWidth / COLUMNS);
-        cellHeight = (int)(measureHeight / ROWS);
-
-        cells = new DayCell[COLUMNS * ROWS];
         for (int i = 0; i < ROWS; ++i) {
             for (int j = 0; j < COLUMNS; ++j) {
-                DayCell cell = new DayCell();
-                if (j == 0) cell.isWeekNumber = true;
-                cell.setBounds(cellWidth * j, cellWidth * ( j + 1 ),
-                        cellHeight * i, cellHeight * ( i + 1 ));
-                cell.representTime = (Calendar)cal.clone();
-                cell.isThisMonth = (currentMonth == cal.get(Calendar.MONTH));
-                cells[ i * COLUMNS + j ] = cell;
+                cells[ i * COLUMNS + j].representTime = (Calendar)cal.clone();
+                cells[ i * COLUMNS + j].isThisMonth = (currentMonth == cal.get(Calendar.MONTH));
+
                 if(j != 0) {
                     cal.add(Calendar.DAY_OF_MONTH, 1);
                     cal.getTimeInMillis();
                 }
             }
         }
+
+
+
+
     }
 
     public void draw(Canvas canvas) {
@@ -130,12 +164,10 @@ public class MonthTable {
 
         if (cell.isWeekNumber) {
             number.setTextColor(weekColor);
+            v.setBackgroundColor(cellReleasedBackground);
         } else {
-            if (cell.isThisMonth) {
-                number.setTextColor(cellActiveColor);
-            } else {
-                number.setTextColor(cellPassiveColor);
-            }
+            number.setTextColor(cell.isThisMonth ? cellActiveColor : cellPassiveColor);
+            v.setBackgroundColor(cell.pressed ? cellPressedBackground : cellReleasedBackground);
         }
 
         int widthSpec = View.MeasureSpec.makeMeasureSpec(cellWidth, View.MeasureSpec.EXACTLY);
@@ -150,6 +182,45 @@ public class MonthTable {
 
         canvas.restore();
     }
+
+    public boolean touchItem(float x, float y) {
+        touchedCell = locateTouchedKey(x, y + screenUp);
+        if (touchedCell.first < COLUMNS && touchedCell.second < ROWS &&
+                touchedCell.first >= 0 && touchedCell.second >= 0) {
+            cells[touchedCell.first + touchedCell.second * COLUMNS].pressed = true;
+            return true;
+        }
+        return false;
+    }
+
+    private Pair locateTouchedKey(float x, float y) {
+        int column = (int)(x / cellWidth);
+        int row = (int)(y / cellHeight);
+        return new Pair(column, row);
+    }
+
+    public boolean releaseTouch() {
+        if ( touchedCell.first < COLUMNS && touchedCell.second < ROWS &&
+                touchedCell.first >= 0 && touchedCell.second >= 0) {
+            cells[touchedCell.first + touchedCell.second * COLUMNS].pressed = false;
+            touchedCell = new Pair<>(COLUMNS, ROWS);
+            return true;
+        }
+        return false;
+    }
+
+    public void updateBounds(int up, int down) {
+        screenUp = up;
+        screenDown = down;
+    }
+
+    public void scrollWeek(int offset) {
+        representTime.add(Calendar.WEEK_OF_YEAR, offset);
+        representTime.getTimeInMillis();
+        updateCells();
+    }
+
+
 
     private void fillCellWithEvents(DayCell cell) {
         for (Event event : events) {
