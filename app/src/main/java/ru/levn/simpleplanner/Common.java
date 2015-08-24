@@ -1,6 +1,7 @@
 package ru.levn.simpleplanner;
 
 import android.animation.ObjectAnimator;
+import android.app.Activity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -13,6 +14,7 @@ import java.util.GregorianCalendar;
 import java.util.Locale;
 
 import ru.levn.simpleplanner.calendar.CalendarProvider;
+import ru.levn.simpleplanner.calendar.EventsContainer;
 
 /**
  * Автор: Левшин Николай, 707 группа.
@@ -34,15 +36,16 @@ public class Common {
     public static final String ENABLED_CALENDARS_DB = "enabledcaldb";
 
     public static SelectedDate sSelectedDate;
-    public static CalendarProvider sCalendarProvider;
+    public static EventsContainer sEvents;
 
     public static int sCurrentMode;
     public static View sBtnCurrentDate;
 
     public static boolean sIsDrawerClosed;
 
-    public static void init() {
+    public static void init(Activity activity) {
         sSelectedDate = new SelectedDate();
+        sEvents = new EventsContainer(sSelectedDate.getDate().getTimeInMillis(), 15);
     }
 
 

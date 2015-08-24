@@ -67,11 +67,11 @@ public class MainActivity extends AppCompatActivity
         Log.d("SCREEN_INFO", "Width = " + dpWidth);
         Log.d("SCREEN_INFO", "Height = " + dpHeight);
 
-        if (savedInstanceState == null) {
-            Common.init();
-        }
-
         CalendarProvider.sInitCalendarProvider(this);
+
+        if (savedInstanceState == null) {
+            Common.init(this);
+        }
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
         setSupportActionBar(toolbar);

@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import ru.levn.simpleplanner.Common;
 import ru.levn.simpleplanner.R;
 import ru.levn.simpleplanner.adapter.EventAdapter;
 import ru.levn.simpleplanner.calendar.CalendarProvider;
@@ -64,7 +65,7 @@ public class PageDay extends Fragment {
         //mRootView = inflater.inflate(R.layout.day_page, container, false);
         View mRootView = inflater.inflate(R.layout.day_page, container, false);
 
-        ArrayList<Event> mEvents = CalendarProvider.getDayEvents(representTime);
+        ArrayList<Event> mEvents = Common.sEvents.getDayEvents(representTime);
 
         if (mEvents.isEmpty()) {
             mRootView.findViewById(R.id.day_text_info).setVisibility(View.VISIBLE);

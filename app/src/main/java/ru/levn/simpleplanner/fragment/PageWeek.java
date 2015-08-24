@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.widget.CardView;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,22 +32,13 @@ import ru.levn.simpleplanner.calendar.Event;
 
 public class PageWeek extends ModeFragment {
 
-    private View mRootView;
-    private LayoutInflater mFragLInflater;
+    private ViewGroup mRootView;
+
     static final String ARGUMENT_REPRESENT_DATE = "arg_represent_date";
     long representTime;
+
     public boolean changed;
     public boolean ready;
-
-    public static final int[] WEEK_IDS = {
-            R.id.week_table_day_1,
-            R.id.week_table_day_2,
-            R.id.week_table_day_3,
-            R.id.week_table_day_4,
-            R.id.week_table_day_5,
-            R.id.week_table_day_6,
-            R.id.week_table_day_7
-    };
 
     int[] dayNamesProjection = {2,3,4,5,6,7,1};
 
@@ -70,11 +62,19 @@ public class PageWeek extends ModeFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        mFragLInflater = inflater;
-        mRootView = inflater.inflate(R.layout.week_page, container, false);
-        ready = true;
+        mRootView = (ViewGroup)inflater.inflate(R.layout.week_page, container, false);
 
-        onBuild();
+        mRootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                Common.sFragWidth = getView().getWidth();
+                Common.sFragHeight = getView().getHeight();
+                if (Common.sFragWidth > 0) {
+                    removeOnGlobalLayoutListener(getView(), this);
+                    onBuild();
+                }
+            }
+        });
 
         return mRootView;
     }
@@ -100,31 +100,28 @@ public class PageWeek extends ModeFragment {
     @Override
     public void onUpdate() {
 
-        Pair<Long,Long> period = CalendarProvider.getWeekPeriod(representTime);
+//        Pair<Long,Long> period = CalendarProvider.getWeekPeriod(representTime);
+//
+//        long start = period.first;
+//        long end = period.second;
+//        long dayDuration = (end - start) / 7;
+//
+//        DateFormatSymbols symbols = DateFormatSymbols.getInstance();
+//        String[] dayNames = symbols.getShortWeekdays();
+//
+//        for (int i = 0; i < 7; ++i) {
+//            View currentCard = mRootView.findViewById(WEEK_IDS[i]);
+//
+//            ((TextView) currentCard.findViewById(R.id.week_card_description)).setText(
+//                    dayNames[dayNamesProjection[i]] + " "
+//                            + CalendarProvider.getDate(start + dayDuration * i));
 
-        long start = period.first;
-        long end = period.second;
-        long dayDuration = (end - start) / 7;
-
-        DateFormatSymbols symbols = DateFormatSymbols.getInstance();
-        String[] dayNames = symbols.getShortWeekdays();
-
-        for (int i = 0; i < 7; ++i) {
-            View currentCard = mRootView.findViewById(WEEK_IDS[i]);
-
-            ((TextView) currentCard.findViewById(R.id.week_card_description)).setText(
-                    dayNames[dayNamesProjection[i]] + " "
-                            + CalendarProvider.getDate(start + dayDuration * i));
-
-            ArrayList<Event> events = CalendarProvider.getDayEvents(start + dayDuration * i );
-            EventWeekAdapter adapter = new EventWeekAdapter(this.getActivity(), events);
-            ListView lv = (ListView)currentCard.findViewById(R.id.week_card_list);
-            lv.setAdapter(adapter);
-            lv.setOnItemClickListener(mSelectItemListener);
-
-            ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(lv, "height", 0.0f, 1.0f ).setDuration(2000);
-            objectAnimator.start();
-        }
+            //ArrayList<Event> events = Common.sEvents.getDayEvents(start + dayDuration * i );
+            //EventWeekAdapter adapter = new EventWeekAdapter(this.getActivity(), events);
+            //ListView lv = (ListView)currentCard.findViewById(R.id.week_card_list);
+            //lv.setAdapter(adapter);
+            //lv.setOnItemClickListener(mSelectItemListener);
+        //}
     }
 
     @Override
@@ -133,13 +130,62 @@ public class PageWeek extends ModeFragment {
 
         // Т.к в grid view элементы добавляются наверх, проходимся в обратном порядке
         for (int i = 6; i != -1; --i) {
-            ViewGroup mContainerView = (ViewGroup)mRootView.findViewById(WEEK_IDS[i]);
-            final ViewGroup newView = (ViewGroup) mFragLInflater.inflate(
-                    R.layout.week_card, mContainerView, false);
-            mContainerView.addView(newView, 0);
+            mRootView.addView(getCard());
         }
 
-        onUpdate();
+        //onUpdate();
+    }
+
+    private CardView getCard() {
+
+        int fragmentWidth = Common.sFragWidth;
+        int fragmentHeight = Common.sFragHeight;
+
+        int cardWidth;
+        int cardHeight;
+
+        if (fragmentWidth > fragmentHeight) {
+            cardWidth = fragmentWidth / 4;
+            cardHeight = fragmentHeight / 2;
+        } else {
+            cardWidth = fragmentWidth / 2;
+            cardHeight = fragmentHeight / 4;
+        }
+
+        CardView cv = new CardView(getActivity());
+        cv.setLayoutParams(new LinearLayout.LayoutParams(cardWidth, cardHeight));
+        cv.setCardElevation(2 * Common.sScreenDensity);
+        cv.setRadius(2 * Common.sScreenDensity);
+
+        LinearLayout ll = new LinearLayout(getActivity());
+        ll.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT));
+        ll.setOrientation(LinearLayout.VERTICAL);
+
+        TextView cardHead = new TextView(getActivity());
+        cardHead.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT));
+
+        ListView eventList = new ListView(getActivity());
+        eventList.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                0,
+                1.0f));
+
+        ViewHolder vh = new ViewHolder();
+        vh.header = cardHead;
+        vh.events = eventList;
+
+        ll.addView(eventList);
+        ll.addView(cardHead);
+        cv.addView(ll);
+        cv.setTag(vh);
+
+        return cv;
+    }
+
+    static class ViewHolder {
+        TextView header;
+        ListView events;
     }
 }
 
