@@ -8,6 +8,7 @@ import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.wdullaer.materialdatetimepicker.date.MonthAdapter;
@@ -61,7 +62,12 @@ public class MonthTable {
     public static final int COLUMNS = 8;
 
     public MonthTable(Context context, Calendar time) {
-        this.cellView = LayoutInflater.from(context).inflate(R.layout.cell_day, null);
+        cellView = LayoutInflater.from(context).inflate(R.layout.cell_day, null);
+        ViewHolder vh = new ViewHolder();
+        vh.number = (TextView)cellView.findViewById(R.id.number);
+        vh.pieChart = (DayPieChart)cellView.findViewById(R.id.pie_chart);
+        cellView.setTag(vh);
+
         cellActiveColor = context.getResources().getColor(android.R.color.black);
         cellPassiveColor = context.getResources().getColor(R.color.grey);
         weekColor = context.getResources().getColor(R.color.red);
@@ -140,15 +146,13 @@ public class MonthTable {
                 cells[ i * COLUMNS + j].isThisMonth = (currentMonth == cal.get(Calendar.MONTH));
 
                 if(j != 0) {
+                    cells[i * COLUMNS + j].events = Common.sEvents.
+                            getDayEvents(cal.getTimeInMillis());
                     cal.add(Calendar.DAY_OF_MONTH, 1);
                     cal.getTimeInMillis();
                 }
             }
         }
-
-
-
-
     }
 
     public void draw(Canvas canvas) {
@@ -160,14 +164,15 @@ public class MonthTable {
     private void mDrawSingleCell(Canvas canvas, DayCell cell) {
         View v = cellView;
 
-        TextView number = (TextView)v.findViewById(R.id.number);
-        number.setText(String.valueOf(cell.getNumber()));
+        ViewHolder vh = (ViewHolder)v.getTag();
+        vh.number.setText(String.valueOf(cell.getNumber()));
+        vh.pieChart.setEvents(cell.events);
 
         if (cell.isWeekNumber) {
-            number.setTextColor(weekColor);
+            vh.number.setTextColor(weekColor);
             v.setBackgroundColor(cellReleasedBackground);
         } else {
-            number.setTextColor(cell.isThisMonth ? cellActiveColor : cellPassiveColor);
+            vh.number.setTextColor(cell.isThisMonth ? cellActiveColor : cellPassiveColor);
             v.setBackgroundColor(cell.pressed ? cellPressedBackground : cellReleasedBackground);
         }
 
@@ -194,10 +199,10 @@ public class MonthTable {
         return false;
     }
 
-    private Pair locateTouchedKey(float x, float y) {
+    private Pair<Integer, Integer> locateTouchedKey(float x, float y) {
         int column = (int)(x / cellWidth);
         int row = (int)(y / cellHeight);
-        return new Pair(column, row);
+        return new Pair<>(column, row);
     }
 
     public boolean releaseTouch() {
@@ -227,6 +232,11 @@ public class MonthTable {
         for (Event event : events) {
             // TODO
         }
+    }
+
+    static class ViewHolder {
+        TextView number;
+        DayPieChart pieChart;
     }
 
 
