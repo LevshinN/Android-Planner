@@ -18,6 +18,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 import ru.levn.simpleplanner.Common;
+import ru.levn.simpleplanner.MainActivity;
 import ru.levn.simpleplanner.R;
 import ru.levn.simpleplanner.calendar.CalendarProvider;
 import ru.levn.simpleplanner.calendar.Event;
@@ -166,7 +167,6 @@ public class MonthTable {
 
         ViewHolder vh = (ViewHolder)v.getTag();
         vh.number.setText(String.valueOf(cell.getNumber()));
-        vh.pieChart.setEvents(cell.events);
 
         if (cell.isWeekNumber) {
             vh.number.setTextColor(weekColor);
@@ -176,8 +176,11 @@ public class MonthTable {
             v.setBackgroundColor(cell.pressed ? cellPressedBackground : cellReleasedBackground);
         }
 
+        vh.pieChart.setEvents(cell.events);
+
         int widthSpec = View.MeasureSpec.makeMeasureSpec(cellWidth, View.MeasureSpec.EXACTLY);
         int heightSpec = View.MeasureSpec.makeMeasureSpec(cellHeight, View.MeasureSpec.EXACTLY);
+
         v.measure(widthSpec, heightSpec);
         v.layout(0, 0, cellWidth, cellHeight);
 
@@ -194,6 +197,10 @@ public class MonthTable {
         if (touchedCell.first < COLUMNS && touchedCell.second < ROWS &&
                 touchedCell.first >= 0 && touchedCell.second >= 0) {
             cells[touchedCell.first + touchedCell.second * COLUMNS].pressed = true;
+//            Common.sCurrentMode = Common.DAY_MODE;
+//            Common.sSelectedDate.
+//                    setDate(cells[touchedCell.first + touchedCell.second * COLUMNS].representTime);
+//            Common.onUpdate();
             return true;
         }
         return false;
@@ -223,16 +230,11 @@ public class MonthTable {
     public void scrollWeek(int offset) {
         representTime.add(Calendar.WEEK_OF_YEAR, offset);
         representTime.getTimeInMillis();
+        Common.sSelectedDate.setDate(representTime);
+        Common.sUpdateTitle();
         updateCells();
     }
 
-
-
-    private void fillCellWithEvents(DayCell cell) {
-        for (Event event : events) {
-            // TODO
-        }
-    }
 
     static class ViewHolder {
         TextView number;

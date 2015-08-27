@@ -43,11 +43,13 @@ public class Common {
 
     public static boolean sIsDrawerClosed;
 
+    private static Activity mMainActivity;
+
     public static void init(Activity activity) {
         sSelectedDate = new SelectedDate();
-        sEvents = new EventsContainer(sSelectedDate.getDate().getTimeInMillis(), 15);
+        sEvents = new EventsContainer(sSelectedDate.getDate().getTimeInMillis(), 6);
+        mMainActivity = activity;
     }
-
 
     public static void sUpdateTitle() {
         ((TextView)sBtnCurrentDate).setText(sGetCurrentDateAsText(sCurrentMode));
@@ -138,5 +140,13 @@ public class Common {
             return false;
         }
     };
+
+    public interface OnUpdateEventsInterface {
+        public void onUpdate();
+    }
+
+    public static void onUpdate() {
+        ((OnUpdateEventsInterface)mMainActivity).onUpdate();
+    }
 }
 

@@ -50,7 +50,7 @@ public class CalendarProvider {
     private static final String[] projectionEvent = new String[] {
             CalendarContract.Events._ID,            // 0
             CalendarContract.Events.CALENDAR_ID,    // 1
-            CalendarContract.Events.EVENT_COLOR,    // 2
+            CalendarContract.Events.DISPLAY_COLOR,    // 2
             CalendarContract.Events.TITLE,          // 3
             CalendarContract.Events.DESCRIPTION,    // 4
             CalendarContract.Events.DTSTART,        // 5

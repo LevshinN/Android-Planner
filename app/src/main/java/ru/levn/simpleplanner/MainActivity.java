@@ -35,7 +35,7 @@ import ru.levn.simpleplanner.fragment.ScreenWeek;
 
 
 public class MainActivity extends AppCompatActivity
-        implements CreateEventFragment.OnUpdateEventsInterface{
+        implements Common.OnUpdateEventsInterface{
 
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;

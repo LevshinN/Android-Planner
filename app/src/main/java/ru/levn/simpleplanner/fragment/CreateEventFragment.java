@@ -66,11 +66,7 @@ public class CreateEventFragment extends DialogFragment {
     private Event mOriginalEvent;
     private Event mNewEvent;
 
-    private OnUpdateEventsInterface mUpdateEvents;
-
-    public interface OnUpdateEventsInterface {
-        public void onUpdate();
-    }
+    private Common.OnUpdateEventsInterface mUpdateEvents;
 
 
     static CreateEventFragment newInstance(int num, Event event) {
@@ -138,7 +134,7 @@ public class CreateEventFragment extends DialogFragment {
         // This makes sure that the container activity has implemented
         // the callback interface. If not, it throws an exception
         try {
-            mUpdateEvents = (OnUpdateEventsInterface) activity;
+            mUpdateEvents = (Common.OnUpdateEventsInterface) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnHeadlineSelectedListener");

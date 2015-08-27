@@ -88,7 +88,7 @@ public class EventsContainer {
     private void mDeleteEvents (long utcTimeStart, long utcTimeEnd) {
         ArrayList<Event> validEvents = new ArrayList<>();
         for (Event event : mEvents) {
-            if (event.timeStart < utcTimeEnd && event.timeEnd > utcTimeStart) {
+            if (event.timeStart < utcTimeStart || event.timeEnd > utcTimeEnd) {
                 validEvents.add(event);
             }
         }
