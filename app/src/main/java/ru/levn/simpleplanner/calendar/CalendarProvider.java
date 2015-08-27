@@ -32,7 +32,6 @@ import ru.levn.simpleplanner.calendar.syncadapter.SyncUtils;
 
 public class CalendarProvider {
     public static ArrayList<MyCalendar> calendars;
-
     private static Uri calendarsUri;
 
     private static final String[] projectionCalendar = new String[]{
@@ -196,48 +195,12 @@ public class CalendarProvider {
         sSaveDB();
     }
 
-    public static void sInsertColorsToCalendars() {
-        for(MyCalendar calendar : calendars) {
-            for (int color : mColors) {
-                //TODO
-            }
-        }
-    }
-
     public static void changeCalendarSelection(String id, boolean enabled) {
         if (!mSelectedCalendarsIDs.containsKey(id)) {
             System.err.println("ERROR: No such key in mSelectedCalendarsIDs: " + id);
         }
         mSelectedCalendarsIDs.put(id, enabled);
         sSaveDB();
-    }
-
-    public static ArrayList<Event> getDayEvents(long UtcTime) {
-        ArrayList<Event> dayEvents = new ArrayList<>();
-
-        Pair<Long, Long> period = getDayPeriod(UtcTime);
-        ArrayList<Event> events = getAvilableEventsForPeriod(period.first, period.second);
-
-        // Отсеиваем события на весь день, которые из за сдвига часовых поясов попали в промежуток
-
-        // Получаем текущий день месыца
-        Calendar c = new GregorianCalendar();
-        c.setTimeInMillis(UtcTime);
-
-        int selectedDay = c.get(Calendar.DAY_OF_MONTH);
-
-        for (Event event : events) {
-            if (!event.isAllDay) {
-                dayEvents.add(event);
-            } else {
-                c.setTimeInMillis(event.timeStart);
-                int eventDay = c.get(Calendar.DAY_OF_MONTH);
-                if (selectedDay == eventDay) {
-                    dayEvents.add(event);
-                }
-            }
-        }
-        return dayEvents;
     }
 
     private static Event getEventById(String eventID) {
@@ -273,7 +236,7 @@ public class CalendarProvider {
         return null;
     }
 
-    public static ArrayList<Event> getAvilableEventsForPeriod(long UTCStart, long UTCEnd) {
+    protected static ArrayList<Event> getAvilableEventsForPeriod(long UTCStart, long UTCEnd) {
         ArrayList<Event> events = new ArrayList<>();
 
         Cursor c = CalendarContract.Instances.query(mContentResolver, projectionInstance, UTCStart, UTCEnd);
@@ -398,7 +361,7 @@ public class CalendarProvider {
         return dateFormat.format(cal.getTimeInMillis());
     }
 
-    public static Uri asSyncAdapter(Uri uri, String account, String accountType) {
+    private static Uri asSyncAdapter(Uri uri, String account, String accountType) {
         return uri
                 .buildUpon()
                 .appendQueryParameter(android.provider.CalendarContract.CALLER_IS_SYNCADAPTER, "true")

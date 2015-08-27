@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
+import ru.levn.simpleplanner.Common;
 import ru.levn.simpleplanner.R;
 import ru.levn.simpleplanner.calendar.CalendarProvider;
 import ru.levn.simpleplanner.calendar.Event;
@@ -89,7 +90,7 @@ public class MonthTable {
         cal.add(Calendar.MONTH, EVENTS_WINDOW * 2);
         this.timeEnd = cal.getTimeInMillis();
 
-        //this.events = CalendarProvider.getAvilableEventsForPeriod(this.timeStart, this.timeEnd); //TODO
+        this.events = Common.sEvents.get(this.timeStart, this.timeEnd);
     }
 
     public void initializeTable(float measureWidth, float measureHeight){

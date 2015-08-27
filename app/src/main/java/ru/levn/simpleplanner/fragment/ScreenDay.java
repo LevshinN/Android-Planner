@@ -1,27 +1,21 @@
 package ru.levn.simpleplanner.fragment;
 
 
-import android.app.Activity;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 
 import com.antonyt.infiniteviewpager.InfinitePagerAdapter;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 
 import ru.levn.simpleplanner.Common;
-import ru.levn.simpleplanner.MainActivity;
 import ru.levn.simpleplanner.R;
 import ru.levn.simpleplanner.calendar.CalendarProvider;
 

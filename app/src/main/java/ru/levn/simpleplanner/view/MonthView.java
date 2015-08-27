@@ -8,6 +8,8 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.Interpolator;
 import android.widget.OverScroller;
 
 import java.util.ArrayList;
@@ -86,7 +88,7 @@ public class MonthView extends View {
 
     private void init() {
         if (!isInEditMode()) {
-            scroller = new OverScroller(getContext());
+            scroller = new OverScroller(getContext(), new DecelerateInterpolator(10f));
             gestureDetector = new GestureDetector(getContext(), gestureListener);
         }
     }
@@ -109,25 +111,6 @@ public class MonthView extends View {
 
             invalidate();
 
-            return true;
-        }
-
-        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-            int minY;
-            int maxY;
-            int speedY;
-
-            if (velocityY > 0) {
-                minY = yOffset - monthTable.lineSize * 10;
-                maxY = yOffset;
-                speedY = -monthTable.lineSize;
-            } else {
-                minY = yOffset;
-                maxY = yOffset + monthTable.lineSize * 10;
-                speedY = monthTable.lineSize * 3;
-            }
-
-            scroller.fling(0, yOffset, 0, speedY, 0, 0, minY, maxY );
             return true;
         }
 
