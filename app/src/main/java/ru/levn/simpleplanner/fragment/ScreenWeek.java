@@ -98,7 +98,11 @@ public class ScreenWeek extends ModeFragment {
 
     @Override
     public void onUpdate() {
-
+        for (PageWeek page : pages) {
+            if (page.ready) {
+                page.onUpdate();
+            }
+        }
     }
 
     @Override

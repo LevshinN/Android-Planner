@@ -33,6 +33,7 @@ import ru.levn.simpleplanner.calendar.Event;
 public class PageWeek extends ModeFragment {
 
     private ViewGroup mRootView;
+    private CardView[] dayCards;
 
     static final String ARGUMENT_REPRESENT_DATE = "arg_represent_date";
     long representTime;
@@ -99,41 +100,47 @@ public class PageWeek extends ModeFragment {
 
     @Override
     public void onUpdate() {
+        Pair<Long,Long> period = CalendarProvider.getWeekPeriod(representTime);
 
-//        Pair<Long,Long> period = CalendarProvider.getWeekPeriod(representTime);
-//
-//        long start = period.first;
-//        long end = period.second;
-//        long dayDuration = (end - start) / 7;
-//
-//        DateFormatSymbols symbols = DateFormatSymbols.getInstance();
-//        String[] dayNames = symbols.getShortWeekdays();
-//
-//        for (int i = 0; i < 7; ++i) {
-//            View currentCard = mRootView.findViewById(WEEK_IDS[i]);
-//
-//            ((TextView) currentCard.findViewById(R.id.week_card_description)).setText(
-//                    dayNames[dayNamesProjection[i]] + " "
-//                            + CalendarProvider.getDate(start + dayDuration * i));
+        long start = period.first;
+        long end = period.second;
+        long dayDuration = (end - start) / 7;
 
-            //ArrayList<Event> events = Common.sEvents.getDayEvents(start + dayDuration * i );
-            //EventWeekAdapter adapter = new EventWeekAdapter(this.getActivity(), events);
-            //ListView lv = (ListView)currentCard.findViewById(R.id.week_card_list);
-            //lv.setAdapter(adapter);
-            //lv.setOnItemClickListener(mSelectItemListener);
-        //}
+        DateFormatSymbols symbols = DateFormatSymbols.getInstance();
+        String[] dayNames = symbols.getShortWeekdays();
+
+
+        for (int i = 0; i < 7; ++i) {
+            CardView card = dayCards[i];
+            ViewHolder vh = (ViewHolder)card.getTag();
+            TextView tv = vh.header;
+            ListView eventList = vh.events;
+
+            tv.setText(dayNames[dayNamesProjection[i]] + " "
+                    + CalendarProvider.getDate(start + dayDuration * i));
+
+            ArrayList<Event> events = Common.sEvents.getDayEvents(start + dayDuration * i );
+            EventWeekAdapter adapter = new EventWeekAdapter(this.getActivity(), events);
+            eventList.setAdapter(adapter);
+            //TODO переписать на notify data change
+        }
     }
 
     @Override
     public void onBuild() {
 
+        dayCards = new CardView[7];
 
         // Т.к в grid view элементы добавляются наверх, проходимся в обратном порядке
-        for (int i = 6; i != -1; --i) {
-            mRootView.addView(getCard());
+        for (int i = 0; i <7 ; ++i) {
+            dayCards[i] = getCard();
+            mRootView.addView(dayCards[i]);
         }
+        ready = true;
 
-        //onUpdate();
+        if(Common.sIsDrawerClosed) {
+           onUpdate();
+        }
     }
 
     private CardView getCard() {
@@ -171,12 +178,14 @@ public class PageWeek extends ModeFragment {
                 0,
                 1.0f));
 
+        eventList.setOnItemClickListener(mSelectItemListener);
+
         ViewHolder vh = new ViewHolder();
         vh.header = cardHead;
         vh.events = eventList;
 
-        ll.addView(eventList);
         ll.addView(cardHead);
+        ll.addView(eventList);
         cv.addView(ll);
         cv.setTag(vh);
 
