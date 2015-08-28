@@ -32,32 +32,10 @@ public class EventsContainer {
     }
 
     public void update(long utcRepresentTime, int weekWindow) {
+
         Pair<Long, Long> newBorders = mGetBorders(utcRepresentTime, weekWindow);
 
-        // Если покрываемые временные отрезки для событий не пересекаются
-        if ( newBorders.first >= mUtcTimeEnd || newBorders.second <= mUtcTimeStart ) {
-            mEvents = CalendarProvider.getAvilableEventsForPeriod(mUtcTimeStart, mUtcTimeEnd);
-        } else {
-
-            // Обрезаем излишки
-
-            if (newBorders.second < mUtcTimeEnd) {
-                mDeleteEvents(newBorders.second, mUtcTimeEnd);
-            }
-
-            if (newBorders.first > mUtcTimeStart) {
-                mDeleteEvents(newBorders.first, mUtcTimeStart);
-            }
-
-            // Добавляем хвостики
-            if (newBorders.first < mUtcTimeStart) {
-                mEvents.addAll(CalendarProvider.getAvilableEventsForPeriod(newBorders.first, mUtcTimeStart));
-            }
-
-            if (newBorders.second > mUtcTimeEnd) {
-                mEvents.addAll(CalendarProvider.getAvilableEventsForPeriod(mUtcTimeEnd, newBorders.second));
-            }
-        }
+        mEvents = CalendarProvider.getAvilableEventsForPeriod(newBorders.first, newBorders.second);
 
         mUtcTimeStart = newBorders.first;
         mUtcTimeEnd = newBorders.second;
@@ -83,16 +61,6 @@ public class EventsContainer {
         long utcTimeEnd = calendar.getTimeInMillis();
 
         return new Pair<>(utcTimeStart, utcTimeEnd);
-    }
-
-    private void mDeleteEvents (long utcTimeStart, long utcTimeEnd) {
-        ArrayList<Event> validEvents = new ArrayList<>();
-        for (Event event : mEvents) {
-            if (event.timeStart < utcTimeStart || event.timeEnd > utcTimeEnd) {
-                validEvents.add(event);
-            }
-        }
-        mEvents = validEvents;
     }
 
     public ArrayList<Event> get(long start, long end) {
