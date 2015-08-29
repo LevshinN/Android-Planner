@@ -118,7 +118,7 @@ class EventDayAdapter extends EventAdapter {
         TextView location = (TextView)v.findViewById(R.id.event_location);
 
 
-        if ( event.title != null ) {
+        if ( event.title != null && event.title.length() != 0 ) {
             title.setText(cutString(event.title));
             String letter = String.valueOf(event.title.toUpperCase().charAt(0));
             firstLetter.setText(letter);
@@ -146,7 +146,7 @@ class EventDayAdapter extends EventAdapter {
         // которые начинаются раньше текущего дня (заканчиваются позже
         // текущего дня), отображались, писалась дата начала и конца
 
-        Pair<Long,Long> dayPeriod = CalendarProvider.getDayPeriod(mRepresentTime);
+        Pair<Long,Long> dayPeriod = CalendarProvider.getDayPeriod(mRepresentTime, false);
 
         if ( event.isAllDay || event.timeStart == 0 ) {
             v.setLayoutParams(new LinearLayout.LayoutParams(0,0));

@@ -75,8 +75,8 @@ public class EventsContainer {
         for (Event event : mEvents) {
             if (event.timeStart < end && event.timeEnd > start) {
                 Event e = new Event(event);
-                if (event.timeStart < start) e.timeStart = start;
-                if (event.timeEnd > end) e.timeEnd = end;
+                //if (event.timeStart < start) e.timeStart = start;
+                //if (event.timeEnd > end) e.timeEnd = end;
 
                 if (e.timeStart <= start && e.timeEnd >= end) {
                     e.isAllDay = true;
@@ -89,7 +89,8 @@ public class EventsContainer {
     }
 
     public ArrayList<Event> getDayEvents(long time) {
-        Pair<Long, Long> borders = CalendarProvider.getDayPeriod(time);
+        Pair<Long, Long> borders = CalendarProvider.getDayPeriod(time, false);
+        Pair<Long, Long> utcBorders = CalendarProvider.getDayPeriod(time,true);
 
         ArrayList<Event> allEvents = get(borders.first, borders.second);
 
@@ -98,17 +99,10 @@ public class EventsContainer {
         // Отбросим такие события.
 
         ArrayList<Event> clearEvents = new ArrayList<>();
-        Calendar c = new GregorianCalendar();
-        c.setTimeInMillis(time);
-        int currentDayNumber = c.get(Calendar.DAY_OF_MONTH);
 
         for (Event e : allEvents) {
             if (e.isAllDay) {
-
-                // У событий на весь день всегда одна таймзона - UTC
-                c.setTimeInMillis(e.timeStart);
-                c.setTimeZone(TimeZone.getTimeZone("UTC"));
-                if (c.get(Calendar.DAY_OF_MONTH) == currentDayNumber) {
+                if (e.timeStart < utcBorders.second && e.timeEnd > utcBorders.first) {
                     clearEvents.add(e);
                 }
             } else {

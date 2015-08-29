@@ -13,9 +13,11 @@ import android.view.Window;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
@@ -41,7 +43,7 @@ import ru.levn.simpleplanner.calendar.MyCalendar;
  * Дата создания: 04.08.2015.
  */
 
-public class CreateEventFragment extends DialogFragment {
+public class CreateEventFragment extends DialogFragment implements CompoundButton.OnCheckedChangeListener {
 
     private static final int EDIT_START_DATE = R.id.edit_event_start_text;
     private static final int EDIT_END_DATE = R.id.edit_event_end_text;
@@ -95,7 +97,13 @@ public class CreateEventFragment extends DialogFragment {
         mRootView = inflater.inflate(R.layout.edit_create_event, container, false);
 
         if (isEdit) mNewEvent = new Event(mOriginalEvent);
-        else mNewEvent = new Event();
+        else {
+            mNewEvent = new Event();
+            mNewEvent.timeStart = Common.sSelectedDate.getDate().getTimeInMillis();
+            Calendar c = (Calendar)Common.sSelectedDate.getDate().clone();
+            c.add(Calendar.HOUR_OF_DAY, 1);
+            mNewEvent.timeEnd = c.getTimeInMillis();
+        }
 
         Spinner colorSelector = (Spinner)mRootView.findViewById(R.id.edit_event_color);
 
@@ -120,9 +128,13 @@ public class CreateEventFragment extends DialogFragment {
         (mRootView.findViewById(R.id.edit_event_cancel)).setOnTouchListener(Common.onTouch);
         (mRootView.findViewById(R.id.edit_event_ok)).setOnTouchListener(Common.onTouch);
 
-        if (isEdit) {
-            mUpdateDialog();
+        Switch s = (Switch) mRootView.findViewById(R.id.edit_event_all_day_switcher);
+        if (s != null) {
+            s.setOnCheckedChangeListener(this);
         }
+
+
+        mUpdateDialog();
 
         return mRootView;
     }
@@ -146,28 +158,27 @@ public class CreateEventFragment extends DialogFragment {
     {
         super.onResume();
         Window window = getDialog().getWindow();
-        window.setLayout(Common.sScreenWidth * 4 / 5, LinearLayout.LayoutParams.WRAP_CONTENT);
+        window.setLayout(Common.sScreenWidth, LinearLayout.LayoutParams.WRAP_CONTENT);
         window.setGravity(Gravity.CENTER);
     }
 
     private void mUpdateDialog() {
-        ((EditText)mRootView.findViewById(R.id.edit_event_title)).setText(mOriginalEvent.title);
-        ((EditText)mRootView.findViewById(R.id.edit_event_description))
-                .setText(mOriginalEvent.description);
-        ((EditText)mRootView.findViewById(R.id.edit_event_location_text))
-                .setText(mOriginalEvent.location);
+        if (isEdit) {
+            ((EditText)mRootView.findViewById(R.id.edit_event_title)).setText(mOriginalEvent.title);
+            ((EditText)mRootView.findViewById(R.id.edit_event_description))
+                    .setText(mOriginalEvent.description);
+            ((EditText)mRootView.findViewById(R.id.edit_event_location_text))
+                    .setText(mOriginalEvent.location);
 
-        mRootView.findViewById(R.id.edit_event_title_area).setBackgroundColor( 0xff000000 + mOriginalEvent.color );
+            mRootView.findViewById(R.id.edit_event_title_area).setBackgroundColor(0xff000000 + mOriginalEvent.color);
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm, dd MMMM yyyy",
-                Locale.getDefault());
-        ((TextView)mRootView.findViewById(R.id.edit_event_start_text))
-                .setText(dateFormat.format(mOriginalEvent.timeStart));
-        ((TextView)mRootView.findViewById(R.id.edit_event_end_text))
-                .setText(dateFormat.format(mOriginalEvent.timeEnd));
+            mRootView.findViewById(R.id.edit_event_calendar_line)
+                    .setLayoutParams(new LinearLayout.LayoutParams(0, 0));
 
-        mRootView.findViewById(R.id.edit_event_calendar_line)
-                .setLayoutParams(new LinearLayout.LayoutParams(0,0));
+            ((Switch)mRootView.findViewById(R.id.edit_event_all_day_switcher)).setChecked(mNewEvent.isAllDay);
+        }
+
+        mUpdateTimeTexts();
     }
 
     Spinner.OnItemSelectedListener colorSelectorListener = new AdapterView.OnItemSelectedListener() {
@@ -279,26 +290,43 @@ public class CreateEventFragment extends DialogFragment {
                 mSelectedHour,
                 mSelectedMinute);
 
-        int editTextID = -1;
-
         switch (mode) {
             case EDIT_START_DATE:
                 mNewEvent.timeStart = calendar.getTimeInMillis();
-                editTextID = R.id.edit_event_start_text;
+
+                if (mNewEvent.timeStart >= mNewEvent.timeEnd) {
+                    calendar.add(Calendar.HOUR_OF_DAY, 1);
+                    mNewEvent.timeEnd = calendar.getTimeInMillis();
+                }
                 break;
             case EDIT_END_DATE:
                 mNewEvent.timeEnd = calendar.getTimeInMillis();
-                editTextID = R.id.edit_event_end_text;
+
+                if (mNewEvent.timeEnd <= mNewEvent.timeStart) {
+                    calendar.add(Calendar.HOUR_OF_DAY, -1);
+                    mNewEvent.timeStart = calendar.getTimeInMillis();
+                }
                 break;
             default:
                 break;
         }
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm, dd MMMM yyyy", Locale.getDefault());
-        String timeText = dateFormat.format(calendar.getTimeInMillis());
-        ((TextView)mRootView.findViewById(editTextID)).setText(timeText);
+        mUpdateTimeTexts();
+    }
 
+    private void mUpdateTimeTexts() {
+        SimpleDateFormat dateFormat;
 
+        if (mNewEvent.isAllDay) {
+            dateFormat = new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault());
+        } else {
+            dateFormat = new SimpleDateFormat("HH:mm, dd MMMM yyyy", Locale.getDefault());
+        }
+
+        TextView start = (TextView) mRootView.findViewById(R.id.edit_event_start_text);
+        TextView end = (TextView) mRootView.findViewById(R.id.edit_event_end_text);
+        start.setText(dateFormat.format(mNewEvent.timeStart));
+        end.setText(dateFormat.format(mNewEvent.timeEnd));
     }
 
 
@@ -317,9 +345,21 @@ public class CreateEventFragment extends DialogFragment {
             CalendarProvider.saveNewEvent(mNewEvent);
         }
 
+        Common.sEvents.update();
         mUpdateEvents.onUpdate();
         dismiss();
 
+    }
+
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        int id = buttonView.getId();
+
+        switch(id) {
+            case R.id.edit_event_all_day_switcher:
+                mNewEvent.isAllDay = isChecked;
+                mUpdateTimeTexts();
+        }
     }
 }
 

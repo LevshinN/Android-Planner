@@ -272,7 +272,7 @@ public class CalendarProvider {
         return events;
     }
 
-    public static Pair<Long,Long> getDayPeriod(long UtcTime) {
+    public static Pair<Long,Long> getDayPeriod(long UtcTime, boolean UtcTimezone) {
 
         Calendar cal = Calendar.getInstance();
 
@@ -282,6 +282,8 @@ public class CalendarProvider {
         cal.set(Calendar.MINUTE, 0);
         cal.set(Calendar.SECOND, 0);
         cal.set(Calendar.MILLISECOND, 0);
+
+        if (UtcTimezone) cal.setTimeZone(TimeZone.getTimeZone("UTC"));
 
         long start = cal.getTimeInMillis();
 
@@ -383,7 +385,30 @@ public class CalendarProvider {
         values.put(CalendarContract.Events.EVENT_LOCATION, event.location);
         values.put(CalendarContract.Events.EVENT_COLOR, event.color);
         values.put(CalendarContract.Events.CALENDAR_ID, event.calendarId);
-        values.put(CalendarContract.Events.EVENT_TIMEZONE, Calendar.getInstance().getTimeZone().getDisplayName()); // TODO Добавить таймзоны
+        values.put(CalendarContract.Events.ALL_DAY, event.isAllDay);
+
+        if (event.isAllDay) {
+            Calendar c = new GregorianCalendar();
+            c.setTimeInMillis(event.timeStart);
+            c.set(Calendar.HOUR_OF_DAY, 0);
+            c.set(Calendar.MINUTE, 0);
+            c.set(Calendar.SECOND, 0);
+            c.set(Calendar.MILLISECOND, 0);
+            values.put(CalendarContract.Events.DTSTART, c.getTimeInMillis());
+
+            c.setTimeInMillis(event.timeEnd);
+            c.set(Calendar.HOUR_OF_DAY, 0);
+            c.set(Calendar.MINUTE, 0);
+            c.set(Calendar.SECOND, 0);
+            c.set(Calendar.MILLISECOND, 0);
+            values.put(CalendarContract.Events.DTEND, c.getTimeInMillis());
+
+            values.put(CalendarContract.Events.EVENT_TIMEZONE, "UTC");
+        } else {
+            values.put(CalendarContract.Events.DTSTART, event.timeStart);
+            values.put(CalendarContract.Events.DTEND, event.timeEnd);
+            values.put(CalendarContract.Events.EVENT_TIMEZONE, Calendar.getInstance().getTimeZone().getDisplayName()); // TODO Добавить таймзоны
+        }
 
         if (event.originalId != null) {
             values.put(CalendarContract.Events.ORIGINAL_ID, event.originalId);
@@ -404,14 +429,35 @@ public class CalendarProvider {
 
             ContentResolver cr = mContentResolver;
             ContentValues values = new ContentValues();
-            values.put(CalendarContract.Events.DTSTART, newEvent.timeStart);
-            values.put(CalendarContract.Events.DTEND, newEvent.timeEnd);
             values.put(CalendarContract.Events.TITLE, newEvent.title);
             values.put(CalendarContract.Events.DESCRIPTION, newEvent.description);
             values.put(CalendarContract.Events.EVENT_LOCATION, newEvent.location);
             values.put(CalendarContract.Events.EVENT_COLOR, newEvent.color);
             values.put(CalendarContract.Events.CALENDAR_ID, newEvent.calendarId);
-            values.put(CalendarContract.Events.EVENT_TIMEZONE, Calendar.getInstance().getTimeZone().getDisplayName()); // TODO Добавить таймзоны
+            values.put(CalendarContract.Events.ALL_DAY, newEvent.isAllDay);
+
+            if (newEvent.isAllDay) {
+                Calendar c = new GregorianCalendar();
+                c.setTimeInMillis(newEvent.timeStart);
+                c.set(Calendar.HOUR_OF_DAY, 0);
+                c.set(Calendar.MINUTE, 0);
+                c.set(Calendar.SECOND, 0);
+                c.set(Calendar.MILLISECOND, 0);
+                values.put(CalendarContract.Events.DTSTART, c.getTimeInMillis());
+
+                c.setTimeInMillis(newEvent.timeEnd);
+                c.set(Calendar.HOUR_OF_DAY, 0);
+                c.set(Calendar.MINUTE, 0);
+                c.set(Calendar.SECOND, 0);
+                c.set(Calendar.MILLISECOND, 0);
+                values.put(CalendarContract.Events.DTEND, c.getTimeInMillis());
+
+                values.put(CalendarContract.Events.EVENT_TIMEZONE, "UTC");
+            } else {
+                values.put(CalendarContract.Events.DTSTART, newEvent.timeStart);
+                values.put(CalendarContract.Events.DTEND, newEvent.timeEnd);
+                values.put(CalendarContract.Events.EVENT_TIMEZONE, Calendar.getInstance().getTimeZone().getDisplayName()); // TODO Добавить таймзоны
+            }
 
             Uri syncUri = CalendarProvider.asSyncAdapter(CalendarContract.Events.CONTENT_URI, GenericAccountService.ACCOUNT_NAME, SyncUtils.ACCOUNT_TYPE);
             Uri updateUri = ContentUris.withAppendedId(syncUri, Integer.valueOf(newEvent.id));

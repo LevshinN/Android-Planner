@@ -106,6 +106,8 @@ public class EventInfo extends DialogFragment implements View.OnClickListener {
         TextView time = (TextView)v.findViewById(R.id.event_info_time);
         if (mEvent.isAllDay) {
             time.setText(CalendarProvider.getDate(mEvent.timeStart)
+                    + ",\n"
+                    + CalendarProvider.getDate(mEvent.timeEnd)
                     + ", "
                     + getResources().getString(R.string.all_day));
         } else {
