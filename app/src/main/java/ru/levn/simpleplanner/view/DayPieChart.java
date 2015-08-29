@@ -75,7 +75,7 @@ public class DayPieChart extends View {
                 centerY + radius);
 
 
-        delimer = 5;
+        delimer = 6;
 
         if (angle == 360) {
             delimer = 0;
@@ -85,7 +85,7 @@ public class DayPieChart extends View {
         for (int i = 0; i < event_colors.length; i++) {
 
             paint.setColor(0xff000000 + event_colors[i]);
-            canvas.drawArc(rectF, temp - 90, angle - delimer, true, paint);
+            canvas.drawArc(rectF, temp - 90 + delimer / 2, angle - delimer / 2 , true, paint);
             temp += angle;
         }
 
@@ -97,8 +97,6 @@ public class DayPieChart extends View {
 
         paint.setColor(0xffffffff);
         canvas.drawArc(rectF, 0, 360, true, paint);
-
-
 
     }
 
