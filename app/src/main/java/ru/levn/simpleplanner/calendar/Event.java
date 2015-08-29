@@ -21,6 +21,7 @@ public class Event {
     public long timeEnd;    // Во сколько заканчивается событие по факту
     public long duration;
     public boolean isAllDay;
+    public String timeZone;
     public String location;
     public String rrule;
     public String rdate;
@@ -42,6 +43,7 @@ public class Event {
 
         isAllDay = e.isAllDay;
 
+        timeZone = e.timeZone;
 
         timeStart = e.timeStart;
         timeEnd = e.timeEnd;

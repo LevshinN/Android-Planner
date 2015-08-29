@@ -4,7 +4,9 @@ import android.util.Pair;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.Locale;
+import java.util.TimeZone;
 
 /**
  * Автор: Левшин Николай, 707 группа.
@@ -88,6 +90,31 @@ public class EventsContainer {
 
     public ArrayList<Event> getDayEvents(long time) {
         Pair<Long, Long> borders = CalendarProvider.getDayPeriod(time);
-        return get(borders.first, borders.second);
+
+        ArrayList<Event> allEvents = get(borders.first, borders.second);
+
+        // Среди полученнх событий могут встречаться те, которые на весь
+        // день и, из-за сдвига временных зон, захватывают 2 дня в другой временной зоне.
+        // Отбросим такие события.
+
+        ArrayList<Event> clearEvents = new ArrayList<>();
+        Calendar c = new GregorianCalendar();
+        c.setTimeInMillis(time);
+        int currentDayNumber = c.get(Calendar.DAY_OF_MONTH);
+
+        for (Event e : allEvents) {
+            if (e.isAllDay) {
+
+                // У событий на весь день всегда одна таймзона - UTC
+                c.setTimeInMillis(e.timeStart);
+                c.setTimeZone(TimeZone.getTimeZone("UTC"));
+                if (c.get(Calendar.DAY_OF_MONTH) == currentDayNumber) {
+                    clearEvents.add(e);
+                }
+            } else {
+                clearEvents.add(e);
+            }
+        }
+        return clearEvents;
     }
 }

@@ -50,20 +50,21 @@ public class CalendarProvider {
     private static final String[] projectionEvent = new String[] {
             CalendarContract.Events._ID,            // 0
             CalendarContract.Events.CALENDAR_ID,    // 1
-            CalendarContract.Events.DISPLAY_COLOR,    // 2
+            CalendarContract.Events.DISPLAY_COLOR,  // 2
             CalendarContract.Events.TITLE,          // 3
             CalendarContract.Events.DESCRIPTION,    // 4
             CalendarContract.Events.DTSTART,        // 5
             CalendarContract.Events.DTEND,          // 6
             CalendarContract.Events.DURATION,       // 7
             CalendarContract.Events.ALL_DAY,        // 8
-            CalendarContract.Events.EVENT_LOCATION, // 9
-            CalendarContract.Events.ORIGINAL_ID,    // 10
-            CalendarContract.Events.RRULE,          // 11
-            CalendarContract.Events.RDATE,          // 12
-            CalendarContract.Events.EXRULE,         // 13
-            CalendarContract.Events.EXDATE,         // 14
-            CalendarContract.Events.ORIGINAL_INSTANCE_TIME  // 15
+            CalendarContract.Events.EVENT_TIMEZONE, // 9
+            CalendarContract.Events.EVENT_LOCATION, // 10
+            CalendarContract.Events.ORIGINAL_ID,    // 11
+            CalendarContract.Events.RRULE,          // 12
+            CalendarContract.Events.RDATE,          // 13
+            CalendarContract.Events.EXRULE,         // 14
+            CalendarContract.Events.EXDATE,         // 15
+            CalendarContract.Events.ORIGINAL_INSTANCE_TIME  // 16
     };
 
     // The indices for the projection array above.
@@ -76,13 +77,14 @@ public class CalendarProvider {
     private static final int PROJECTION_EVENT_DTEND = 6;
     private static final int PROJECTION_EVENT_DURATION = 7;
     private static final int PROJECTION_EVENT_ALL_DAY = 8;
-    private static final int PROJECTION_EVENT_LOCATION = 9;
-    private static final int PROJECTION_EVENT_ORIGINAL_ID = 10;
-    private static final int PROJECTION_EVENT_RRULE = 11;
-    private static final int PROJECTION_EVENT_RDATE = 12;
-    private static final int PROJECTION_EVENT_EXRULE = 13;
-    private static final int PROJECTION_EVENT_EXDATE = 14;
-    private static final int PROJECTION_EVENT_INSTANCE_TIME = 15;
+    private static final int PROJECTION_EVENT_TIME_ZONE = 9;
+    private static final int PROJECTION_EVENT_LOCATION = 10;
+    private static final int PROJECTION_EVENT_ORIGINAL_ID = 11;
+    private static final int PROJECTION_EVENT_RRULE = 12;
+    private static final int PROJECTION_EVENT_RDATE = 13;
+    private static final int PROJECTION_EVENT_EXRULE = 14;
+    private static final int PROJECTION_EVENT_EXDATE = 15;
+    private static final int PROJECTION_EVENT_INSTANCE_TIME = 16;
 
     private static final String[] projectionInstance = new String[] {
             CalendarContract.Instances.EVENT_ID,    // 0
@@ -220,6 +222,7 @@ public class CalendarProvider {
             event.timeOriginalEnd = cEvent.getLong(PROJECTION_EVENT_DTEND);
             event.duration = cEvent.getLong(PROJECTION_EVENT_DURATION);
             event.isAllDay = cEvent.getLong(PROJECTION_EVENT_ALL_DAY) > 0;
+            event.timeZone = cEvent.getString(PROJECTION_EVENT_TIME_ZONE);
             event.location = cEvent.getString(PROJECTION_EVENT_LOCATION);
             event.originalId = cEvent.getString(PROJECTION_EVENT_ORIGINAL_ID);
             event.rrule = cEvent.getString(PROJECTION_EVENT_RRULE);
