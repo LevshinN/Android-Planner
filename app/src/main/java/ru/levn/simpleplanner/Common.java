@@ -52,7 +52,8 @@ public class Common {
     }
 
     public static void sUpdateTitle() {
-        ((TextView)sBtnCurrentDate).setText(sGetCurrentDateAsText(sCurrentMode));
+        ((TextView)sBtnCurrentDate.findViewById(R.id.txt_current_date))
+                .setText(sGetCurrentDateAsText(sCurrentMode));
     }
 
     public static String sGetCurrentDateAsText(int mode) {
@@ -76,7 +77,7 @@ public class Common {
                 int month = c.get(Calendar.MONTH);
                 int year = c.get(Calendar.YEAR);
 
-                String startWeek =  "" + day + " " + new DateFormatSymbols().getShortMonths()[month % 12] + " " + year;
+                String startWeek =  "" + day + " " + new DateFormatSymbols().getShortMonths()[month % 12];
 
                 c.add(Calendar.WEEK_OF_YEAR, 1);
 
@@ -84,7 +85,7 @@ public class Common {
                 month = c.get(Calendar.MONTH);
                 year = c.get(Calendar.YEAR);
 
-                String endWeek = "" + day + " " + new DateFormatSymbols().getShortMonths()[month % 12] + " " + year;
+                String endWeek = "" + day + " " + new DateFormatSymbols().getShortMonths()[month % 12];
 
                 return startWeek + " - " + endWeek;
 

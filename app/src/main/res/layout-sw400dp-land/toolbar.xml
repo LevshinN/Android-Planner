@@ -40,6 +40,50 @@
 
         </RelativeLayout>
 
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:paddingRight="16dp"
+            android:paddingLeft="16dp"
+            android:id="@+id/btn_day_mode">
+
+            <TextView
+                style="@style/ButtonToolbarTheme"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:text="@string/mode_day" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/btn_week_mode"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:paddingRight="16dp"
+            android:paddingLeft="16dp">
+
+            <TextView
+                style="@style/ButtonToolbarTheme"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:text="@string/mode_week" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:paddingRight="16dp"
+            android:paddingLeft="16dp"
+            android:id="@+id/btn_month_mode">
+
+            <TextView
+                style="@style/ButtonToolbarTheme"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:text="@string/mode_month" />
+
+        </RelativeLayout>
 
         <RelativeLayout
             android:id="@+id/btn_add"
@@ -51,8 +95,8 @@
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
+                android:layout_marginLeft="64dp"
+                android:layout_marginRight="64dp"
                 android:background="@drawable/ic_add_black_24dp"/>
 
         </RelativeLayout>
@@ -67,11 +111,13 @@
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
+                android:layout_marginLeft="64dp"
+                android:layout_marginRight="64dp"
                 android:background="@drawable/ic_today_black_24dp"/>
         </RelativeLayout>
 
     </LinearLayout>
+
+
 
 </android.support.v7.widget.Toolbar>

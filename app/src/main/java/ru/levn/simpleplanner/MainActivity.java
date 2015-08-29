@@ -209,7 +209,7 @@ public class MainActivity extends AppCompatActivity
             mCurrentMode = pressedButton;
         }
 
-        ((TextView)findViewById(R.id.btn_current_date)).setText(Common.sGetCurrentDateAsText(Common.sCurrentMode));
+        Common.sUpdateTitle();
     }
 
     /**
