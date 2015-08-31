@@ -16,11 +16,14 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.text.ParseException;
+
 import ru.levn.simpleplanner.Common;
 import ru.levn.simpleplanner.R;
 import ru.levn.simpleplanner.calendar.CalendarProvider;
 import ru.levn.simpleplanner.calendar.Event;
 import ru.levn.simpleplanner.calendar.MyCalendar;
+import ru.levn.simpleplanner.calendar.RRule;
 
 /**
  * Автор: Левшин Николай, 707 группа.
@@ -97,6 +100,7 @@ public class EventInfo extends DialogFragment implements View.OnClickListener {
 
     private void mEditBody(View v) {
         mEditTime(v);
+        mEditRepeatRule(v);
         mEditLocation(v.findViewById(R.id.event_info_location_line));
         mEditDescription(v.findViewById(R.id.event_info_description_line));
         mEditCalendar(v.findViewById(R.id.event_info_calendar_line));
@@ -125,6 +129,27 @@ public class EventInfo extends DialogFragment implements View.OnClickListener {
 
             time.setText(timeDescription);
         }
+    }
+
+    private void mEditRepeatRule( View v ) {
+        if (mEvent.rrule != null) {
+            String ruleDescription;
+
+            RRule rRule = new RRule();
+            try {
+                rRule.parse(mEvent.rrule);
+                ruleDescription = rRule.getDescription();
+                ((TextView)v.findViewById(R.id.event_info_repeat)).setText(ruleDescription);
+
+            } catch (ParseException exception) {
+                exception.printStackTrace();
+            }
+
+        } else {
+            v.findViewById(R.id.event_info_repeat_line)
+                    .setLayoutParams(new LinearLayout.LayoutParams(0, 0));
+        }
+
     }
 
     private void mEditLocation(View v){

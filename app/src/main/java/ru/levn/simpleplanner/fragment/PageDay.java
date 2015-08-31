@@ -25,6 +25,8 @@ import ru.levn.simpleplanner.calendar.Event;
 /**
  * Автор: Левшин Николай, 707 группа.
  * Дата создания: 14.08.2015.
+ *
+ * Фрагмент, соответствующий одной странице ViewFlipper`а
  */
 public class PageDay extends Fragment {
 
