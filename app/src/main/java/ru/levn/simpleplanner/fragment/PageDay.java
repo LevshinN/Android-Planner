@@ -62,7 +62,6 @@ public class PageDay extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        //mRootView = inflater.inflate(R.layout.day_page, container, false);
         View mRootView = inflater.inflate(R.layout.day_page, container, false);
 
         ArrayList<Event> mEvents = Common.sEvents.getDayEvents(representTime);
