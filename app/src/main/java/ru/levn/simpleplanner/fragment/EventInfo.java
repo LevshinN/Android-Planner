@@ -137,8 +137,15 @@ public class EventInfo extends DialogFragment implements View.OnClickListener {
 
             RRule rRule = new RRule();
             try {
+                rRule.setStart(mEvent.timeStart);
                 rRule.parse(mEvent.rrule);
-                ruleDescription = rRule.getDescription();
+                ruleDescription = rRule.getDescription() + "\n" +
+                        "---------------------------------" + "\n" +
+                        mEvent.rrule + '\n' +
+                        mEvent.rdate + '\n' +
+                        mEvent.exrule + '\n' +
+                        mEvent.exdate;
+
                 ((TextView)v.findViewById(R.id.event_info_repeat)).setText(ruleDescription);
 
             } catch (ParseException exception) {

@@ -163,6 +163,8 @@ public class PageWeek extends ModeFragment {
         cv.setLayoutParams(new LinearLayout.LayoutParams(cardWidth, cardHeight));
         cv.setCardElevation(2 * Common.sScreenDensity);
         cv.setRadius(2 * Common.sScreenDensity);
+        cv.setUseCompatPadding(true);
+
 
         LinearLayout ll = new LinearLayout(getActivity());
         ll.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
