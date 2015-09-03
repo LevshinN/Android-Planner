@@ -9,9 +9,11 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.view.Window;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -37,6 +39,7 @@ import ru.levn.simpleplanner.adapter.ColorListAdapter;
 import ru.levn.simpleplanner.calendar.CalendarProvider;
 import ru.levn.simpleplanner.calendar.Event;
 import ru.levn.simpleplanner.calendar.MyCalendar;
+import ru.levn.simpleplanner.calendar.RRule;
 
 /**
  * Автор: Левшин Николай, 707 группа.
@@ -54,10 +57,11 @@ public class CreateEventFragment extends DialogFragment implements CompoundButto
 
     private boolean isEdit;
     private boolean isFirstColorSelect = true;
+    private boolean isRepeatModeSelectorClosed = true;
 
 
     private View mRootView;
-    private int mDateOnEdit;
+    private int mButtonId;
 
     private int mSelectedYear;
     private int mSelectedMonth;
@@ -65,10 +69,15 @@ public class CreateEventFragment extends DialogFragment implements CompoundButto
     private int mSelectedHour;
     private int mSelectedMinute;
 
+    private RRule mRecRule;
+
     private Event mOriginalEvent;
     private Event mNewEvent;
 
     private Common.OnUpdateEventsInterface mUpdateEvents;
+
+    private View mModeSelector;
+    private ViewGroup mModeLine;
 
 
     static CreateEventFragment newInstance(int num, Event event) {
@@ -113,17 +122,23 @@ public class CreateEventFragment extends DialogFragment implements CompoundButto
         ColorListAdapter colorAdapter = new ColorListAdapter(getActivity(), colors, colorsNames );
         colorSelector.setAdapter(colorAdapter);
         colorSelector.setOnItemSelectedListener(colorSelectorListener);
-        colorSelector.setPrompt("Color...");
+
 
         CalendarSpinnerAdapter calendarsListAdapter = new CalendarSpinnerAdapter(this.getActivity(),CalendarProvider.calendars);
         Spinner calendarSelector = (Spinner)mRootView.findViewById(R.id.edie_event_calendar);
         calendarSelector.setAdapter(calendarsListAdapter);
         calendarSelector.setOnItemSelectedListener(calendarSelectorListener);
 
+        (mRootView.findViewById(R.id.edit_event_repeat_mode_button)).setOnClickListener(buttonListener);
         (mRootView.findViewById(R.id.edit_event_start_text)).setOnClickListener(buttonListener);
         (mRootView.findViewById(R.id.edit_event_end_text)).setOnClickListener(buttonListener);
         (mRootView.findViewById(R.id.edit_event_cancel)).setOnClickListener(buttonListener);
         (mRootView.findViewById(R.id.edit_event_ok)).setOnClickListener(buttonListener);
+
+        mRootView.findViewById(R.id.edit_event_repeat_mode_year).setOnClickListener(buttonListener);
+        mRootView.findViewById(R.id.edit_event_repeat_mode_month).setOnClickListener(buttonListener);
+        mRootView.findViewById(R.id.edit_event_repeat_mode_week).setOnClickListener(buttonListener);
+        mRootView.findViewById(R.id.edit_event_repeat_mode_day).setOnClickListener(buttonListener);
 
         (mRootView.findViewById(R.id.edit_event_cancel)).setOnTouchListener(Common.onTouch);
         (mRootView.findViewById(R.id.edit_event_ok)).setOnTouchListener(Common.onTouch);
@@ -133,6 +148,10 @@ public class CreateEventFragment extends DialogFragment implements CompoundButto
             s.setOnCheckedChangeListener(this);
         }
 
+        mModeSelector = mRootView.findViewById(R.id.edit_event_repeat_mode_selector);
+        mModeLine = (ViewGroup)mModeSelector.getParent();
+        mModeLine.removeView(mModeSelector);
+        isRepeatModeSelectorClosed = true;
 
         mUpdateDialog();
 
@@ -213,9 +232,12 @@ public class CreateEventFragment extends DialogFragment implements CompoundButto
     Button.OnClickListener buttonListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            mDateOnEdit = v.getId();
+            mButtonId = v.getId();
 
-            switch (mDateOnEdit) {
+            switch (mButtonId) {
+                case R.id.edit_event_repeat_mode_button:
+                    mOnEditRepeatModeSelector();
+                    break;
                 case R.id.edit_event_start_text:
                     mShowDatePicker(DIALOG_DATE);
                     break;
@@ -228,6 +250,12 @@ public class CreateEventFragment extends DialogFragment implements CompoundButto
                 case R.id.edit_event_cancel:
                     dismiss();
                     break;
+                case R.id.edit_event_repeat_mode_year:
+                case R.id.edit_event_repeat_mode_month:
+                case R.id.edit_event_repeat_mode_week:
+                case R.id.edit_event_repeat_mode_day:
+                    mOnCreateRRule(mButtonId);
+
                 default:
                     break;
             }
@@ -279,7 +307,7 @@ public class CreateEventFragment extends DialogFragment implements CompoundButto
             mSelectedHour = hourOfDay;
             mSelectedMinute = minute;
 
-            mUpdateStartOrEndTime(mDateOnEdit);
+            mUpdateStartOrEndTime(mButtonId);
         }
     };
 
@@ -349,6 +377,46 @@ public class CreateEventFragment extends DialogFragment implements CompoundButto
         mUpdateEvents.onUpdate();
         dismiss();
 
+    }
+
+    private void mOnEditRepeatModeSelector() {
+        if (isRepeatModeSelectorClosed) {
+            mModeLine.addView(mModeSelector, 2);
+        } else {
+            mModeLine.removeView(mModeSelector);
+        }
+        isRepeatModeSelectorClosed = !isRepeatModeSelectorClosed;
+    }
+
+    private void mOnCreateRRule(int modeId) {
+        mRecRule = new RRule();
+        String freqRule;
+        String buttonTextEnding;
+        switch (modeId) {
+            case R.id.edit_event_repeat_mode_year:
+                freqRule = "YEARLY";
+                buttonTextEnding = getResources().getString(R.string.mode_year).toLowerCase();
+                break;
+            case R.id.edit_event_repeat_mode_month:
+                freqRule = "MONTHLY";
+                buttonTextEnding = getResources().getString(R.string.mode_month).toLowerCase();
+                break;
+            case R.id.edit_event_repeat_mode_week:
+                freqRule = "WEEKLY";
+                buttonTextEnding = getResources().getString(R.string.mode_week).toLowerCase();
+                break;
+            case R.id.edit_event_repeat_mode_day:
+                freqRule = "DAILY";
+                buttonTextEnding = getResources().getString(R.string.mode_day).toLowerCase();
+                break;
+            default:
+                mRecRule = null;
+                return;
+        }
+        mRecRule.setFreq(freqRule);
+        Button b = (Button)mRootView.findViewById(R.id.edit_event_repeat_mode_button);
+        b.setText(getResources().getString(R.string.repeat_every) + " " + buttonTextEnding + ".");
+        mOnEditRepeatModeSelector();
     }
 
     @Override

@@ -171,11 +171,34 @@ public class RRule  {
         return description;
     }
 
+    public String getRule() {
+
+        String rule = "FREQ=";
+        switch (repeatMode) {
+            case RM_YEARLY:
+                rule += "YEARLY";
+                break;
+            case RM_MONTHLY:
+                rule += "MONTHLY";
+                break;
+            case RM_WEEKLY:
+                rule += "WEEKLY";
+                break;
+            case RM_DAILY:
+                rule += "DAILY";
+                break;
+            default:
+                break;
+        }
+        return rule;
+
+    }
+
     public void setStart( long utcStart ) {
         this.utcStart = utcStart;
     }
 
-    public void setFreq( String freqMode ) throws ParseException {
+    public void setFreq( String freqMode ) {
         switch (freqMode) {
             case "YEARLY":
                 repeatMode = ERepeatMode.RM_YEARLY;

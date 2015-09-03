@@ -10,5 +10,7 @@
     <dimen name="day_item_padding">16dp</dimen>
     <dimen name="day_content_margin">72dp</dimen>
 
+    <dimen name="mode_list_margin">0dp</dimen>
+
 
 </resources>

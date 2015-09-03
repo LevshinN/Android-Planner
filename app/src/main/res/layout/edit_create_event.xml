@@ -35,7 +35,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:animateLayoutChanges="true">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -62,21 +63,78 @@
                         android:fontFamily="sans-serif-light"/>
 
                     <Button
+                        style="@style/buttonTheme"
                         android:id="@+id/edit_event_start_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-light"
                         android:text="TIME START"/>
 
                     <Button
+                        style="@style/buttonTheme"
                         android:id="@+id/edit_event_end_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-light"
                         android:text="TIME END"/>
 
                 </LinearLayout>
 
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_margin="16dp"
+                    android:background="@drawable/ic_repeat_black_24dp"/>
+
+                    <Button
+                        style="@style/buttonTheme"
+                        android:id="@+id/edit_event_repeat_mode_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="56dp"
+                        android:padding="8dp"
+                        android:text="Repeat every..."/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/edit_event_repeat_mode_selector"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:layout_marginLeft="@dimen/mode_list_margin">
+
+                <Button
+                    style="@style/buttonTheme"
+                    android:id="@+id/edit_event_repeat_mode_year"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/mode_year"/>
+
+                <Button
+                    style="@style/buttonTheme"
+                    android:id="@+id/edit_event_repeat_mode_month"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/mode_month"/>
+
+                <Button
+                    style="@style/buttonTheme"
+                    android:id="@+id/edit_event_repeat_mode_week"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/mode_week"/>
+
+                <Button
+                    style="@style/buttonTheme"
+                    android:id="@+id/edit_event_repeat_mode_day"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/mode_day"/>
 
             </LinearLayout>
 
@@ -174,17 +232,17 @@
         android:padding="8dp">
 
         <Button
+            style="@style/buttonTheme"
             android:id="@+id/edit_event_cancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="sans-serif-medium"
             android:text="@string/mdtp_cancel" />
 
         <Button
+            style="@style/buttonTheme"
             android:id="@+id/edit_event_ok"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="sans-serif-medium"
             android:text="@string/mdtp_ok" />
 
     </LinearLayout>

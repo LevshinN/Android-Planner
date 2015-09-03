@@ -150,17 +150,18 @@
         android:padding="8dp">
 
         <Button
+            style="@style/buttonTheme"
             android:id="@+id/event_info_edit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="sans-serif-medium"
-            android:text="@string/btn_edit"/>
+            android:layout_marginRight="8dp"
+            android:text="@string/btn_edit" />
 
         <Button
+            style="@style/buttonTheme"
             android:id="@+id/event_info_close"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="sans-serif-medium"
             android:text="@string/btn_close"/>
 
     </LinearLayout>
