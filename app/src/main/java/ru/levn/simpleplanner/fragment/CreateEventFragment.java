@@ -17,7 +17,9 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -29,8 +31,13 @@ import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.TimeZone;
 
 import ru.levn.simpleplanner.Common;
 import ru.levn.simpleplanner.R;
@@ -58,6 +65,7 @@ public class CreateEventFragment extends DialogFragment implements CompoundButto
     private boolean isEdit;
     private boolean isFirstColorSelect = true;
     private boolean isRepeatModeSelectorClosed = true;
+    private boolean isUntilSetting = false;
 
 
     private View mRootView;
@@ -70,6 +78,8 @@ public class CreateEventFragment extends DialogFragment implements CompoundButto
     private int mSelectedMinute;
 
     private RRule mRecRule;
+    private Calendar mUntil;
+    private RRule.EEndMode mRecRuleEndMode = RRule.EEndMode.EM_FOREVER;
 
     private Event mOriginalEvent;
     private Event mNewEvent;
@@ -77,8 +87,6 @@ public class CreateEventFragment extends DialogFragment implements CompoundButto
     private Common.OnUpdateEventsInterface mUpdateEvents;
 
     private View mModeSelector;
-    private ViewGroup mModeLine;
-
 
     static CreateEventFragment newInstance(int num, Event event) {
         CreateEventFragment fragment = new CreateEventFragment();
@@ -124,24 +132,60 @@ public class CreateEventFragment extends DialogFragment implements CompoundButto
         colorSelector.setOnItemSelectedListener(colorSelectorListener);
 
 
-        CalendarSpinnerAdapter calendarsListAdapter = new CalendarSpinnerAdapter(this.getActivity(),CalendarProvider.calendars);
+        CalendarSpinnerAdapter calendarsListAdapter =
+                new CalendarSpinnerAdapter(this.getActivity(),CalendarProvider.calendars);
         Spinner calendarSelector = (Spinner)mRootView.findViewById(R.id.edie_event_calendar);
         calendarSelector.setAdapter(calendarsListAdapter);
         calendarSelector.setOnItemSelectedListener(calendarSelectorListener);
 
-        (mRootView.findViewById(R.id.edit_event_repeat_mode_button)).setOnClickListener(buttonListener);
-        (mRootView.findViewById(R.id.edit_event_start_text)).setOnClickListener(buttonListener);
-        (mRootView.findViewById(R.id.edit_event_end_text)).setOnClickListener(buttonListener);
-        (mRootView.findViewById(R.id.edit_event_cancel)).setOnClickListener(buttonListener);
-        (mRootView.findViewById(R.id.edit_event_ok)).setOnClickListener(buttonListener);
+        String[] data = {"Count", "Until"};
 
+        final ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+                this.getActivity(),
+                android.R.layout.simple_spinner_dropdown_item,
+                data);
+        Spinner borderMode = (Spinner)mRootView.findViewById(R.id.edit_event_border_mode);
+        borderMode.setAdapter(adapter);
+        borderMode.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            View button = mRootView.findViewById(R.id.edit_event_repeat_until);
+            View editText = mRootView.findViewById(R.id.edit_event_repeat_count);
+
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                switch (position) {
+                    case 0:
+                        mRecRuleEndMode = RRule.EEndMode.EM_COUNT;
+                        editText.setVisibility(View.VISIBLE);
+                        button.setVisibility(View.GONE);
+                        break;
+                    case 1:
+                        mRecRuleEndMode = RRule.EEndMode.EM_UNTIL;
+                        editText.setVisibility(View.GONE);
+                        button.setVisibility(View.VISIBLE);
+                        break;
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
+
+
+
+        // Здесь на все кнопки меню вешается слушатель события нажатия.
+
+        mRootView.findViewById(R.id.edit_event_repeat_mode_button).setOnClickListener(buttonListener);
+        mRootView.findViewById(R.id.edit_event_start_text).setOnClickListener(buttonListener);
+        mRootView.findViewById(R.id.edit_event_end_text).setOnClickListener(buttonListener);
+        mRootView.findViewById(R.id.edit_event_cancel).setOnClickListener(buttonListener);
+        mRootView.findViewById(R.id.edit_event_ok).setOnClickListener(buttonListener);
         mRootView.findViewById(R.id.edit_event_repeat_mode_year).setOnClickListener(buttonListener);
         mRootView.findViewById(R.id.edit_event_repeat_mode_month).setOnClickListener(buttonListener);
         mRootView.findViewById(R.id.edit_event_repeat_mode_week).setOnClickListener(buttonListener);
         mRootView.findViewById(R.id.edit_event_repeat_mode_day).setOnClickListener(buttonListener);
-
-        (mRootView.findViewById(R.id.edit_event_cancel)).setOnTouchListener(Common.onTouch);
-        (mRootView.findViewById(R.id.edit_event_ok)).setOnTouchListener(Common.onTouch);
+        mRootView.findViewById(R.id.edit_event_repeat_delete).setOnClickListener(buttonListener);
+        mRootView.findViewById(R.id.edit_event_repeat_advanced_button).setOnClickListener(buttonListener);
+        mRootView.findViewById(R.id.edit_event_repeat_until).setOnClickListener(buttonListener);
 
         Switch s = (Switch) mRootView.findViewById(R.id.edit_event_all_day_switcher);
         if (s != null) {
@@ -149,8 +193,6 @@ public class CreateEventFragment extends DialogFragment implements CompoundButto
         }
 
         mModeSelector = mRootView.findViewById(R.id.edit_event_repeat_mode_selector);
-        mModeLine = (ViewGroup)mModeSelector.getParent();
-        mModeLine.removeView(mModeSelector);
         isRepeatModeSelectorClosed = true;
 
         mUpdateDialog();
@@ -255,7 +297,17 @@ public class CreateEventFragment extends DialogFragment implements CompoundButto
                 case R.id.edit_event_repeat_mode_week:
                 case R.id.edit_event_repeat_mode_day:
                     mOnCreateRRule(mButtonId);
-
+                    break;
+                case R.id.edit_event_repeat_delete:
+                    mOnDeleteRRule();
+                    break;
+                case R.id.edit_event_repeat_advanced_button:
+                    mOnOpenAdvanceSettings();
+                    break;
+                case R.id.edit_event_repeat_until:
+                    isUntilSetting = true;
+                    mShowDatePicker(DIALOG_DATE);
+                    break;
                 default:
                     break;
             }
@@ -296,8 +348,19 @@ public class CreateEventFragment extends DialogFragment implements CompoundButto
             mSelectedMonth = monthOfYear;
             mSelectedDay = dayOfMonth;
 
-            // mEditTime =  "" + dayOfMonth + " " + new DateFormatSymbols().getShortMonths()[monthOfYear % 12] + " " + year;
-            mShowDatePicker(DIALOG_TIME);
+            if (isUntilSetting) {
+                mUntil = Calendar.getInstance();
+                mUntil.set(year, monthOfYear, dayOfMonth);
+                ((Button)mRootView.findViewById(R.id.edit_event_repeat_until))
+                        .setText(CalendarProvider.getDate(mUntil.getTimeInMillis()));
+                return;
+            }
+
+            if (mNewEvent.isAllDay) {
+                mUpdateStartOrEndTime(mButtonId);
+            } else {
+                mShowDatePicker(DIALOG_TIME);
+            }
         }
     };
 
@@ -317,6 +380,19 @@ public class CreateEventFragment extends DialogFragment implements CompoundButto
                 mSelectedDay,
                 mSelectedHour,
                 mSelectedMinute);
+
+        if (mNewEvent.isAllDay) {
+            calendar.set(Calendar.HOUR_OF_DAY, 0);
+            calendar.set(Calendar.MINUTE, 0);
+            calendar.set(Calendar.SECOND, 0);
+            calendar.set(Calendar.MILLISECOND, 0);
+
+            if (mode == EDIT_END_DATE) {
+                calendar.getTimeInMillis();
+                calendar.add(Calendar.DAY_OF_YEAR, 1);
+                calendar.getTimeInMillis();
+            }
+        }
 
         switch (mode) {
             case EDIT_START_DATE:
@@ -362,10 +438,43 @@ public class CreateEventFragment extends DialogFragment implements CompoundButto
         EditText titleView = (EditText)mRootView.findViewById(R.id.edit_event_title);
         EditText descriptionView = (EditText)mRootView.findViewById(R.id.edit_event_description);
         EditText locationView = (EditText)mRootView.findViewById(R.id.edit_event_location_text);
+        EditText intervalView = (EditText)mRootView.findViewById(R.id.edit_event_repeat_interval);
 
         mNewEvent.title = titleView.getText().toString();
         mNewEvent.description = descriptionView.getText().toString();
         mNewEvent.location = locationView.getText().toString();
+
+        if (mRecRule != null) {
+            String intervalRule = intervalView.getText().toString();
+            if (!intervalRule.equals(""))  mRecRule.setInterval(intervalRule);
+
+            switch (mRecRuleEndMode) {
+                case EM_COUNT:
+                    EditText countView = (EditText)mRootView.findViewById(R.id.edit_event_repeat_count);
+                    String countRule = countView.getText().toString();
+                    if (!countRule.equals(""))  mRecRule.setCount(countRule);
+                    break;
+                case EM_UNTIL:
+                    if (mUntil != null) {
+                        Calendar c = (Calendar)mUntil.clone();
+                        c.setTimeInMillis(mNewEvent.timeEnd);
+                        c.getTimeInMillis();
+                        c.set(Calendar.YEAR, mUntil.get(Calendar.YEAR));
+                        c.set(Calendar.MONTH, mUntil.get(Calendar.MONTH));
+                        c.set(Calendar.DAY_OF_MONTH, mUntil.get(Calendar.DAY_OF_MONTH));
+                        c.getTimeInMillis();
+                        c.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd'T'HHmmss'Z'");
+                        String untilRule = simpleDateFormat.format(new Date(c.getTimeInMillis()));
+                        mRecRule.setUntil(untilRule);
+                    }
+                    break;
+                default:
+                    break;
+            }
+            mNewEvent.rrule = mRecRule.getRule();
+        }
 
         if (isEdit) {
             CalendarProvider.editEvent(mOriginalEvent, mNewEvent);
@@ -381,9 +490,9 @@ public class CreateEventFragment extends DialogFragment implements CompoundButto
 
     private void mOnEditRepeatModeSelector() {
         if (isRepeatModeSelectorClosed) {
-            mModeLine.addView(mModeSelector, 2);
+            mModeSelector.setVisibility(View.VISIBLE);
         } else {
-            mModeLine.removeView(mModeSelector);
+            mModeSelector.setVisibility(View.GONE);
         }
         isRepeatModeSelectorClosed = !isRepeatModeSelectorClosed;
     }
@@ -416,7 +525,44 @@ public class CreateEventFragment extends DialogFragment implements CompoundButto
         mRecRule.setFreq(freqRule);
         Button b = (Button)mRootView.findViewById(R.id.edit_event_repeat_mode_button);
         b.setText(getResources().getString(R.string.repeat_every) + " " + buttonTextEnding + ".");
+
+        ImageButton c = (ImageButton)mRootView.findViewById(R.id.edit_event_repeat_delete);
+        c.setVisibility(View.VISIBLE);
+
         mOnEditRepeatModeSelector();
+
+        b = (Button)mRootView.findViewById(R.id.edit_event_repeat_advanced_button);
+        b.setVisibility(View.VISIBLE);
+    }
+
+    private void mOnDeleteRRule() {
+        mRecRule = null;
+
+        Button b = (Button)mRootView.findViewById(R.id.edit_event_repeat_mode_button);
+        b.setText(getResources().getString(R.string.repeat_every) + "...");
+
+        View v = mRootView.findViewById(R.id.edit_event_repeat_delete);
+        v.setVisibility(View.INVISIBLE);
+
+        if (!isRepeatModeSelectorClosed) {
+            mOnEditRepeatModeSelector();
+        }
+
+        v = mRootView.findViewById(R.id.edit_event_repeat_advanced_button);
+        v.setVisibility(View.GONE);
+
+        v = mRootView.findViewById(R.id.edit_event_repeat_advanced);
+        TextView interval = (TextView)v.findViewById(R.id.edit_event_repeat_interval);
+        interval.clearComposingText();
+
+        TextView count = (TextView)v.findViewById(R.id.edit_event_repeat_count);
+        count.clearComposingText();
+
+        b = (Button)v.findViewById(R.id.edit_event_repeat_until);
+        b.setText("Until date");
+        mUntil = null;
+
+        v.setVisibility(View.GONE);
     }
 
     @Override
@@ -427,6 +573,15 @@ public class CreateEventFragment extends DialogFragment implements CompoundButto
             case R.id.edit_event_all_day_switcher:
                 mNewEvent.isAllDay = isChecked;
                 mUpdateTimeTexts();
+        }
+    }
+
+    public void mOnOpenAdvanceSettings() {
+        View v = mRootView.findViewById(R.id.edit_event_repeat_advanced);
+        if (v.getVisibility() == View.VISIBLE) {
+            v.setVisibility(View.GONE);
+        } else {
+            v.setVisibility(View.VISIBLE);
         }
     }
 }

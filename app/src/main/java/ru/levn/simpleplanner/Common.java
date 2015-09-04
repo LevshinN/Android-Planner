@@ -119,29 +119,6 @@ public class Common {
         public Calendar getDate() { return mDate; }
     }
 
-    public static View.OnTouchListener onTouch = new View.OnTouchListener() {
-
-        @Override
-        public boolean onTouch(View v, MotionEvent event) {
-            switch (event.getAction()) {
-                case MotionEvent.ACTION_DOWN:
-                    ObjectAnimator o1 = ObjectAnimator.ofFloat(v, "cardElevation",
-                            2 * Common.sScreenDensity ,
-                            8 * Common.sScreenDensity ).setDuration(80);
-                    o1.start();
-                    break;
-                case MotionEvent.ACTION_CANCEL:
-                case MotionEvent.ACTION_UP:
-                    ObjectAnimator o2 = ObjectAnimator.ofFloat(v, "cardElevation",
-                            8 * Common.sScreenDensity ,
-                            2 * Common.sScreenDensity ).setDuration(80);
-                    o2.start();
-                    break;
-            }
-            return false;
-        }
-    };
-
     public interface OnUpdateEventsInterface {
         public void onUpdate();
     }

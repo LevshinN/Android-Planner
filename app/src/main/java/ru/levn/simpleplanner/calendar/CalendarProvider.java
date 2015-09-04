@@ -386,9 +386,10 @@ public class CalendarProvider {
         values.put(CalendarContract.Events.EVENT_COLOR, event.color);
         values.put(CalendarContract.Events.CALENDAR_ID, event.calendarId);
         values.put(CalendarContract.Events.ALL_DAY, event.isAllDay);
+        values.put(CalendarContract.Events.RRULE, event.rrule);
 
         if (event.isAllDay) {
-            Calendar c = new GregorianCalendar();
+            Calendar c = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
             c.setTimeInMillis(event.timeStart);
             c.set(Calendar.HOUR_OF_DAY, 0);
             c.set(Calendar.MINUTE, 0);
@@ -401,6 +402,8 @@ public class CalendarProvider {
             c.set(Calendar.MINUTE, 0);
             c.set(Calendar.SECOND, 0);
             c.set(Calendar.MILLISECOND, 0);
+            c.getTimeInMillis();
+            c.add(Calendar.DAY_OF_YEAR, 1);
             values.put(CalendarContract.Events.DTEND, c.getTimeInMillis());
 
             values.put(CalendarContract.Events.EVENT_TIMEZONE, "UTC");

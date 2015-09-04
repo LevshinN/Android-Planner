@@ -53,9 +53,6 @@ public class EventInfo extends DialogFragment implements View.OnClickListener {
         (v.findViewById(R.id.event_info_edit)).setOnClickListener(onClick);
         (v.findViewById(R.id.event_info_close)).setOnClickListener(onClick);
 
-        (v.findViewById(R.id.event_info_edit)).setOnTouchListener(Common.onTouch);
-        (v.findViewById(R.id.event_info_close)).setOnTouchListener(Common.onTouch);
-
         return v;
     }
 

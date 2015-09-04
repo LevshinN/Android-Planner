@@ -20,7 +20,9 @@
             android:fontFamily="sans-serif"
             android:textStyle="bold"
             android:textSize="@dimen/abc_text_size_headline_material"
-            android:hint="Title"/>
+            android:hint="Title"
+            android:imeOptions="actionDone"
+            android:singleLine="true"/>
 
     </LinearLayout>
 
@@ -28,7 +30,10 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1.0"
-        android:background="@drawable/drawer_shadow">
+        android:background="@drawable/drawer_shadow"
+        android:animateLayoutChanges="true"
+        android:scrollbarAlwaysDrawVerticalTrack="true"
+        android:fadeScrollbars="false">
 
         <LinearLayout
             android:id="@+id/edit_event_body_area"
@@ -81,60 +86,151 @@
 
             </LinearLayout>
 
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
                 <ImageView
+                    android:id="@+id/edit_event_repeat_icon"
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
                     android:layout_margin="16dp"
-                    android:background="@drawable/ic_repeat_black_24dp"/>
+                    android:background="@drawable/ic_repeat_black_24dp"
+                    android:layout_alignParentLeft="true"/>
 
-                    <Button
-                        style="@style/buttonTheme"
-                        android:id="@+id/edit_event_repeat_mode_button"
-                        android:layout_width="wrap_content"
-                        android:layout_height="56dp"
-                        android:padding="8dp"
-                        android:text="Repeat every..."/>
+                <Button
+                    style="@style/buttonTheme"
+                    android:id="@+id/edit_event_repeat_mode_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="56dp"
+                    android:padding="8dp"
+                    android:layout_toRightOf="@id/edit_event_repeat_icon"
+                    android:text="Repeat every..."/>
 
-            </LinearLayout>
+                <ImageButton
+                    android:id="@+id/edit_event_repeat_delete"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_margin="12dp"
+                    android:background="@android:drawable/ic_menu_close_clear_cancel"
+                    android:visibility="invisible"/>
 
-            <LinearLayout
+
+            </RelativeLayout>
+
+            <GridLayout
                 android:id="@+id/edit_event_repeat_mode_selector"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:columnCount="@integer/mode_selector_column_count"
                 android:padding="8dp"
-                android:layout_marginLeft="@dimen/mode_list_margin">
+                android:layout_marginLeft="48dp"
+                android:visibility="gone">
 
                 <Button
                     style="@style/buttonTheme"
                     android:id="@+id/edit_event_repeat_mode_year"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:text="@string/mode_year"/>
 
                 <Button
                     style="@style/buttonTheme"
                     android:id="@+id/edit_event_repeat_mode_month"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:text="@string/mode_month"/>
 
                 <Button
                     style="@style/buttonTheme"
                     android:id="@+id/edit_event_repeat_mode_week"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:text="@string/mode_week"/>
 
                 <Button
                     style="@style/buttonTheme"
                     android:id="@+id/edit_event_repeat_mode_day"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:text="@string/mode_day"/>
+
+            </GridLayout>
+
+            <Button
+                style="@style/buttonTheme"
+                android:id="@+id/edit_event_repeat_advanced_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="56dp"
+                android:padding="8dp"
+                android:text="Advanced Settings"
+                android:visibility="gone"/>
+
+            <LinearLayout
+                android:id="@+id/edit_event_repeat_advanced"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginLeft="64dp"
+                android:visibility="gone">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:textAppearance="?android:textAppearanceMedium"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:text="Interval:"/>
+
+
+                    <EditText
+                        android:id="@+id/edit_event_repeat_interval"
+                        android:layout_width="56dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="80dp"
+                        android:inputType="number"
+                        android:maxLength="2"
+                        android:singleLine="true"
+                        android:imeOptions="actionDone" />
+
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:animateLayoutChanges="true">
+
+                    <Spinner
+                        android:id="@+id/edit_event_border_mode"
+                        android:layout_width="80dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="-8dp">
+
+                    </Spinner>
+
+
+                    <EditText
+                        android:id="@+id/edit_event_repeat_count"
+                        android:layout_width="56dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="80dp"
+                        android:layout_centerVertical="true"
+                        android:inputType="number"
+                        android:maxLength="2"
+                        android:singleLine="true"
+                        android:imeOptions="actionDone" />
+
+                    <Button
+                        android:id="@+id/edit_event_repeat_until"
+                        style="@style/buttonTheme"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="80dp"
+                        android:text="Finish date"/>
+
+                </RelativeLayout>
+
+
 
             </LinearLayout>
 
@@ -154,7 +250,8 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="8dp"
                     android:fontFamily="sans-serif-light"
-                    android:hint="Location"/>
+                    android:hint="Location"
+                    android:imeOptions="actionDone"/>
 
             </LinearLayout>
 
@@ -176,7 +273,8 @@
                     android:inputType="textMultiLine"
                     android:hint="Description"
                     android:ems="10"
-                    android:fontFamily="sans-serif-light"/>
+                    android:fontFamily="sans-serif-light"
+                    android:imeOptions="actionDone"/>
 
             </LinearLayout>
 

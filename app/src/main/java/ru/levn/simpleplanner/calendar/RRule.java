@@ -16,7 +16,7 @@ import java.util.Locale;
  */
 public class RRule  {
     private enum ERepeatMode { RM_DAILY, RM_WEEKLY, RM_MONTHLY, RM_YEARLY }
-    private enum EEndMode {EM_FOREVER, EM_COUNT, EM_UNTIL}
+    public enum EEndMode {EM_FOREVER, EM_COUNT, EM_UNTIL}
 
     // ------ Параметры, присутствуюшие в любом правиле ------
 
@@ -33,7 +33,7 @@ public class RRule  {
     // ------ Параметры, опциональные для всех типов повторения ------
 
     // Интервал повтора (каждые 2 дня, каждые 3 месяца и т.п.
-    private int mInterval;
+    private int mInterval = 1;
 
     // Количество раз, которое нужно повторить событие
     private int mCount;
@@ -176,20 +176,37 @@ public class RRule  {
         String rule = "FREQ=";
         switch (repeatMode) {
             case RM_YEARLY:
-                rule += "YEARLY";
+                rule += "YEARLY;";
                 break;
             case RM_MONTHLY:
-                rule += "MONTHLY";
+                rule += "MONTHLY;";
                 break;
             case RM_WEEKLY:
-                rule += "WEEKLY";
+                rule += "WEEKLY;";
                 break;
             case RM_DAILY:
-                rule += "DAILY";
+                rule += "DAILY;";
                 break;
             default:
                 break;
         }
+
+
+        if (mInterval > 1) {
+            rule += "INTERVAL=" + String.valueOf(mInterval) + ";";
+        }
+
+        switch (endMode) {
+            case EM_UNTIL:
+                rule += "UNTIL=" + mUntil + ";";
+                break;
+            case EM_COUNT:
+                rule += "COUNT=" + String.valueOf(mCount) + ";";
+                break;
+            default:
+                break;
+        }
+
         return rule;
 
     }
