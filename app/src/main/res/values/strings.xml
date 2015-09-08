@@ -33,4 +33,9 @@
         <item>My Calendars</item>
     </string-array>
 
+    <string-array name="delete_options">
+        <item>All events</item>
+        <item>This and future events</item>
+    </string-array>
+
 </resources>

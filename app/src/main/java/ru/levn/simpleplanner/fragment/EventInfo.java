@@ -1,18 +1,16 @@
 package ru.levn.simpleplanner.fragment;
 
 
-import android.animation.ObjectAnimator;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.CardView;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -29,11 +27,10 @@ import ru.levn.simpleplanner.calendar.RRule;
  * Автор: Левшин Николай, 707 группа.
  * Дата создания: 30.07.2015.
  */
-public class EventInfo extends DialogFragment implements View.OnClickListener {
+public class EventInfo extends DialogFragment {
 
     private Event mEvent;
-    private CardView mButtonEdit;
-    private CardView mButtonExit;
+    private int mDeleteOption;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -50,8 +47,9 @@ public class EventInfo extends DialogFragment implements View.OnClickListener {
         mEditTitle(v.findViewById(R.id.event_info_title));
         mEditBody(v.findViewById(R.id.event_info_body));
 
-        (v.findViewById(R.id.event_info_edit)).setOnClickListener(onClick);
-        (v.findViewById(R.id.event_info_close)).setOnClickListener(onClick);
+        v.findViewById(R.id.event_info_edit).setOnClickListener(onClick);
+        v.findViewById(R.id.event_info_close).setOnClickListener(onClick);
+        v.findViewById(R.id.event_info_delete).setOnClickListener(onClick);
 
         return v;
     }
@@ -63,11 +61,6 @@ public class EventInfo extends DialogFragment implements View.OnClickListener {
         Window window = getDialog().getWindow();
         window.setLayout(Common.sScreenWidth * 4 / 5, LinearLayout.LayoutParams.WRAP_CONTENT);
         window.setGravity(Gravity.CENTER);
-    }
-
-    @Override
-    public void onClick(View v) {
-        dismiss();
     }
 
     public static EventInfo newInstance(int num, Event e) {
@@ -202,6 +195,31 @@ public class EventInfo extends DialogFragment implements View.OnClickListener {
                     android.app.DialogFragment editEventDialog = CreateEventFragment.newInstance(0, mEvent);
                     editEventDialog.show(getActivity().getFragmentManager(), "edit_event");
                     dismiss();
+                    break;
+                case  R.id.event_info_delete:
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+                    builder.setTitle("Delete...")
+                                    .setSingleChoiceItems(R.array.delete_options, 0, new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            mDeleteOption = which;
+                                        }
+                                    })
+                                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                        }
+                                    })
+                                    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dismiss();
+                                        }
+                                    });
+                    builder.show();
                     break;
             }
         }

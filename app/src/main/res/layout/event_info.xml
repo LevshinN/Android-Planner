@@ -140,30 +140,48 @@
 
     </ScrollView>
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/event_info_button_box"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="end"
         android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
         android:padding="8dp">
-
-        <Button
-            style="@style/buttonTheme"
-            android:id="@+id/event_info_edit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="8dp"
-            android:text="@string/btn_edit" />
 
         <Button
             style="@style/buttonTheme"
             android:id="@+id/event_info_close"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
             android:text="@string/btn_close"/>
 
-    </LinearLayout>
+        <RelativeLayout
+            android:id="@+id/event_info_edit_box"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@id/event_info_close"
+            android:layout_alignParentLeft="true">
+
+            <Button
+                style="@style/buttonTheme"
+                android:id="@+id/event_info_delete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="DELETE"
+                android:textColor="@android:color/holo_red_light"/>
+
+            <Button
+                style="@style/buttonTheme"
+                android:id="@+id/event_info_edit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/event_info_delete"
+                android:text="@string/btn_edit"
+                android:textColor="@android:color/holo_green_light"/>
+
+
+        </RelativeLayout>
+
+    </RelativeLayout>
 
 </LinearLayout>
