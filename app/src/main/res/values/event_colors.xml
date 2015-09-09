@@ -3,7 +3,6 @@
 
     <array name="event_colors_values">
         <item>@android:color/transparent</item>
-        <item>@color/grey</item>
         <item>@color/red</item>
         <item>@color/blue</item>
         <item>@color/yellow</item>
@@ -13,7 +12,6 @@
 
     <string-array name="event_colors_names">
         <item>Color</item>
-        <item>Grey</item>
         <item>Red</item>
         <item>Blue</item>
         <item>Yellow</item>

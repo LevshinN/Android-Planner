@@ -6,10 +6,9 @@
     <color name="green">#4CAF50</color>
     <color name="yellow">#FFEB3B</color>
     <color name="orange">#FF9800</color>
-    <color name="grey">#9E9E9E</color>
     <color name="amber">#FFC107</color>
 
-    <color name="default_color">@color/grey</color>
+    <color name="default_color">@color/green</color>
     
     <color name="btn_pressed_background">#229E9E9E</color>
     <color name="btn_background">@android:color/transparent</color>

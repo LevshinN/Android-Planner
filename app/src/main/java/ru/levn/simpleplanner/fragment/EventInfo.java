@@ -17,6 +17,7 @@ import android.widget.TextView;
 import java.text.ParseException;
 
 import ru.levn.simpleplanner.Common;
+import ru.levn.simpleplanner.MainActivity;
 import ru.levn.simpleplanner.R;
 import ru.levn.simpleplanner.calendar.CalendarProvider;
 import ru.levn.simpleplanner.calendar.Event;
@@ -30,7 +31,7 @@ import ru.levn.simpleplanner.calendar.RRule;
 public class EventInfo extends DialogFragment {
 
     private Event mEvent;
-    private int mDeleteOption;
+    private int mDeleteOption = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -197,31 +198,66 @@ public class EventInfo extends DialogFragment {
                     dismiss();
                     break;
                 case  R.id.event_info_delete:
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-
-                    builder.setTitle("Delete...")
-                                    .setSingleChoiceItems(R.array.delete_options, 0, new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            mDeleteOption = which;
-                                        }
-                                    })
-                                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                        }
-                                    })
-                                    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            dismiss();
-                                        }
-                                    });
-                    builder.show();
+                    if ( mEvent.rrule != null ) {
+                        showSequenceDeleteDialog();
+                    } else {
+                        showDeleteConfirmDialog();
+                    }
                     break;
             }
         }
     };
+
+    private void showDeleteConfirmDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setMessage("Delete this event?")
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {}
+                })
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        CalendarProvider.deleteSingleEvent(mEvent);
+                        Common.onUpdate();
+                        dismiss();
+                    }
+                });
+        builder.show();
+    }
+
+    private void showSequenceDeleteDialog() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("Delete...")
+                .setSingleChoiceItems(R.array.delete_options, mDeleteOption, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mDeleteOption = which;
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {}
+                })
+                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (mDeleteOption) {
+                            case 0:
+                                CalendarProvider.deleteSingleEvent(mEvent);
+                                break;
+                            case 1:
+                                // CalendarProvider.deleteSequenceTail(mEvent);
+                                break;
+                        }
+                        Common.onUpdate();
+                        dismiss();
+                    }
+                });
+        builder.show();
+    }
 }

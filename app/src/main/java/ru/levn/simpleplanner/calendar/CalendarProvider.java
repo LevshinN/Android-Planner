@@ -11,9 +11,11 @@ import android.provider.CalendarContract;
 import android.util.Log;
 import android.util.Pair;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Locale;
@@ -462,11 +464,48 @@ public class CalendarProvider {
                 values.put(CalendarContract.Events.EVENT_TIMEZONE, Calendar.getInstance().getTimeZone().getDisplayName()); // TODO Добавить таймзоны
             }
 
-            Uri syncUri = CalendarProvider.asSyncAdapter(CalendarContract.Events.CONTENT_URI, GenericAccountService.ACCOUNT_NAME, SyncUtils.ACCOUNT_TYPE);
+            Uri syncUri = CalendarProvider.asSyncAdapter(CalendarContract.Events.CONTENT_URI,
+                    GenericAccountService.ACCOUNT_NAME,
+                    SyncUtils.ACCOUNT_TYPE);
             Uri updateUri = ContentUris.withAppendedId(syncUri, Integer.valueOf(newEvent.id));
 
             cr.update(updateUri, values, null, null);
 
+        }
+    }
+
+    public static void deleteSingleEvent( Event event ) {
+        long eventID = Long.valueOf(event.id);
+        Uri deleteUri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventID);
+        mContentResolver.delete(deleteUri, null, null);
+    }
+
+    public static void deleteSequenceTail(Event event) {
+        if (event.rrule == null) {
+            deleteSingleEvent(event);
+        } else {
+            RRule rRule = new RRule();
+            try {
+                rRule.parse(event.rrule);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd'T'HHmmss'Z'");
+            String untilRule = simpleDateFormat.format(new Date(event.timeStart));
+            rRule.setUntil(untilRule);
+            event.rrule = rRule.getRule();
+
+            ContentResolver cr = mContentResolver;
+            ContentValues values = new ContentValues();
+            values.put(CalendarContract.Events.RRULE, rRule.getRule());
+
+            Uri syncUri = CalendarProvider.asSyncAdapter(CalendarContract.Events.CONTENT_URI,
+                    GenericAccountService.ACCOUNT_NAME,
+                    SyncUtils.ACCOUNT_TYPE);
+            Uri updateUri = ContentUris.withAppendedId(syncUri, Integer.valueOf(event.id));
+
+            cr.update(updateUri, values, null, null);
         }
     }
 }

@@ -124,6 +124,7 @@ public class Common {
     }
 
     public static void onUpdate() {
+        sEvents.update();
         ((OnUpdateEventsInterface)mMainActivity).onUpdate();
     }
 }

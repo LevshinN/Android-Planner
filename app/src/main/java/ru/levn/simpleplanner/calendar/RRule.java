@@ -18,6 +18,9 @@ public class RRule  {
     private enum ERepeatMode { RM_DAILY, RM_WEEKLY, RM_MONTHLY, RM_YEARLY }
     public enum EEndMode {EM_FOREVER, EM_COUNT, EM_UNTIL}
 
+    // Совершается ли сейчас процесс парсинга правила
+    private boolean isParsingMode = false;
+
     // ------ Параметры, присутствуюшие в любом правиле ------
 
     // Частота повтора
@@ -70,6 +73,8 @@ public class RRule  {
 
 
     public void parse( String rRule ) throws ParseException {
+        isParsingMode = true;
+
         ArrayList<Pair<String, String>> rules = mGetRules(rRule);
         for (Pair<String, String> rule : rules) {
             switch (rule.first) {
@@ -96,6 +101,7 @@ public class RRule  {
                     break;
             }
         }
+        isParsingMode = false;
     }
 
     private ArrayList<Pair<String,String>> mGetRules( String rRule ) throws ParseException {
@@ -230,7 +236,7 @@ public class RRule  {
                 repeatMode = ERepeatMode.RM_DAILY;
                 return;
             default:
-                throw new IllegalArgumentException("Unnown value " + freqMode);
+                throw new IllegalArgumentException("Unknown value " + freqMode);
         }
     }
 
@@ -240,7 +246,7 @@ public class RRule  {
 
     public void setCount( String count ) {
         mCount = Integer.valueOf(count);
-        if (endMode != EEndMode.EM_FOREVER) {
+        if (isParsingMode && endMode != EEndMode.EM_FOREVER) {
             throw new IllegalArgumentException ("Rule can contain only one of rules: COUNT or UNTIL");
         } else {
             endMode = EEndMode.EM_COUNT;
@@ -249,7 +255,7 @@ public class RRule  {
 
     public void setUntil( String until ) {
         mUntil = until;
-        if (endMode != EEndMode.EM_FOREVER) {
+        if (isParsingMode && endMode != EEndMode.EM_FOREVER) {
             throw new IllegalArgumentException("RRule can contain only one of rules: COUNT or UNTIL");
         } else {
             endMode = EEndMode.EM_UNTIL;

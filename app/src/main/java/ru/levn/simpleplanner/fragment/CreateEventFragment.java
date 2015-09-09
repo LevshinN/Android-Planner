@@ -3,6 +3,7 @@ package ru.levn.simpleplanner.fragment;
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -23,6 +24,7 @@ import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 import com.wdullaer.materialdatetimepicker.time.RadialPickerLayout;
@@ -53,7 +55,8 @@ import ru.levn.simpleplanner.calendar.RRule;
  * Дата создания: 04.08.2015.
  */
 
-public class CreateEventFragment extends DialogFragment implements CompoundButton.OnCheckedChangeListener {
+public class CreateEventFragment extends DialogFragment
+        implements CompoundButton.OnCheckedChangeListener, View.OnClickListener{
 
     private static final int EDIT_START_DATE = R.id.edit_event_start_text;
     private static final int EDIT_END_DATE = R.id.edit_event_end_text;
@@ -112,6 +115,7 @@ public class CreateEventFragment extends DialogFragment implements CompoundButto
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         mRootView = inflater.inflate(R.layout.edit_create_event, container, false);
+        mRootView.findViewById(R.id.edit_event_title_area).setBackgroundResource(R.color.default_color);
 
         if (isEdit) mNewEvent = new Event(mOriginalEvent);
         else {
@@ -122,24 +126,25 @@ public class CreateEventFragment extends DialogFragment implements CompoundButto
             mNewEvent.timeEnd = c.getTimeInMillis();
         }
 
-        Spinner colorSelector = (Spinner)mRootView.findViewById(R.id.edit_event_color);
 
+        // Спиннер для выбора цвета события
+        Spinner colorSelector = (Spinner)mRootView.findViewById(R.id.edit_event_color);
         int[] colors = getResources().getIntArray(R.array.event_colors_values);
         String[] colorsNames = getResources().getStringArray(R.array.event_colors_names);
-
         ColorListAdapter colorAdapter = new ColorListAdapter(getActivity(), colors, colorsNames );
         colorSelector.setAdapter(colorAdapter);
         colorSelector.setOnItemSelectedListener(colorSelectorListener);
 
 
+        // Спиннер для выбора календаря
         CalendarSpinnerAdapter calendarsListAdapter =
                 new CalendarSpinnerAdapter(this.getActivity(),CalendarProvider.calendars);
         Spinner calendarSelector = (Spinner)mRootView.findViewById(R.id.edie_event_calendar);
         calendarSelector.setAdapter(calendarsListAdapter);
         calendarSelector.setOnItemSelectedListener(calendarSelectorListener);
 
+        // Спиннер для выбора, как ограничивать последовательность событий
         String[] data = {"Count", "Until"};
-
         final ArrayAdapter<String> adapter = new ArrayAdapter<String>(
                 this.getActivity(),
                 android.R.layout.simple_spinner_dropdown_item,
@@ -173,20 +178,20 @@ public class CreateEventFragment extends DialogFragment implements CompoundButto
 
 
         // Здесь на все кнопки меню вешается слушатель события нажатия.
+        mRootView.findViewById(R.id.edit_event_repeat_mode_button).setOnClickListener(this);
+        mRootView.findViewById(R.id.edit_event_start_text).setOnClickListener(this);
+        mRootView.findViewById(R.id.edit_event_end_text).setOnClickListener(this);
+        mRootView.findViewById(R.id.edit_event_cancel).setOnClickListener(this);
+        mRootView.findViewById(R.id.edit_event_ok).setOnClickListener(this);
+        mRootView.findViewById(R.id.edit_event_repeat_mode_year).setOnClickListener(this);
+        mRootView.findViewById(R.id.edit_event_repeat_mode_month).setOnClickListener(this);
+        mRootView.findViewById(R.id.edit_event_repeat_mode_week).setOnClickListener(this);
+        mRootView.findViewById(R.id.edit_event_repeat_mode_day).setOnClickListener(this);
+        mRootView.findViewById(R.id.edit_event_repeat_delete).setOnClickListener(this);
+        mRootView.findViewById(R.id.edit_event_repeat_advanced_button).setOnClickListener(this);
+        mRootView.findViewById(R.id.edit_event_repeat_until).setOnClickListener(this);
 
-        mRootView.findViewById(R.id.edit_event_repeat_mode_button).setOnClickListener(buttonListener);
-        mRootView.findViewById(R.id.edit_event_start_text).setOnClickListener(buttonListener);
-        mRootView.findViewById(R.id.edit_event_end_text).setOnClickListener(buttonListener);
-        mRootView.findViewById(R.id.edit_event_cancel).setOnClickListener(buttonListener);
-        mRootView.findViewById(R.id.edit_event_ok).setOnClickListener(buttonListener);
-        mRootView.findViewById(R.id.edit_event_repeat_mode_year).setOnClickListener(buttonListener);
-        mRootView.findViewById(R.id.edit_event_repeat_mode_month).setOnClickListener(buttonListener);
-        mRootView.findViewById(R.id.edit_event_repeat_mode_week).setOnClickListener(buttonListener);
-        mRootView.findViewById(R.id.edit_event_repeat_mode_day).setOnClickListener(buttonListener);
-        mRootView.findViewById(R.id.edit_event_repeat_delete).setOnClickListener(buttonListener);
-        mRootView.findViewById(R.id.edit_event_repeat_advanced_button).setOnClickListener(buttonListener);
-        mRootView.findViewById(R.id.edit_event_repeat_until).setOnClickListener(buttonListener);
-
+        // Свитчер на установку события на весь день
         Switch s = (Switch) mRootView.findViewById(R.id.edit_event_all_day_switcher);
         if (s != null) {
             s.setOnCheckedChangeListener(this);
@@ -271,48 +276,6 @@ public class CreateEventFragment extends DialogFragment implements CompoundButto
         }
     };
 
-    Button.OnClickListener buttonListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            mButtonId = v.getId();
-
-            switch (mButtonId) {
-                case R.id.edit_event_repeat_mode_button:
-                    mOnEditRepeatModeSelector();
-                    break;
-                case R.id.edit_event_start_text:
-                    mShowDatePicker(DIALOG_DATE);
-                    break;
-                case R.id.edit_event_end_text:
-                    mShowDatePicker(DIALOG_DATE);
-                    break;
-                case R.id.edit_event_ok:
-                    mOnFinishEdit();
-                    break;
-                case R.id.edit_event_cancel:
-                    dismiss();
-                    break;
-                case R.id.edit_event_repeat_mode_year:
-                case R.id.edit_event_repeat_mode_month:
-                case R.id.edit_event_repeat_mode_week:
-                case R.id.edit_event_repeat_mode_day:
-                    mOnCreateRRule(mButtonId);
-                    break;
-                case R.id.edit_event_repeat_delete:
-                    mOnDeleteRRule();
-                    break;
-                case R.id.edit_event_repeat_advanced_button:
-                    mOnOpenAdvanceSettings();
-                    break;
-                case R.id.edit_event_repeat_until:
-                    isUntilSetting = true;
-                    mShowDatePicker(DIALOG_DATE);
-                    break;
-                default:
-                    break;
-            }
-        }
-    };
 
     private void mShowDatePicker(int mode) {
         if (mode == DIALOG_DATE) {
@@ -443,6 +406,11 @@ public class CreateEventFragment extends DialogFragment implements CompoundButto
         mNewEvent.title = titleView.getText().toString();
         mNewEvent.description = descriptionView.getText().toString();
         mNewEvent.location = locationView.getText().toString();
+
+        if (mNewEvent.title.equals("")) {
+            Toast.makeText(getActivity(), "Title can`t be empty!", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         if (mRecRule != null) {
             String intervalRule = intervalView.getText().toString();
@@ -582,6 +550,47 @@ public class CreateEventFragment extends DialogFragment implements CompoundButto
             v.setVisibility(View.GONE);
         } else {
             v.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        mButtonId = v.getId();
+
+        switch (mButtonId) {
+            case R.id.edit_event_repeat_mode_button:
+                mOnEditRepeatModeSelector();
+                break;
+            case R.id.edit_event_start_text:
+                mShowDatePicker(DIALOG_DATE);
+                break;
+            case R.id.edit_event_end_text:
+                mShowDatePicker(DIALOG_DATE);
+                break;
+            case R.id.edit_event_ok:
+                mOnFinishEdit();
+                break;
+            case R.id.edit_event_cancel:
+                dismiss();
+                break;
+            case R.id.edit_event_repeat_mode_year:
+            case R.id.edit_event_repeat_mode_month:
+            case R.id.edit_event_repeat_mode_week:
+            case R.id.edit_event_repeat_mode_day:
+                mOnCreateRRule(mButtonId);
+                break;
+            case R.id.edit_event_repeat_delete:
+                mOnDeleteRRule();
+                break;
+            case R.id.edit_event_repeat_advanced_button:
+                mOnOpenAdvanceSettings();
+                break;
+            case R.id.edit_event_repeat_until:
+                isUntilSetting = true;
+                mShowDatePicker(DIALOG_DATE);
+                break;
+            default:
+                break;
         }
     }
 }

@@ -70,7 +70,7 @@ public class MonthTable {
         cellView.setTag(vh);
 
         cellActiveColor = context.getResources().getColor(android.R.color.black);
-        cellPassiveColor = context.getResources().getColor(R.color.grey);
+        cellPassiveColor = context.getResources().getColor(android.R.color.darker_gray);
         weekColor = context.getResources().getColor(R.color.red);
         cellPressedBackground = context.getResources().getColor(R.color.yellow);
         cellReleasedBackground = context.getResources().getColor(android.R.color.transparent);
