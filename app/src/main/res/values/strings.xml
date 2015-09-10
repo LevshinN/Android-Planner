@@ -35,7 +35,7 @@
 
     <string-array name="delete_options">
         <item>All events</item>
-        <item>This and future events</item>
+        <item>This event</item>
     </string-array>
 
 </resources>

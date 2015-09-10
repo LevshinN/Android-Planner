@@ -86,7 +86,7 @@ public class EventInfo extends DialogFragment {
             v.setBackgroundColor(v.getContext().getResources().getColor(R.color.default_color));
         }
 
-        ((TextView)v).setText(mEvent.title);
+        ((TextView)v).setText(mEvent.title  + '\n' + mEvent.id);
     }
 
     private void mEditBody(View v) {
@@ -251,7 +251,7 @@ public class EventInfo extends DialogFragment {
                                 CalendarProvider.deleteSingleEvent(mEvent);
                                 break;
                             case 1:
-                                // CalendarProvider.deleteSequenceTail(mEvent);
+                                CalendarProvider.deleteSequenceEvent(mEvent);
                                 break;
                         }
                         Common.onUpdate();

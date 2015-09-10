@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import java.text.DateFormatSymbols;
 import java.util.ArrayList;
+import java.util.List;
 
 import ru.levn.simpleplanner.Common;
 import ru.levn.simpleplanner.R;
@@ -40,6 +41,8 @@ public class PageWeek extends ModeFragment {
 
     public boolean changed;
     public boolean ready;
+
+    private EventWeekAdapter[] mAdapter = new EventWeekAdapter[7];
 
     int[] dayNamesProjection = {2,3,4,5,6,7,1};
 
@@ -119,10 +122,14 @@ public class PageWeek extends ModeFragment {
             tv.setText(dayNames[dayNamesProjection[i]] + " "
                     + CalendarProvider.getDate(start + dayDuration * i));
 
-            ArrayList<Event> events = Common.sEvents.getDayEvents(start + dayDuration * i );
-            EventWeekAdapter adapter = new EventWeekAdapter(this.getActivity(), events);
-            eventList.setAdapter(adapter);
-            //TODO переписать на notify data change
+            ArrayList<Event> events = Common.sEvents.getDayEvents(start + dayDuration * i);
+            if (mAdapter[i] != null) {
+                mAdapter[i].setEvents(events);
+                mAdapter[i].notifyDataSetChanged();
+            } else {
+                mAdapter[i] = new EventWeekAdapter(this.getActivity(), events);
+                eventList.setAdapter(mAdapter[i]);
+            }
         }
     }
 
@@ -204,6 +211,10 @@ class EventWeekAdapter extends EventAdapter {
     public EventWeekAdapter(Context context, ArrayList<Event> events) {
         mEventList = events;
         mLInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+    }
+
+    public void setEvents(ArrayList<Event> events) {
+        mEventList = events;
     }
 
     @Override

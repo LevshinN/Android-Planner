@@ -388,7 +388,8 @@ public class CalendarProvider {
         values.put(CalendarContract.Events.EVENT_COLOR, event.color);
         values.put(CalendarContract.Events.CALENDAR_ID, event.calendarId);
         values.put(CalendarContract.Events.ALL_DAY, event.isAllDay);
-        values.put(CalendarContract.Events.RRULE, event.rrule);
+
+        if (event.originalId == null) values.put(CalendarContract.Events.RRULE, event.rrule);
 
         if (event.isAllDay) {
             Calendar c = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
@@ -480,32 +481,16 @@ public class CalendarProvider {
         mContentResolver.delete(deleteUri, null, null);
     }
 
-    public static void deleteSequenceTail(Event event) {
+    public static void deleteSequenceEvent(Event event) {
         if (event.rrule == null) {
             deleteSingleEvent(event);
         } else {
-            RRule rRule = new RRule();
-            try {
-                rRule.parse(event.rrule);
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd'T'HHmmss'Z'");
-            String untilRule = simpleDateFormat.format(new Date(event.timeStart));
-            rRule.setUntil(untilRule);
-            event.rrule = rRule.getRule();
-
-            ContentResolver cr = mContentResolver;
+            Uri contentExeptionUri = ContentUris.
+                    withAppendedId(CalendarContract.Events.CONTENT_EXCEPTION_URI, Long.valueOf(event.id));
             ContentValues values = new ContentValues();
-            values.put(CalendarContract.Events.RRULE, rRule.getRule());
-
-            Uri syncUri = CalendarProvider.asSyncAdapter(CalendarContract.Events.CONTENT_URI,
-                    GenericAccountService.ACCOUNT_NAME,
-                    SyncUtils.ACCOUNT_TYPE);
-            Uri updateUri = ContentUris.withAppendedId(syncUri, Integer.valueOf(event.id));
-
-            cr.update(updateUri, values, null, null);
+            values.put(CalendarContract.Events.ORIGINAL_INSTANCE_TIME, event.timeStart);
+            values.put(CalendarContract.Events.STATUS, CalendarContract.Events.STATUS_CANCELED);
+            mContentResolver.insert(contentExeptionUri, values);
         }
     }
 }
