@@ -103,7 +103,7 @@ public class PageWeek extends ModeFragment {
 
     @Override
     public void onUpdate() {
-        Pair<Long,Long> period = CalendarProvider.getWeekPeriod(representTime);
+        Pair<Long,Long> period = CalendarProvider.getWeekPeriod(representTime, false);
 
         long start = period.first;
         long end = period.second;

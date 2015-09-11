@@ -47,7 +47,7 @@ public class Common {
 
     public static void init(Activity activity) {
         sSelectedDate = new SelectedDate();
-        sEvents = new EventsContainer(sSelectedDate.getDate().getTimeInMillis(), 6);
+        sEvents = new EventsContainer(sSelectedDate.getDate().getTimeInMillis(), 50);
         mMainActivity = activity;
     }
 

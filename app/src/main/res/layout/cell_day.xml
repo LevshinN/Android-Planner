@@ -11,6 +11,12 @@
         android:layout_centerHorizontal="true"
         android:layout_height="match_parent"/>
 
+    <ru.levn.simpleplanner.view.DayLines
+        android:id="@+id/lines"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="4dp"/>
+
     <TextView
         android:id="@+id/number"
         android:text="NUMBER"

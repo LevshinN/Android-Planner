@@ -9,7 +9,6 @@ import android.view.View;
 
 import java.util.ArrayList;
 
-import ru.levn.simpleplanner.Common;
 import ru.levn.simpleplanner.calendar.Event;
 
 /**
@@ -20,9 +19,9 @@ import ru.levn.simpleplanner.calendar.Event;
 public class DayPieChart extends View {
 
     private Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private RectF rectF = new RectF();
     private int[] event_colors;
     private int angle;
-    private int delimer = 0;
 
     public DayPieChart(Context context) {
         super(context);
@@ -69,28 +68,28 @@ public class DayPieChart extends View {
 
         int radius = Math.min(width, height) / 2;
 
-        RectF rectF = new RectF(centerX - radius,
+        rectF.set(centerX - radius,
                 centerY - radius,
                 centerX + radius,
                 centerY + radius);
 
 
-        delimer = 6;
+        int delimer = 6;
 
         if (angle == 360) {
             delimer = 0;
         }
 
         int temp = 0;
-        for (int i = 0; i < event_colors.length; i++) {
+        for (int event_color : event_colors) {
 
-            paint.setColor(0xff000000 + event_colors[i]);
-            canvas.drawArc(rectF, temp - 90 + delimer / 2, angle - delimer / 2 , true, paint);
+            paint.setColor(0xff000000 + event_color);
+            canvas.drawArc(rectF, temp - 90 + delimer / 2, angle - delimer / 2, true, paint);
             temp += angle;
         }
 
         radius = radius / 3 * 2;
-        rectF = new RectF(centerX - radius,
+        rectF.set(centerX - radius,
                 centerY - radius,
                 centerX + radius,
                 centerY + radius);
@@ -98,8 +97,5 @@ public class DayPieChart extends View {
         paint.setColor(0xffffffff);
         canvas.drawArc(rectF, 0, 360, true, paint);
 
-    }
-
-    public void setSize(int measuredSize) {
     }
 }

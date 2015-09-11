@@ -296,7 +296,7 @@ public class CalendarProvider {
         return new Pair<>(start, finish);
     }
 
-    public static Pair<Long,Long> getWeekPeriod(long UtcTime) {
+    public static Pair<Long,Long> getWeekPeriod(long UtcTime, boolean UtcTimezone) {
 
         Calendar cal = Calendar.getInstance();
 
@@ -306,6 +306,8 @@ public class CalendarProvider {
         cal.set(Calendar.MINUTE, 0);
         cal.set(Calendar.SECOND, 0);
         cal.set(Calendar.MILLISECOND, 0);
+
+        if (UtcTimezone) cal.setTimeZone(TimeZone.getTimeZone("UTC"));
 
         cal.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
 

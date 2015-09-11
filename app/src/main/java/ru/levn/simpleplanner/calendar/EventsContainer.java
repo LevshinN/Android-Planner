@@ -98,10 +98,33 @@ public class EventsContainer {
         // день и, из-за сдвига временных зон, захватывают 2 дня в другой временной зоне.
         // Отбросим такие события.
 
+        return mFilterEvents(allEvents ,utcBorders);
+    }
+
+    public ArrayList<Event> getWeekEvents(long time) {
+        Pair<Long, Long> borders = CalendarProvider.getWeekPeriod(time, false);
+        Pair<Long, Long> utcBorders = CalendarProvider.getWeekPeriod(time, true);
+
+        ArrayList<Event> allEvents = get(borders.first, borders.second);
+
+        // Среди полученнх событий могут встречаться те, которые на весь
+        // день и, из-за сдвига временных зон, захватывают 2 дня в другой временной зоне.
+        // Отбросим такие события.
+
+        return mFilterEvents(allEvents ,utcBorders);
+    }
+
+    private ArrayList<Event> mFilterEvents( ArrayList<Event> events, Pair<Long, Long> utcBorders ) {
+
         ArrayList<Event> clearEvents = new ArrayList<>();
 
-        for (Event e : allEvents) {
+        for (Event e : events) {
             if (e.isAllDay) {
+                if (e.timeStart == e.timeEnd && e.timeStart < utcBorders.second) {
+                    clearEvents.add(e);
+                    continue;
+                }
+
                 if (e.timeStart < utcBorders.second && e.timeEnd > utcBorders.first) {
                     clearEvents.add(e);
                 }

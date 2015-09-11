@@ -24,41 +24,42 @@ import ru.levn.simpleplanner.calendar.Event;
 
 public class MonthView extends View {
 
-    private boolean measurementChanged = false;
+    protected boolean measurementChanged = false;
 
-    private MonthTable monthTable;
+    protected MonthTableLines monthTable;
 
     private GestureDetector gestureDetector;
 
-    private OverScroller scroller;
+    protected OverScroller scroller;
 
-    private int yOffset;
+    protected int yOffset;
 
-    private int canvasHeight;
+    protected int canvasHeight;
 
     // Конструктор, необходимый для создания элемента внутри кода программы
     public MonthView(Context context) {
         super(context);
         init();
-        monthTable = new MonthTable(context, Common.sSelectedDate.getDate());
+        monthTable = new MonthTableLines(context, Common.sSelectedDate.getDate());
     }
 
     // Конструктор, необходимый для наполнения элемента из файла с ресурсом
     public MonthView (Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
-        monthTable = new MonthTable(context, Common.sSelectedDate.getDate());
+        monthTable = new MonthTableLines(context, Common.sSelectedDate.getDate());
     }
 
     // Конструктор, необходимый для наполнения элемента из файла с ресурсом
     public MonthView (Context context, AttributeSet ats, int defaultStyle) {
-        super(context, ats, defaultStyle );
+        super(context, ats, defaultStyle);
         init();
-        monthTable = new MonthTable(context, Common.sSelectedDate.getDate());
+        monthTable = new MonthTableLines(context, Common.sSelectedDate.getDate());
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
+
         if (scroller.computeScrollOffset()) {
             yOffset = scroller.getCurrY();
         }
@@ -96,9 +97,9 @@ public class MonthView extends View {
     private GestureDetector.OnGestureListener gestureListener = new GestureDetector.SimpleOnGestureListener() {
 
         public boolean onDown(MotionEvent e) {
-            if (monthTable.touchItem(e.getX(), e.getY())) {
-                invalidate();
-            }
+//            if (monthTable.touchItem(e.getX(), e.getY())) {
+//                invalidate();
+//            }
 
             return true;
         }
@@ -131,9 +132,9 @@ public class MonthView extends View {
     }
 
     private void resetTouchFeedback() {
-        if (monthTable.releaseTouch()) {
-            invalidate();
-        }
+//        if (monthTable.releaseTouch()) {
+//            invalidate();
+//        }
     };
 
     @Override
@@ -142,8 +143,4 @@ public class MonthView extends View {
         measurementChanged = true;
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
-
-
-
-
 }
