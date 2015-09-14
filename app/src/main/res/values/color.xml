@@ -10,8 +10,8 @@
 
     <color name="default_color">@color/green</color>
     
-    <color name="btn_pressed_background">#229E9E9E</color>
-    <color name="btn_background">@android:color/transparent</color>
+    <color name="btn_pressed_background">#ffbfbfbf</color>
+    <color name="btn_background">@android:color/background_light</color>
     <color name="btn_text_color">@color/orange</color>
 
     <color name="status_bar_color">#F57F17</color>

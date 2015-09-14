@@ -33,6 +33,7 @@ public class WeekLine{
     private int cellPassiveColor;
     private int weekColor;
     private int backgroundColor;
+    private int pressedBackgroundColor;
     private int numberFontSize;
     private int marginHorizontal = 1;
     private int marginVertical = 1;
@@ -52,6 +53,7 @@ public class WeekLine{
 
     // Счетчики непоместившихся на экран событий.
     int[] hiddenEventsNum = new int[7];
+    int touchedCell = -1;
 
     private RectF lineRect = new RectF();
     private Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -61,7 +63,8 @@ public class WeekLine{
         cellActiveColor = context.getResources().getColor(android.R.color.black);
         cellPassiveColor = context.getResources().getColor(android.R.color.darker_gray);
         weekColor = context.getResources().getColor(R.color.red);
-        backgroundColor = context.getResources().getColor(android.R.color.background_light);
+        backgroundColor = context.getResources().getColor(R.color.btn_background);
+        pressedBackgroundColor = context.getResources().getColor(R.color.btn_pressed_background);
         numberFontSize = context.getResources().getDimensionPixelSize(R.dimen.abc_text_size_body_1_material);
     }
 
@@ -140,6 +143,17 @@ public class WeekLine{
         c.getTimeInMillis();
 
         for (int i = 0; i < 7; ++i) {
+
+            if (i == touchedCell) {
+                paint.setColor(pressedBackgroundColor);
+                RectF rectF = new RectF(
+                        weekNumberCellWidth + i * dayCellWidth,
+                        0,
+                        weekNumberCellWidth + (i+1)*dayCellWidth,
+                        height
+                );
+                canvas.drawRect(rectF, paint);
+            }
 
             if (c.get(Calendar.MONTH) == currentMonth) {
                 paint.setColor(cellActiveColor);
@@ -260,7 +274,12 @@ public class WeekLine{
         for (int i = 0; i < 7; ++i) {
             if (hiddenEventsNum[i] > 0) {
 
-                paint.setColor(backgroundColor);
+                if (i == touchedCell) {
+                    paint.setColor(pressedBackgroundColor);
+                } else {
+                    paint.setColor(backgroundColor);
+                }
+
                 canvas.drawRect(weekNumberCellWidth + i * dayCellWidth - marginHorizontal,
                         lineHeight * (maxLinesNum),
                         weekNumberCellWidth + (i + 1) * dayCellWidth + marginHorizontal,
@@ -333,5 +352,17 @@ public class WeekLine{
         // Бинарным поиском ищем наибольшее количество символов
         while(p.measureText(s.substring(0, biggestLength)) < width) ++biggestLength;
         return s.substring(0, biggestLength - 1);
+    }
+
+    public float getLineHeight() {
+        return lineHeight;
+    }
+
+    public void touchCell(float x) {
+        touchedCell = (int)((x - weekNumberCellWidth) / dayCellWidth);
+        if (touchedCell < 0 || touchedCell > 6) {
+            touchedCell = -1;
+        }
+
     }
 }

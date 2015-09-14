@@ -17,9 +17,6 @@ import ru.levn.simpleplanner.R;
  * Дата создания: 23.08.2015.
  */
 public class MonthTable {
-    public enum CellMode {CM_CIRCLE, CM_LINE };
-
-    public CellMode cellMode = CellMode.CM_LINE;
 
     private DayCell[] cells;
 
@@ -53,7 +50,6 @@ public class MonthTable {
         ViewHolder vh = new ViewHolder();
         vh.number = (TextView)cellView.findViewById(R.id.number);
         vh.pieChart = (DayPieChart)cellView.findViewById(R.id.pie_chart);
-        vh.lines = (DayLines)cellView.findViewById(R.id.lines);
         cellView.setTag(vh);
 
         cellActiveColor = context.getResources().getColor(android.R.color.black);
@@ -139,15 +135,7 @@ public class MonthTable {
             v.setBackgroundColor(cell.pressed ? cellPressedBackground : cellReleasedBackground);
         }
 
-        switch (cellMode) {
-            case CM_CIRCLE:
-                vh.pieChart.setEvents(cell.events);
-                break;
-            case CM_LINE:
-                vh.lines.setEvents(cell.events);
-                break;
-        }
-
+        vh.pieChart.setEvents(cell.events);
 
         int widthSpec = View.MeasureSpec.makeMeasureSpec(cellWidth, View.MeasureSpec.EXACTLY);
         int heightSpec = View.MeasureSpec.makeMeasureSpec(cellHeight, View.MeasureSpec.EXACTLY);
@@ -207,6 +195,5 @@ public class MonthTable {
     static class ViewHolder {
         TextView number;
         DayPieChart pieChart;
-        DayLines lines;
     }
 }

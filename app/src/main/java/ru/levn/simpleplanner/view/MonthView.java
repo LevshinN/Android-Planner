@@ -97,9 +97,9 @@ public class MonthView extends View {
     private GestureDetector.OnGestureListener gestureListener = new GestureDetector.SimpleOnGestureListener() {
 
         public boolean onDown(MotionEvent e) {
-//            if (monthTable.touchItem(e.getX(), e.getY())) {
-//                invalidate();
-//            }
+            if (monthTable.touchItem(e.getX(), e.getY())) {
+                invalidate();
+            }
 
             return true;
         }

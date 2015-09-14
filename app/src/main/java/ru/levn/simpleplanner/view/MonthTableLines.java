@@ -2,6 +2,7 @@ package ru.levn.simpleplanner.view;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
@@ -33,6 +34,8 @@ public class MonthTableLines {
     private Context context;
 
     public int lineSize;
+
+    private int touchedLine = -1;
 
     // Размеры таблицы
     public static final int ROWS = 8;
@@ -104,6 +107,24 @@ public class MonthTableLines {
         Common.sSelectedDate.setDate(representTime);
         Common.sUpdateTitle();
         updateLines();
+    }
+
+    public boolean touchItem(float x, float y) {
+        touchedLine = locateTouchedLine(y + screenUp);
+        if (touchedLine < ROWS - 2 && touchedLine >= 0) {
+            lines[touchedLine + 1].touchCell(x);
+//            Common.sCurrentMode = Common.DAY_MODE;
+//            Common.sSelectedDate.
+//                    setDate(cells[touchedCell.first + touchedCell.second * COLUMNS].representTime);
+//            Common.onUpdate();
+            return true;
+        }
+        return false;
+    }
+
+    private int locateTouchedLine(float y) {
+        int row = (int)(y / lineHeight);
+        return row;
     }
 
     public void updateBounds(int up, int down) {
