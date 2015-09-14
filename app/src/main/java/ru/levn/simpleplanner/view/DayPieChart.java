@@ -60,6 +60,9 @@ public class DayPieChart extends View {
             return;
         }
 
+        int xPos = (int)getX();
+        int yPos = (int)getY();
+
         int width = getWidth();
         int height = getHeight();
 
@@ -68,10 +71,10 @@ public class DayPieChart extends View {
 
         int radius = Math.min(width, height) / 2;
 
-        rectF.set(centerX - radius,
-                centerY - radius,
-                centerX + radius,
-                centerY + radius);
+        rectF.set(xPos + centerX - radius,
+                yPos + centerY - radius,
+                xPos + centerX + radius,
+                yPos + centerY + radius);
 
 
         int delimer = 6;
@@ -89,10 +92,10 @@ public class DayPieChart extends View {
         }
 
         radius = radius / 3 * 2;
-        rectF.set(centerX - radius,
-                centerY - radius,
-                centerX + radius,
-                centerY + radius);
+        rectF.set(xPos + centerX - radius,
+                yPos + centerY - radius,
+                xPos + centerX + radius,
+                yPos + centerY + radius);
 
         paint.setColor(0xffffffff);
         canvas.drawArc(rectF, 0, 360, true, paint);

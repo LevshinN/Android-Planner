@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="MonthView">
+        <attr name="pieChartMargin" format="dimension" />
+        <attr name="eventRepresentation" format="enum">
+            <enum name="line" value="0"/>
+            <enum name="pieChart" value="1"/>
+        </attr>
+    </declare-styleable>
+
+</resources>

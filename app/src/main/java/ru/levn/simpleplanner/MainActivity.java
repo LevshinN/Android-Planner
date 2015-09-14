@@ -2,9 +2,11 @@ package ru.levn.simpleplanner;
 
 
 import android.app.DialogFragment;
+import android.app.Fragment;
 import android.content.res.Configuration;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -43,6 +45,7 @@ public class MainActivity extends AppCompatActivity
 
     private static FragmentActivity mCurrentActivity;
     private static ModeFragment mCurrentFragment;
+    private static ModeFragment mSupportFragment;
 
     private View mCurrentMode;
 
@@ -120,6 +123,15 @@ public class MainActivity extends AppCompatActivity
         if (savedInstanceState == null)  {
             mSelectItem(Common.DAY_MODE);
         }
+
+        // Добавляем в боковую панель (при её наличии) дополнительный фрагмент
+        if (findViewById(R.id.content_frame_support) != null) {
+            mSupportFragment = new ScreenMonth();
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.content_frame_main, mSupportFragment, "main")
+                    .commit();
+        }
     }
 
     @Override
@@ -186,8 +198,11 @@ public class MainActivity extends AppCompatActivity
         // Insert the fragment by replacing any existing fragment
         if (mCurrentFragment != null) {
 
-            FragmentManager fragmentManager = mCurrentActivity.getSupportFragmentManager();
-            fragmentManager.beginTransaction().replace(R.id.content_frame, mCurrentFragment).commit();
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction transaction = fragmentManager.beginTransaction();
+            transaction.replace(R.id.content_frame_support, mCurrentFragment, "support");
+            transaction.addToBackStack(null);
+            transaction.commit();
 
             // Highlight the selected item, update the title, and close the drawer
             mDrawerList.setItemChecked(position, true);

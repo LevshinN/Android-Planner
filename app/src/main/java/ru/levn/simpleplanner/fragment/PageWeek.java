@@ -71,11 +71,13 @@ public class PageWeek extends ModeFragment {
         mRootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                Common.sFragWidth = getView().getWidth();
-                Common.sFragHeight = getView().getHeight();
-                if (Common.sFragWidth > 0) {
-                    removeOnGlobalLayoutListener(getView(), this);
-                    onBuild();
+                if (getView() != null) {
+                    Common.sFragWidth = getView().getWidth();
+                    Common.sFragHeight = getView().getHeight();
+                    if (Common.sFragWidth > 0) {
+                        removeOnGlobalLayoutListener(getView(), this);
+                        onBuild();
+                    }
                 }
             }
         });

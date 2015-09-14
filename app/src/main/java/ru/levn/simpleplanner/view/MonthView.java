@@ -1,21 +1,19 @@
 package ru.levn.simpleplanner.view;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
-import android.view.animation.Interpolator;
 import android.widget.OverScroller;
-
-import java.util.ArrayList;
+import android.widget.Toast;
 
 import ru.levn.simpleplanner.Common;
-import ru.levn.simpleplanner.calendar.Event;
+import ru.levn.simpleplanner.R;
 
 /**
  * Автор: Левшин Николай, 707 группа.
@@ -25,13 +23,10 @@ import ru.levn.simpleplanner.calendar.Event;
 public class MonthView extends View {
 
     protected boolean measurementChanged = false;
-
-    protected MonthTableLines monthTable;
+    protected MonthTable monthTable;
 
     private GestureDetector gestureDetector;
-
     protected OverScroller scroller;
-
     protected int yOffset;
 
     protected int canvasHeight;
@@ -40,25 +35,27 @@ public class MonthView extends View {
     public MonthView(Context context) {
         super(context);
         init();
-        monthTable = new MonthTableLines(context, Common.sSelectedDate.getDate());
+        monthTable = new MonthTable(context, Common.sSelectedDate.getDate());
     }
 
     // Конструктор, необходимый для наполнения элемента из файла с ресурсом
     public MonthView (Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
-        monthTable = new MonthTableLines(context, Common.sSelectedDate.getDate());
+        monthTable = new MonthTable(context, Common.sSelectedDate.getDate(), attrs);
     }
 
     // Конструктор, необходимый для наполнения элемента из файла с ресурсом
-    public MonthView (Context context, AttributeSet ats, int defaultStyle) {
-        super(context, ats, defaultStyle);
+    public MonthView (Context context, AttributeSet attrs, int defaultStyle) {
+        super(context, attrs, defaultStyle);
         init();
-        monthTable = new MonthTableLines(context, Common.sSelectedDate.getDate());
+        monthTable = new MonthTable(context, Common.sSelectedDate.getDate(), attrs);
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
+
+        if (isInEditMode()) return;
 
         if (scroller.computeScrollOffset()) {
             yOffset = scroller.getCurrY();
@@ -100,7 +97,6 @@ public class MonthView extends View {
             if (monthTable.touchItem(e.getX(), e.getY())) {
                 invalidate();
             }
-
             return true;
         }
 
@@ -120,6 +116,16 @@ public class MonthView extends View {
             return super.onSingleTapUp(e);
         }
 
+        public void onLongPress(MotionEvent e) {
+            resetTouchFeedback();
+        }
+
+        public boolean onDoubleTapEvent(MotionEvent e) {
+            resetTouchFeedback();
+            monthTable.selectItem(e.getX(), e.getY());
+            return true;
+        }
+
     };
 
     @Override
@@ -132,9 +138,9 @@ public class MonthView extends View {
     }
 
     private void resetTouchFeedback() {
-//        if (monthTable.releaseTouch()) {
-//            invalidate();
-//        }
+        if (monthTable.releaseTouch()) {
+            invalidate();
+        }
     };
 
     @Override
