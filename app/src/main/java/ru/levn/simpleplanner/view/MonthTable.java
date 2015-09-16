@@ -136,8 +136,7 @@ public class MonthTable {
         touchedLine -= offset;
         representTime.add(Calendar.WEEK_OF_YEAR, offset);
         representTime.getTimeInMillis();
-        Common.sSelectedDate.setDate(representTime);
-        Common.sUpdateTitle();
+        Common.sUpdateTitle(representTime);
         updateLines();
     }
 

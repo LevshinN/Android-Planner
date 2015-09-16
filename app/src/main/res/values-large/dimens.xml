@@ -1,0 +1,8 @@
+<resources>
+
+    <dimen name="activity_horizontal_margin">64dp</dimen>
+    <dimen name="button_toolbar_tex_size">32sp</dimen>
+
+    <dimen name="mode_list_margin">48dp</dimen>
+
+</resources>

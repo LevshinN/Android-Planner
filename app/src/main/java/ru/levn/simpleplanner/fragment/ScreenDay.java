@@ -75,7 +75,7 @@ public class ScreenDay extends ModeFragment {
                 }
 
                 mPagerAdapter.notifyDataSetChanged();
-                Common.sUpdateTitle();
+                Common.sUpdateTitle(Common.sSelectedDate.getDate());
                 mCurrentPosition = position % NUM_PAGES;
             }
 

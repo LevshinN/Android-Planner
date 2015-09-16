@@ -130,7 +130,22 @@ public class WeekLine {
         c.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
         c.getTimeInMillis();
 
+        Calendar currentDate = Calendar.getInstance();
+
         for (int i = 0; i < 7; ++i) {
+
+            xPos = (int)(weekNumberCellWidth + i * dayCellWidth + dayCellWidth / 2 - paint.measureText(number) / 2);
+            number = String.valueOf(c.get(Calendar.DAY_OF_MONTH));
+
+            if (c.get(Calendar.YEAR) == currentDate.get(Calendar.YEAR)
+                    && c.get(Calendar.DAY_OF_YEAR) == currentDate.get(Calendar.DAY_OF_YEAR)) {
+                float centerX = paint.measureText(number) + xPos;
+                //float centerY =
+
+                RectF circleRect = new RectF(xPos, yPos, xPos + paint.measureText(number), yPos + textHeight );
+                paint.setColor(weekColor);
+                canvas.drawArc(circleRect, 0, 360, false, paint);
+            }
 
             if (c.get(Calendar.MONTH) == currentMonth) {
                 paint.setColor(cellActiveColor);
@@ -138,9 +153,7 @@ public class WeekLine {
                 paint.setColor(cellPassiveColor);
             }
 
-            number = String.valueOf(c.get(Calendar.DAY_OF_MONTH));
 
-            xPos = (int)(weekNumberCellWidth + i * dayCellWidth + dayCellWidth / 2 - paint.measureText(number) / 2);
 
             canvas.drawText(number, xPos, yPos,paint);
 

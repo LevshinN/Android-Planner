@@ -75,10 +75,7 @@ class CalendarListAdapter extends CalendarAdapter {
 
         MyCalendar cal = (MyCalendar)getItem(position);
 
-        ((TextView) view.findViewById(R.id.calendar_id)).setText(cal.id);
-        ((TextView) view.findViewById(R.id.calendar_acc_name)).setText(cal.accountName);
-        ((TextView) view.findViewById(R.id.calendar_disp_name)).setText(cal.displayName);
-        ((TextView) view.findViewById(R.id.calendar_owner_acc)).setText(cal.ownerAccount);
+        ((TextView) view.findViewById(R.id.calendar_disp_name)).setText(cal.displayName + " (" + cal.accountName + ")");
 
         CheckBox isEnabledCB = (CheckBox) view.findViewById(R.id.is_calendar_enabled);
         isEnabledCB.setChecked(cal.enabled);

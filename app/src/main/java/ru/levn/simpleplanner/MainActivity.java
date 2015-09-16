@@ -43,7 +43,6 @@ public class MainActivity extends AppCompatActivity
     private ListView mDrawerList;
     private ActionBarDrawerToggle mDrawerToggle;
 
-    private static FragmentActivity mCurrentActivity;
     private static ModeFragment mCurrentFragment;
     private static ModeFragment mSupportFragment;
 
@@ -56,7 +55,6 @@ public class MainActivity extends AppCompatActivity
 
         SyncUtils.CreateSyncAccount(this);
 
-        mCurrentActivity = this;
         Common.sIsDrawerClosed = true;
 
         DisplayMetrics displayMetrics = getApplicationContext().getResources().getDisplayMetrics();
@@ -125,7 +123,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         // Добавляем в боковую панель (при её наличии) дополнительный фрагмент
-        if (findViewById(R.id.content_frame_support) != null) {
+        if (findViewById(R.id.content_frame_main) != null) {
             mSupportFragment = new ScreenMonth();
             FragmentManager fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction()
@@ -154,7 +152,8 @@ public class MainActivity extends AppCompatActivity
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            mSelectItem(position);
+            int[] projection = getResources().getIntArray(R.array.modes_projection);
+            mSelectItem(projection[position]);
         }
     }
 
@@ -224,7 +223,7 @@ public class MainActivity extends AppCompatActivity
             mCurrentMode = pressedButton;
         }
 
-        Common.sUpdateTitle();
+        Common.sUpdateTitle(Common.sSelectedDate.getDate());
     }
 
     /**
@@ -290,7 +289,7 @@ public class MainActivity extends AppCompatActivity
 
         Common.sBtnCurrentDate = findViewById(R.id.btn_current_date);
         Common.sBtnCurrentDate.setOnClickListener(listener);
-        Common.sUpdateTitle();
+        Common.sUpdateTitle(Common.sSelectedDate.getDate());
 
         findViewById(R.id.btn_add).setOnClickListener(listener);
         findViewById(R.id.btn_today).setOnClickListener(listener);

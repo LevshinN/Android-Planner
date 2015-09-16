@@ -113,6 +113,7 @@ public class MonthView extends View {
 
         public boolean onSingleTapUp(MotionEvent e) {
             resetTouchFeedback();
+            monthTable.selectItem(e.getX(), e.getY());
             return super.onSingleTapUp(e);
         }
 
@@ -122,7 +123,6 @@ public class MonthView extends View {
 
         public boolean onDoubleTapEvent(MotionEvent e) {
             resetTouchFeedback();
-            monthTable.selectItem(e.getX(), e.getY());
             return true;
         }
 

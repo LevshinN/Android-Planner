@@ -12,6 +12,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.AdapterView;
+import android.widget.GridLayout;
+import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -41,6 +43,9 @@ public class PageWeek extends ModeFragment {
 
     public boolean changed;
     public boolean ready;
+
+    private int width;
+    private int height;
 
     private EventWeekAdapter[] mAdapter = new EventWeekAdapter[7];
 
@@ -72,9 +77,9 @@ public class PageWeek extends ModeFragment {
             @Override
             public void onGlobalLayout() {
                 if (getView() != null) {
-                    Common.sFragWidth = getView().getWidth();
-                    Common.sFragHeight = getView().getHeight();
-                    if (Common.sFragWidth > 0) {
+                    width = getView().getWidth();
+                    height = getView().getHeight();
+                    if (width > 0) {
                         removeOnGlobalLayoutListener(getView(), this);
                         onBuild();
                     }
@@ -138,6 +143,13 @@ public class PageWeek extends ModeFragment {
     @Override
     public void onBuild() {
 
+        GridLayout gv =(GridLayout)mRootView.findViewById(R.id.week_table);
+        if (width > height) {
+            gv.setColumnCount(4);
+        } else {
+            gv.setColumnCount(2);
+        }
+
         dayCards = new CardView[7];
 
         // Т.к в grid view элементы добавляются наверх, проходимся в обратном порядке
@@ -154,18 +166,15 @@ public class PageWeek extends ModeFragment {
 
     private CardView getCard() {
 
-        int fragmentWidth = Common.sFragWidth;
-        int fragmentHeight = Common.sFragHeight;
-
         int cardWidth;
         int cardHeight;
 
-        if (fragmentWidth > fragmentHeight) {
-            cardWidth = fragmentWidth / 4;
-            cardHeight = fragmentHeight / 2;
+        if (width > height) {
+            cardWidth = width / 4;
+            cardHeight = height / 2;
         } else {
-            cardWidth = fragmentWidth / 2;
-            cardHeight = fragmentHeight / 4;
+            cardWidth = width / 2;
+            cardHeight = height / 4;
         }
 
         CardView cv = new CardView(getActivity());

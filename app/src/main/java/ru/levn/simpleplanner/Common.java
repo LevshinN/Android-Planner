@@ -51,14 +51,14 @@ public class Common {
         mMainActivity = activity;
     }
 
-    public static void sUpdateTitle() {
+    public static void sUpdateTitle(Calendar date) {
         ((TextView)sBtnCurrentDate.findViewById(R.id.txt_current_date))
-                .setText(sGetCurrentDateAsText(sCurrentMode));
+                .setText(sGetCurrentDateAsText(date, sCurrentMode));
     }
 
-    public static String sGetCurrentDateAsText(int mode) {
+    public static String sGetCurrentDateAsText(Calendar date, int mode) {
         SimpleDateFormat dateFormat;
-        long UTCDate = sSelectedDate.getDate().getTimeInMillis();
+        long UTCDate = date.getTimeInMillis();
 
         switch (mode) {
             case DAY_MODE:

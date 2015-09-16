@@ -12,6 +12,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
+import ru.levn.simpleplanner.Common;
 import ru.levn.simpleplanner.calendar.CalendarProvider;
 import ru.levn.simpleplanner.calendar.Event;
 
@@ -234,7 +235,7 @@ public class WeekLineRect extends WeekLine {
                     paint.setColor(cellPassiveColor);
                 }
 
-                if (reservedLines[i][maxLinesNum - 1]) {
+                 if (reservedLines[i][maxLinesNum - 1]) {
                     hiddenNumber = "Ещё +" + String.valueOf(hiddenEventsNum[i] + 1);
                 } else {
                     hiddenNumber = "+" + String.valueOf(hiddenEventsNum[i]);
@@ -268,7 +269,29 @@ public class WeekLineRect extends WeekLine {
         c.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
         c.getTimeInMillis();
 
+        Calendar currentDate = Calendar.getInstance();
+
         for (int i = 0; i < 7; ++i) {
+
+
+            number = String.valueOf(c.get(Calendar.DAY_OF_MONTH));
+
+            xPos = (int)(weekNumberCellWidth + i * dayCellWidth + paint.descent());
+
+            if (c.get(Calendar.YEAR) == currentDate.get(Calendar.YEAR)
+                    && c.get(Calendar.DAY_OF_YEAR) == currentDate.get(Calendar.DAY_OF_YEAR)) {
+                float centerX = paint.measureText(number) / 2 + xPos;
+                float centerY = yPos + (paint.descent() + paint.ascent()) / 2;
+
+                RectF circleRect = new RectF(
+                        centerX - centerY,
+                        0,
+                        centerX + centerY,
+                        2 * centerY
+                );
+                paint.setColor(weekColor);
+                canvas.drawArc(circleRect, 0, 360, false, paint);
+            }
 
             if (c.get(Calendar.MONTH) == currentMonth) {
                 paint.setColor(cellActiveColor);
@@ -276,10 +299,6 @@ public class WeekLineRect extends WeekLine {
                 paint.setColor(cellPassiveColor);
             }
 
-            number = String.valueOf(c.get(Calendar.DAY_OF_MONTH));
-
-            xPos = (int)(weekNumberCellWidth + i * dayCellWidth + paint.descent());
-            yPos = (int) textHeight;
 
             canvas.drawText(number, xPos, yPos,paint);
 

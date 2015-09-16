@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <integer name="mode_selector_column_count">2</integer>
-
     <array name="modes_projection">
         <item>0</item>
         <item>1</item>
-        <item>2</item>
         <item>3</item>
+        <item>-1</item>
     </array>
+
+    <integer name="mode_selector_column_count">4</integer>
 
 </resources>
