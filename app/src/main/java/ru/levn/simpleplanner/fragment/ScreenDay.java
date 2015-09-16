@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import com.antonyt.infiniteviewpager.InfinitePagerAdapter;
 
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 import ru.levn.simpleplanner.Common;
 import ru.levn.simpleplanner.R;
@@ -34,20 +35,36 @@ public class ScreenDay extends ModeFragment {
     PagerAdapter mPagerAdapter;
     InfinitePagerAdapter mInfPagerAdapter;
 
+    View mRootView;
+
     PageDay[] pages = {null, null, null, null, null};
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (savedInstanceState == null) {
+            mCurrentPosition = 0;
+
+            for (int i = 0; i < 5; ++i) {
+                pages[i] = PageDay.newInstance(mGetNextDate( (i + 2) % 5 - 2 ));
+            }
+        }
+    }
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View mRootView = inflater.inflate(R.layout.day, container, false);
-
-        mCurrentPosition = 0;
-
-        for (int i = 0; i < 5; ++i) {
-            pages[i] = PageDay.newInstance(mGetNextDate( (i + 2) % 5 - 2 ));
+        if (mRootView != null) {
+            Calendar c = new GregorianCalendar();
+            c.setTimeInMillis(pages[mCurrentPosition].representTime);
+            Common.sCurrentMode = Common.DAY_MODE;
+            Common.sUpdateTitle(c);
+            return mRootView;
         }
+
+        mRootView = inflater.inflate(R.layout.day, container, false);
 
         mPager = (ViewPager) mRootView.findViewById(R.id.pager);
         mPagerAdapter = new MyFragmentPagerAdapter(getActivity().getSupportFragmentManager());
@@ -89,6 +106,7 @@ public class ScreenDay extends ModeFragment {
             }
         });
 
+        mPagerAdapter.notifyDataSetChanged();
         return mRootView;
     }
 

@@ -152,8 +152,7 @@ public class MainActivity extends AppCompatActivity
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            int[] projection = getResources().getIntArray(R.array.modes_projection);
-            mSelectItem(projection[position]);
+            mSelectItem(position);
         }
     }
 
@@ -163,7 +162,10 @@ public class MainActivity extends AppCompatActivity
         Common.sCurrentMode = position;
         mCurrentFragment = null;
         View pressedButton = null;
-        switch (position) {
+
+        final int[] projection = getResources().getIntArray(R.array.modes_projection);
+
+        switch (projection[position]) {
             case Common.DAY_MODE:
                 mCurrentFragment = new ScreenDay();
                 pressedButton = findViewById(R.id.btn_day_mode);
@@ -199,8 +201,10 @@ public class MainActivity extends AppCompatActivity
 
             FragmentManager fragmentManager = getSupportFragmentManager();
             FragmentTransaction transaction = fragmentManager.beginTransaction();
-            transaction.replace(R.id.content_frame_support, mCurrentFragment, "support");
-            transaction.addToBackStack(null);
+            transaction.replace(R.id.content_frame_support,
+                        mCurrentFragment,
+                        "support");
+            transaction.addToBackStack("support");
             transaction.commit();
 
             // Highlight the selected item, update the title, and close the drawer
@@ -325,4 +329,16 @@ public class MainActivity extends AppCompatActivity
             mSelectItem(Common.sCurrentMode);
         }
     };
+
+    @Override
+    public void onBackPressed() {
+        int fragments = getSupportFragmentManager().getBackStackEntryCount();
+        if (fragments == 1) {
+            finish();
+        }
+
+        super.onBackPressed();
+
+        mDrawerList.setItemChecked(Common.sCurrentMode, true);
+    }
 }

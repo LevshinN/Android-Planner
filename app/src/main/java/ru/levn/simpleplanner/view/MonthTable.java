@@ -22,7 +22,7 @@ public class MonthTable {
 
     private WeekLine[] lines;
 
-    private Calendar representTime;
+    public Calendar representTime;
 
     private float lineWidth;
     private float lineHeight;

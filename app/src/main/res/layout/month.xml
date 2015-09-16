@@ -57,6 +57,7 @@
 
     <ru.levn.simpleplanner.view.MonthView
 
+        android:id="@+id/month_table"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         custom:eventRepresentation = "line"/>

@@ -12,6 +12,8 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.OverScroller;
 import android.widget.Toast;
 
+import java.util.Calendar;
+
 import ru.levn.simpleplanner.Common;
 import ru.levn.simpleplanner.R;
 
@@ -148,5 +150,9 @@ public class MonthView extends View {
         canvasHeight = MeasureSpec.getSize(heightMeasureSpec);
         measurementChanged = true;
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+    }
+
+    public Calendar getRepresentTime() {
+        return monthTable.representTime;
     }
 }

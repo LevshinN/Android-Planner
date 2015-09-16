@@ -9,21 +9,33 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.text.DateFormatSymbols;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
+import ru.levn.simpleplanner.Common;
 import ru.levn.simpleplanner.R;
+import ru.levn.simpleplanner.view.MonthView;
 
 /**
  * Автор: Левшин Николай, 707 группа.
  * Дата создания: 14.07.2015.
  */
 public class ScreenMonth extends ModeFragment {
-    int[] dayNamesProjection = {2,3,4,5,6,7,1};
+
+    private View mRootView;
+    private int[] dayNamesProjection = {2,3,4,5,6,7,1};
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.month, container, false);
+        if (mRootView != null) {
+            Common.sCurrentMode = Common.MONTH_MODE;
+            Common.sUpdateTitle(((MonthView)mRootView.findViewById(R.id.month_table)).getRepresentTime());
+            return mRootView;
+        }
+
+        mRootView = inflater.inflate(R.layout.month, container, false);
         DateFormatSymbols symbols = DateFormatSymbols.getInstance();
         String[] dayNames = symbols.getShortWeekdays();
 
@@ -38,11 +50,11 @@ public class ScreenMonth extends ModeFragment {
         };
 
         for (int i = 0; i < 7; ++i) {
-            ((TextView)rootView.findViewById(headerIds[i]))
+            ((TextView)mRootView.findViewById(headerIds[i]))
                     .setText(dayNames[dayNamesProjection[i]].toUpperCase());
         }
 
-        return rootView;
+        return mRootView;
     }
 
 
