@@ -13,6 +13,7 @@ import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
 import ru.levn.simpleplanner.Common;
+import ru.levn.simpleplanner.R;
 import ru.levn.simpleplanner.calendar.CalendarProvider;
 import ru.levn.simpleplanner.calendar.Event;
 
@@ -235,13 +236,12 @@ public class WeekLineRect extends WeekLine {
                     paint.setColor(cellPassiveColor);
                 }
 
+                hiddenNumber = Common.sGetResources().getString(R.string.other_events);
                  if (reservedLines[i][maxLinesNum - 1]) {
-                    hiddenNumber = "Ещё +" + String.valueOf(hiddenEventsNum[i] + 1);
+                    hiddenNumber += String.valueOf(hiddenEventsNum[i] + 1);
                 } else {
-                    hiddenNumber = "+" + String.valueOf(hiddenEventsNum[i]);
+                    hiddenNumber += String.valueOf(hiddenEventsNum[i]);
                 }
-
-
 
                 xPos = (int)(weekNumberCellWidth + i * dayCellWidth + dayCellWidth / 2 - paint.measureText(hiddenNumber) / 2);
                 yPos = (int) ((maxLinesNum) * lineHeight + lineHeight / 2 + textHeight / 2);

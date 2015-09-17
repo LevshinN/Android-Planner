@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="action_settings">Настройки</string>
+    <string name="action_search">Поиск</string>
+    <string name="action_add">Добавить</string>
+    <string name="action_upload">Загрузить календари</string>
+    <string name="info_current_date">Текущая дата</string>
+    <string name="action_options">Открыть опции</string>
+
+    <string name="mode_day">День</string>
+    <string name="mode_week">Неделя</string>
+    <string name="mode_month">Месяц</string>
+    <string name="mode_year">Год</string>
+    <string name="mode_calendar">Мои календари</string>
+
+    <string name="all_day">Весь день</string>
+    <string name="no_events">Событий нет</string>
+    <string name="other_events">Ещё +</string>
+
+    <string name="btn_edit">ИЗМЕНИТЬ</string>
+    <string name="btn_close">ЗАКРЫТЬ</string>
+    <string name="btn_save">СОХРАНИТЬ</string>
+    <string name="btn_delete">УДАЛИТЬ</string>
+
+    <string name="repeat">Повторять</string>
+    <string name="repeat_ellipsis">Повторять…</string>
+    <string name="title">Заголовок</string>
+    <string name="location">Местоположение</string>
+    <string name="description">Описание</string>
+    <string name="advanced_settings">Дополнительные настройки</string>
+    <string name="interval">Интервал:</string>
+    <string name="finish_date">Дата окончания</string>
+
+    <string name="color">Цвет</string>
+    <string name="red">Красный</string>
+    <string name="blue">Синий</string>
+    <string name="yellow">Желтый</string>
+    <string name="green">Зеленый</string>
+    <string name="orange">Оранжевый</string>
+
+    <string name="yearly">Ежегодно</string>
+    <string name="monthly">Ежемесячно</string>
+    <string name="weekly">Еженедельно</string>
+    <string name="daily">Ежедневно</string>
+
+
+    <string name="msg_delete_recurrent_event">Событие является частью цепочки. Удалить…</string>
+    <string name="msg_delete_single_event">Удалить это событие?</string>
+    <string name="msg_no_empty_title">Заголовок не может быть пустым!</string>
+
+    <string-array name="delete_options">
+        <item>Всю цепочку</item>
+        <item>Это событие</item>
+    </string-array>
+
+    <string-array name="month_names">
+
+        <item>Январь</item>
+        <item>Февраль</item>
+        <item>Март</item>
+        <item>Апрель</item>
+        <item>Май</item>
+        <item>Июнь</item>
+        <item>Июль</item>
+        <item>Август</item>
+        <item>Сентябрь</item>
+        <item>Октябрь</item>
+        <item>Ноябрь</item>
+        <item>Декабрь</item>
+
+    </string-array>
+
+    <string-array name="repeat_border">
+        <item>Кол-во</item>
+        <item>До</item>
+    </string-array>
+
+    <string name="rr_every_year">Повторяется каждый год</string>
+    <string name="rr_every_month">Повторяется каждый месяц</string>
+    <string name="rr_every_week">Повторяется каждую неделю</string>
+    <string name="rr_every_day">Повторяется каждый день</string>
+
+    <string name="rr_on"> </string>
+    <string name="rr_at">в</string>
+
+</resources>

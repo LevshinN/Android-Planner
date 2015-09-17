@@ -19,7 +19,7 @@
             android:fontFamily="sans-serif"
             android:textStyle="bold"
             android:textSize="@dimen/abc_text_size_headline_material"
-            android:hint="Title"
+            android:hint="@string/title"
             android:imeOptions="actionDone"
             android:singleLine="true"/>
 
@@ -48,6 +48,7 @@
                 android:orientation="horizontal">
 
                 <ImageView
+                    android:contentDescription="@string/all_day"
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
                     android:layout_margin="16dp"
@@ -70,15 +71,13 @@
                         style="@style/buttonTheme"
                         android:id="@+id/edit_event_start_text"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="TIME START"/>
+                        android:layout_height="wrap_content"/>
 
                     <Button
                         style="@style/buttonTheme"
                         android:id="@+id/edit_event_end_text"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="TIME END"/>
+                        android:layout_height="wrap_content"/>
 
                 </LinearLayout>
 
@@ -90,6 +89,7 @@
                 android:layout_height="wrap_content">
 
                 <ImageView
+                    android:contentDescription="@string/repeat"
                     android:id="@+id/edit_event_repeat_icon"
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
@@ -104,7 +104,7 @@
                     android:layout_height="56dp"
                     android:padding="8dp"
                     android:layout_toRightOf="@id/edit_event_repeat_icon"
-                    android:text="Repeat every..."/>
+                    android:text="@string/repeat_ellipsis"/>
 
                 <ImageButton
                     android:id="@+id/edit_event_repeat_delete"
@@ -131,22 +131,22 @@
                 <Button
                     style="@style/buttonTheme"
                     android:id="@+id/edit_event_repeat_mode_year"
-                    android:text="@string/mode_year"/>
+                    android:text="@string/yearly"/>
 
                 <Button
                     style="@style/buttonTheme"
                     android:id="@+id/edit_event_repeat_mode_month"
-                    android:text="@string/mode_month"/>
+                    android:text="@string/monthly"/>
 
                 <Button
                     style="@style/buttonTheme"
                     android:id="@+id/edit_event_repeat_mode_week"
-                    android:text="@string/mode_week"/>
+                    android:text="@string/weekly"/>
 
                 <Button
                     style="@style/buttonTheme"
                     android:id="@+id/edit_event_repeat_mode_day"
-                    android:text="@string/mode_day"/>
+                    android:text="@string/daily"/>
 
             </GridLayout>
 
@@ -157,7 +157,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="56dp"
                 android:padding="8dp"
-                android:text="Advanced Settings"
+                android:text="@string/advanced_settings"
                 android:visibility="gone"/>
 
             <LinearLayout
@@ -177,7 +177,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
-                        android:text="Interval:"/>
+                        android:text="@string/interval"/>
 
 
                     <EditText
@@ -200,7 +200,7 @@
 
                     <Spinner
                         android:id="@+id/edit_event_border_mode"
-                        android:layout_width="80dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="-8dp">
 
@@ -225,7 +225,7 @@
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:layout_marginLeft="80dp"
-                        android:text="Finish date"/>
+                        android:text="@string/finish_date"/>
 
                 </RelativeLayout>
 
@@ -249,7 +249,7 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="8dp"
                     android:fontFamily="sans-serif-light"
-                    android:hint="Location"
+                    android:hint="@string/location"
                     android:imeOptions="actionDone"/>
 
             </LinearLayout>
@@ -270,7 +270,7 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="8dp"
                     android:inputType="textMultiLine"
-                    android:hint="Description"
+                    android:hint="@string/description"
                     android:ems="10"
                     android:fontFamily="sans-serif-light"
                     android:imeOptions="actionDone"/>

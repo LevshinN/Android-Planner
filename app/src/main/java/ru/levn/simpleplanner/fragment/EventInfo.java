@@ -86,7 +86,7 @@ public class EventInfo extends DialogFragment {
             v.setBackgroundColor(v.getContext().getResources().getColor(R.color.default_color));
         }
 
-        ((TextView)v).setText(mEvent.title  + '\n' + mEvent.id);
+        ((TextView)v).setText(mEvent.title);
     }
 
     private void mEditBody(View v) {
@@ -130,13 +130,7 @@ public class EventInfo extends DialogFragment {
             try {
                 rRule.setStart(mEvent.timeStart);
                 rRule.parse(mEvent.rrule);
-                ruleDescription = rRule.getDescription() + "\n" +
-                        "---------------------------------" + "\n" +
-                        mEvent.rrule + '\n' +
-                        mEvent.rdate + '\n' +
-                        mEvent.exrule + '\n' +
-                        mEvent.exdate;
-
+                ruleDescription = rRule.getDescription();
                 ((TextView)v.findViewById(R.id.event_info_repeat)).setText(ruleDescription);
 
             } catch (ParseException exception) {
@@ -210,13 +204,12 @@ public class EventInfo extends DialogFragment {
 
     private void showDeleteConfirmDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setMessage("Delete this event?")
-                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+        builder.setMessage(R.string.msg_delete_single_event)
+                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {}
                 })
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         CalendarProvider.deleteSingleEvent(mEvent);
@@ -230,19 +223,19 @@ public class EventInfo extends DialogFragment {
     private void showSequenceDeleteDialog() {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("Delete...")
+        builder.setTitle(R.string.msg_delete_recurrent_event)
                 .setSingleChoiceItems(R.array.delete_options, mDeleteOption, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         mDeleteOption = which;
                     }
                 })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {}
                 })
-                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {

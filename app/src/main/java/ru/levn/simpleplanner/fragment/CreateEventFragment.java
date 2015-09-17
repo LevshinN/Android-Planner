@@ -144,7 +144,7 @@ public class CreateEventFragment extends DialogFragment
         calendarSelector.setOnItemSelectedListener(calendarSelectorListener);
 
         // Спиннер для выбора, как ограничивать последовательность событий
-        String[] data = {"Count", "Until"};
+        String[] data = getResources().getStringArray(R.array.repeat_border);
         final ArrayAdapter<String> adapter = new ArrayAdapter<String>(
                 this.getActivity(),
                 android.R.layout.simple_spinner_dropdown_item,
@@ -408,7 +408,7 @@ public class CreateEventFragment extends DialogFragment
         mNewEvent.location = locationView.getText().toString();
 
         if (mNewEvent.title.equals("")) {
-            Toast.makeText(getActivity(), "Title can`t be empty!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), R.string.msg_no_empty_title, Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -472,19 +472,19 @@ public class CreateEventFragment extends DialogFragment
         switch (modeId) {
             case R.id.edit_event_repeat_mode_year:
                 freqRule = "YEARLY";
-                buttonTextEnding = getResources().getString(R.string.mode_year).toLowerCase();
+                buttonTextEnding = getResources().getString(R.string.yearly).toLowerCase();
                 break;
             case R.id.edit_event_repeat_mode_month:
                 freqRule = "MONTHLY";
-                buttonTextEnding = getResources().getString(R.string.mode_month).toLowerCase();
+                buttonTextEnding = getResources().getString(R.string.monthly).toLowerCase();
                 break;
             case R.id.edit_event_repeat_mode_week:
                 freqRule = "WEEKLY";
-                buttonTextEnding = getResources().getString(R.string.mode_week).toLowerCase();
+                buttonTextEnding = getResources().getString(R.string.weekly).toLowerCase();
                 break;
             case R.id.edit_event_repeat_mode_day:
                 freqRule = "DAILY";
-                buttonTextEnding = getResources().getString(R.string.mode_day).toLowerCase();
+                buttonTextEnding = getResources().getString(R.string.daily).toLowerCase();
                 break;
             default:
                 mRecRule = null;
@@ -492,7 +492,7 @@ public class CreateEventFragment extends DialogFragment
         }
         mRecRule.setFreq(freqRule);
         Button b = (Button)mRootView.findViewById(R.id.edit_event_repeat_mode_button);
-        b.setText(getResources().getString(R.string.repeat_every) + " " + buttonTextEnding + ".");
+        b.setText(getResources().getString(R.string.repeat) + " " + buttonTextEnding + ".");
 
         ImageButton c = (ImageButton)mRootView.findViewById(R.id.edit_event_repeat_delete);
         c.setVisibility(View.VISIBLE);
@@ -507,7 +507,7 @@ public class CreateEventFragment extends DialogFragment
         mRecRule = null;
 
         Button b = (Button)mRootView.findViewById(R.id.edit_event_repeat_mode_button);
-        b.setText(getResources().getString(R.string.repeat_every) + "...");
+        b.setText(getResources().getString(R.string.repeat_ellipsis));
 
         View v = mRootView.findViewById(R.id.edit_event_repeat_delete);
         v.setVisibility(View.INVISIBLE);
@@ -527,7 +527,7 @@ public class CreateEventFragment extends DialogFragment
         count.clearComposingText();
 
         b = (Button)v.findViewById(R.id.edit_event_repeat_until);
-        b.setText("Until date");
+        b.setText(R.string.finish_date);
         mUntil = null;
 
         v.setVisibility(View.GONE);

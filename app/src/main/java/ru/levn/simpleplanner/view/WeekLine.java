@@ -31,6 +31,7 @@ public class WeekLine {
     protected int backgroundColor;
     protected int pressedBackgroundColor;
     protected int numberFontSize;
+    protected int dividerColor;
 
     protected float weekNumberCellWidth;
     protected float dayCellWidth;
@@ -54,6 +55,7 @@ public class WeekLine {
         weekColor = context.getResources().getColor(R.color.red);
         backgroundColor = context.getResources().getColor(R.color.btn_background);
         pressedBackgroundColor = context.getResources().getColor(R.color.btn_pressed_background);
+        dividerColor = context.getResources().getColor(R.color.month_table_divider_color);
         numberFontSize = context.getResources().getDimensionPixelSize(R.dimen.abc_text_size_body_1_material);
     }
 
@@ -99,8 +101,16 @@ public class WeekLine {
     private void drawTable(Canvas canvas) {
 
         // Рисуем горизонтальную разделительную линию
-        paint.setColor(cellActiveColor);
+        paint.setColor(dividerColor);
         canvas.drawLine(weekNumberCellWidth, 0, width, 0, paint);
+
+        for ( int i = 0; i < 7; ++i ) {
+            canvas.drawLine(weekNumberCellWidth + (i + 1) * dayCellWidth,
+                    0,
+                    weekNumberCellWidth + (i + 1) * dayCellWidth,
+                    height,
+                    paint );
+        }
 
         // Закрашиваем клетку, до которой докоснулись
         if (touchedCell >= 0 && touchedCell < 7) {

@@ -3,6 +3,9 @@ package ru.levn.simpleplanner.calendar;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
+import ru.levn.simpleplanner.Common;
+import ru.levn.simpleplanner.R;
+
 /**
  * Автор: Левшин Николай, 707 группа.
  * Дата создания: 27.07.2015.
@@ -68,7 +71,7 @@ public class Event {
         }
 
         if (isAllDay) {
-            timeText += "ALL_DAY";
+            timeText += Common.sGetResources().getString(R.string.all_day);
         } else {
             timeText += CalendarProvider.getTime(timeStart);
 

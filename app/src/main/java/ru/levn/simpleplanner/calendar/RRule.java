@@ -10,6 +10,9 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
+import ru.levn.simpleplanner.Common;
+import ru.levn.simpleplanner.R;
+
 /**
  * Автор: Левшин Николай, 707 группа.
  * Дата создания: 31.08.2015.
@@ -135,30 +138,12 @@ public class RRule  {
         String description = "";
         switch (repeatMode) {
             case RM_YEARLY:
-                description += "Every year on ";
+                description += Common.sGetResources().getString(R.string.rr_every_year);
                 if (null == yearlyByDay) {
                     if (null == yearlyByMonth) {
                         SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM", Locale.getDefault());
-                        description += sdf.format(new Date(utcStart));
-                    } else {
-                        Calendar c = new GregorianCalendar();
-                        c.setTimeInMillis(utcStart);
-                        int day = c.get(Calendar.DAY_OF_MONTH);
-
-                        description += String.valueOf(day) + " day of";
-
-                        String delimer;
-                        if (yearlyByMonth.length > 1) {
-                            description += ": ";
-                            delimer = ", ";
-                        } else {
-                            description += " ";
-                            delimer = "";
-                        }
-
-                        for (String month : yearlyByMonth) {
-                            description += month + delimer;
-                        }
+                        description += " " + Common.sGetResources().getString(R.string.rr_on) + " "
+                                + sdf.format(new Date(utcStart));
                     }
                 }
                 break;

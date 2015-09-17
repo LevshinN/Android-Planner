@@ -1,10 +1,9 @@
 package ru.levn.simpleplanner;
 
-import android.animation.ObjectAnimator;
 import android.app.Activity;
-import android.view.MotionEvent;
+import android.content.ContentResolver;
+import android.content.res.Resources;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 
 import java.text.DateFormatSymbols;
@@ -13,7 +12,6 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
-import ru.levn.simpleplanner.calendar.CalendarProvider;
 import ru.levn.simpleplanner.calendar.EventsContainer;
 
 /**
@@ -29,9 +27,6 @@ public class Common {
     public static int sScreenWidth;
     public static int sScreenHeight;
     public static float sScreenDensity;
-
-    public static int sFragWidth;
-    public static int sFragHeight;
 
     public static final String ENABLED_CALENDARS_DB = "enabledcaldb";
 
@@ -75,7 +70,6 @@ public class Common {
 
                 int day = c.get(Calendar.DAY_OF_MONTH);
                 int month = c.get(Calendar.MONTH);
-                int year = c.get(Calendar.YEAR);
 
                 String startWeek =  "" + day + " " + new DateFormatSymbols().getShortMonths()[month % 12];
 
@@ -83,7 +77,6 @@ public class Common {
 
                 day = c.get(Calendar.DAY_OF_MONTH);
                 month = c.get(Calendar.MONTH);
-                year = c.get(Calendar.YEAR);
 
                 String endWeek = "" + day + " " + new DateFormatSymbols().getShortMonths()[month % 12];
 
@@ -120,12 +113,16 @@ public class Common {
     }
 
     public interface OnUpdateEventsInterface {
-        public void onUpdate();
+        void onUpdate();
     }
 
     public static void onUpdate() {
         //sEvents.update();
         ((OnUpdateEventsInterface)mMainActivity).onUpdate();
+    }
+
+    public static Resources sGetResources() {
+        return mMainActivity.getResources();
     }
 }
 

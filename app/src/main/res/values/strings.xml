@@ -15,27 +15,66 @@
     <string name="mode_week">Week</string>
     <string name="mode_month">Month</string>
     <string name="mode_year">Year</string>
+    <string name="mode_calendar">My calendars</string>
 
     <string name="all_day">All day</string>
     <string name="no_events">No events</string>
+    <string name="other_events">More +</string>
 
     <string name="btn_edit">EDIT</string>
     <string name="btn_close">CLOSE</string>
     <string name="btn_save">SAVE</string>
+    <string name="btn_delete">DELETE</string>
 
-    <string name="repeat_every">Repeat every</string>
+    <string name="repeat">Repeat</string>
+    <string name="repeat_ellipsis">Repeat…</string>
+    <string name="title">Title</string>
+    <string name="location">Location</string>
+    <string name="description">Description</string>
+    <string name="advanced_settings">Advanced settings</string>
+    <string name="interval">Interval:</string>
+    <string name="finish_date">Finish date</string>
 
+    <string name="color">Color</string>
+    <string name="red">Red</string>
+    <string name="blue">Blue</string>
+    <string name="yellow">Yellow</string>
+    <string name="green">Green</string>
+    <string name="orange">Orange</string>
+
+    <string name="yearly">Yearly</string>
+    <string name="monthly">Monthly</string>
+    <string name="weekly">Weekly</string>
+    <string name="daily">Daily</string>
+
+
+    <string name="msg_delete_recurrent_event">Event is a part of the chain. Delete…</string>
+    <string name="msg_delete_single_event">Delete this event?</string>
+    <string name="msg_no_empty_title">Title can`t be empty!</string>
 
     <string-array name="screen_array">
-        <item>Day</item>
-        <item>Week</item>
-        <item>Month</item>
-        <item>My Calendars</item>
+        <item>@string/mode_day</item>
+        <item>@string/mode_week</item>
+        <item>@string/mode_month</item>
+        <item>@string/mode_calendar</item>
     </string-array>
 
     <string-array name="delete_options">
-        <item>All events</item>
+        <item>Whole chain</item>
         <item>This event</item>
     </string-array>
+
+    <string-array name="repeat_border">
+        <item>Count</item>
+        <item>Until</item>
+    </string-array>
+
+    <string name="rr_every_year">Repeats every year</string>
+    <string name="rr_every_month">Repeats every month</string>
+    <string name="rr_every_week">Repeats every week</string>
+    <string name="rr_every_day">Repeats every day</string>
+
+    <string name="rr_on">on</string>
+    <string name="rr_at">at</string>
 
 </resources>

@@ -302,11 +302,9 @@ public class MainActivity extends AppCompatActivity
         View btnWeek = findViewById(R.id.btn_week_mode);
         View btnMonth = findViewById(R.id.btn_month_mode);
 
-        if (btnDay != null && btnWeek != null && btnMonth != null) {
-            btnDay.setOnClickListener(listener);
-            btnWeek.setOnClickListener(listener);
-            btnMonth.setOnClickListener(listener);
-        }
+        if (btnDay != null) btnDay.setOnClickListener(listener);
+        if (btnWeek != null) btnWeek.setOnClickListener(listener);
+        if (btnMonth != null) btnMonth.setOnClickListener(listener);
     }
 
     private void mShowDatePicker() {

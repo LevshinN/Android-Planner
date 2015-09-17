@@ -9,6 +9,8 @@
     <color name="amber">#FFC107</color>
 
     <color name="default_color">@color/green</color>
+
+    <color name="month_table_divider_color">#E0E0E0</color>
     
     <color name="btn_pressed_background">#ffbfbfbf</color>
     <color name="btn_background">@android:color/background_light</color>

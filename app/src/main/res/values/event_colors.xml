@@ -11,11 +11,11 @@
     </array>
 
     <string-array name="event_colors_names">
-        <item>Color</item>
-        <item>Red</item>
-        <item>Blue</item>
-        <item>Yellow</item>
-        <item>Green</item>
-        <item>Orange</item>
+        <item>@string/color</item>
+        <item>@string/red</item>
+        <item>@string/blue</item>
+        <item>@string/yellow</item>
+        <item>@string/green</item>
+        <item>@string/orange</item>
     </string-array>
 </resources>
