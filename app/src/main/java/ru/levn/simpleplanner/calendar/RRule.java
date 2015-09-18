@@ -139,26 +139,52 @@ public class RRule  {
         switch (repeatMode) {
             case RM_YEARLY:
                 description += Common.sGetResources().getString(R.string.rr_every_year);
-                if (null == yearlyByDay) {
-                    if (null == yearlyByMonth) {
-                        SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM", Locale.getDefault());
-                        description += " " + Common.sGetResources().getString(R.string.rr_on) + " "
-                                + sdf.format(new Date(utcStart));
-                    }
-                }
                 break;
             case RM_MONTHLY:
-                description += "Every month";
+                description += Common.sGetResources().getString(R.string.rr_every_month);
                 break;
             case RM_WEEKLY:
-                description += "Every week";
+                description += Common.sGetResources().getString(R.string.rr_every_week);
                 break;
             case RM_DAILY:
-                description += "Every day";
+                description += Common.sGetResources().getString(R.string.rr_every_day);
                 break;
             default:
                 break;
         }
+
+        if (endMode != EEndMode.EM_FOREVER) {
+            switch (endMode) {
+                case EM_COUNT:
+                    String times;
+                    if (mCount % 10 <= 4 && mCount % 10 >= 2 && mCount / 10 != 1) {
+                        times = Common.sGetResources().getString(R.string.rr_times_2_4);
+                    } else {
+                        times = Common.sGetResources().getString(R.string.rr_times_usual);
+                    }
+                    description += '\n' + String.valueOf(mCount) +  ' ' + times;
+                    break;
+                case EM_UNTIL:
+                    Calendar c = new GregorianCalendar();
+                    c.set(Integer.valueOf(mUntil.substring(0, 4)),
+                            Integer.valueOf(mUntil.substring(4,6)),
+                            Integer.valueOf(mUntil.substring(6,8)),
+                            Integer.valueOf(mUntil.substring(9, 11)),
+                            Integer.valueOf(mUntil.substring(11, 13)),
+                            Integer.valueOf(mUntil.substring(13, 15)));
+                    description += '\n' + Common.sGetResources().getString(R.string.rr_until)
+                            + ' ' + CalendarProvider.getDate(c.getTimeInMillis());
+                    break;
+            }
+        }
+
+        if (mInterval > 1) {
+            description += '\n';
+            description += Common.sGetResources().getString(R.string.rr_interval)
+                    + ' ' + String.valueOf(mInterval);
+        }
+
+
         return description;
     }
 
@@ -230,21 +256,21 @@ public class RRule  {
     }
 
     public void setCount( String count ) {
-        mCount = Integer.valueOf(count);
         if (isParsingMode && endMode != EEndMode.EM_FOREVER) {
             throw new IllegalArgumentException ("Rule can contain only one of rules: COUNT or UNTIL");
         } else {
             endMode = EEndMode.EM_COUNT;
         }
+        mCount = Integer.valueOf(count);
     }
 
     public void setUntil( String until ) {
-        mUntil = until;
         if (isParsingMode && endMode != EEndMode.EM_FOREVER) {
             throw new IllegalArgumentException("RRule can contain only one of rules: COUNT or UNTIL");
         } else {
             endMode = EEndMode.EM_UNTIL;
         }
+        mUntil = until;
     }
 
     public void setByDay( String rule ) {

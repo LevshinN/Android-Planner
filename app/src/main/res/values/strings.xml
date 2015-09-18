@@ -77,4 +77,9 @@
     <string name="rr_on">on</string>
     <string name="rr_at">at</string>
 
+    <string name="rr_interval">With interval</string>
+    <string name="rr_until">Until</string>
+    <string name="rr_times_usual">times</string>
+    <string name="rr_times_2_4">times</string>
+
 </resources>

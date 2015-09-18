@@ -144,6 +144,7 @@ public class MonthTable {
 
         for (int i = 0; i < ROWS; ++i) {
             lines[(i + listStart) % ROWS].setBounds(0, lineWidth, lineHeight * (i - 1), lineHeight * i);
+            lines[(i + listStart) % ROWS].currentMonth = currentMonth;
         }
     }
 

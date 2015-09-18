@@ -56,18 +56,18 @@
 
     <string-array name="month_names">
 
-        <item>Январь</item>
-        <item>Февраль</item>
-        <item>Март</item>
-        <item>Апрель</item>
-        <item>Май</item>
-        <item>Июнь</item>
-        <item>Июль</item>
-        <item>Август</item>
-        <item>Сентябрь</item>
-        <item>Октябрь</item>
-        <item>Ноябрь</item>
-        <item>Декабрь</item>
+        <item>январь</item>
+        <item>февраль</item>
+        <item>март</item>
+        <item>апрель</item>
+        <item>май</item>
+        <item>июнь</item>
+        <item>июль</item>
+        <item>август</item>
+        <item>сентябрь</item>
+        <item>октябрь</item>
+        <item>ноябрь</item>
+        <item>декабрь</item>
 
     </string-array>
 
@@ -81,7 +81,12 @@
     <string name="rr_every_week">Повторяется каждую неделю</string>
     <string name="rr_every_day">Повторяется каждый день</string>
 
-    <string name="rr_on"> </string>
+    <string name="rr_on"></string>
     <string name="rr_at">в</string>
+
+    <string name="rr_interval">С интервалом</string>
+    <string name="rr_until">До</string>
+    <string name="rr_times_usual">раз</string>
+    <string name="rr_times_2_4">раза</string>
 
 </resources>

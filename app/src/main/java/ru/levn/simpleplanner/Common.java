@@ -83,9 +83,10 @@ public class Common {
                 return startWeek + " - " + endWeek;
 
             case MONTH_MODE:
-
-                dateFormat = new SimpleDateFormat("MMMM yyyy", Locale.getDefault());
-                return dateFormat.format(UTCDate);
+                String monthName = getMonthName(date.get(Calendar.MONTH));
+                String firstLetter = monthName.substring(0,1).toUpperCase();
+                monthName = firstLetter + monthName.substring(1);
+                return monthName + ' ' + String.valueOf(date.get(Calendar.YEAR));
         }
 
         return null;
@@ -119,6 +120,18 @@ public class Common {
     public static void onUpdate() {
         //sEvents.update();
         ((OnUpdateEventsInterface)mMainActivity).onUpdate();
+    }
+
+    public static String getMonthName(int month) {
+        String[] months;
+        try {
+            months = mMainActivity.getResources().getStringArray(R.array.month_names);
+        } catch (Resources.NotFoundException ex) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM", Locale.getDefault());
+            Calendar calendar = new GregorianCalendar(2000, month, 1);
+            return dateFormat.format(calendar.getTimeInMillis());
+        }
+        return months[month];
     }
 
     public static Resources sGetResources() {
