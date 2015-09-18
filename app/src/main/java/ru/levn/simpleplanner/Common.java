@@ -38,12 +38,11 @@ public class Common {
 
     public static boolean sIsDrawerClosed;
 
-    private static Activity mMainActivity;
+    public static Activity sMainActivity;
 
-    public static void init(Activity activity) {
+    public static void init() {
         sSelectedDate = new SelectedDate();
         sEvents = new EventsContainer(sSelectedDate.getDate().getTimeInMillis(), 50);
-        mMainActivity = activity;
     }
 
     public static void sUpdateTitle(Calendar date) {
@@ -119,13 +118,13 @@ public class Common {
 
     public static void onUpdate() {
         //sEvents.update();
-        ((OnUpdateEventsInterface)mMainActivity).onUpdate();
+        ((OnUpdateEventsInterface)sMainActivity).onUpdate();
     }
 
     public static String getMonthName(int month) {
         String[] months;
         try {
-            months = mMainActivity.getResources().getStringArray(R.array.month_names);
+            months = sMainActivity.getResources().getStringArray(R.array.month_names);
         } catch (Resources.NotFoundException ex) {
             SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM", Locale.getDefault());
             Calendar calendar = new GregorianCalendar(2000, month, 1);
@@ -135,7 +134,7 @@ public class Common {
     }
 
     public static Resources sGetResources() {
-        return mMainActivity.getResources();
+        return sMainActivity.getResources();
     }
 }
 

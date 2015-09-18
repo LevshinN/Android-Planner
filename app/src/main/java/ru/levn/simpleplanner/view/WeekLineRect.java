@@ -206,6 +206,10 @@ public class WeekLineRect extends WeekLine {
     }
 
     private void drawHiddenEvents(Canvas canvas) {
+
+        // Если места не хватает, то не рисуем.
+        if (maxLinesNum < 1) return;
+
         Calendar c = (Calendar)representTime.clone();
         c.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
         c.getTimeInMillis();

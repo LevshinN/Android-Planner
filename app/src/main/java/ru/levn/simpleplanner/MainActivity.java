@@ -3,6 +3,7 @@ package ru.levn.simpleplanner;
 
 import android.app.DialogFragment;
 import android.app.Fragment;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -71,7 +72,8 @@ public class MainActivity extends AppCompatActivity
         CalendarProvider.sInitCalendarProvider(this);
 
         if (savedInstanceState == null) {
-            Common.init(this);
+            Common.init();
+            Common.sMainActivity = this;
         }
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
@@ -158,6 +160,7 @@ public class MainActivity extends AppCompatActivity
 
     /** Swaps fragments in the main content view */
     private void mSelectItem(int position) {
+
         // Update the main content by replacing fragments
         Common.sCurrentMode = position;
         mCurrentFragment = null;
@@ -199,13 +202,13 @@ public class MainActivity extends AppCompatActivity
         // Insert the fragment by replacing any existing fragment
         if (mCurrentFragment != null) {
 
-            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentManager fragmentManager = this.getSupportFragmentManager();
             FragmentTransaction transaction = fragmentManager.beginTransaction();
             transaction.replace(R.id.content_frame_support,
                         mCurrentFragment,
                         "support");
             transaction.addToBackStack("support");
-            transaction.commit();
+            transaction.commitAllowingStateLoss();
 
             // Highlight the selected item, update the title, and close the drawer
             mDrawerList.setItemChecked(position, true);
@@ -339,4 +342,11 @@ public class MainActivity extends AppCompatActivity
 
         mDrawerList.setItemChecked(Common.sCurrentMode, true);
     }
+
+    @Override
+    public void onPostResume() {
+        super.onPostResume();
+        Common.sMainActivity = this;
+    }
+
 }
