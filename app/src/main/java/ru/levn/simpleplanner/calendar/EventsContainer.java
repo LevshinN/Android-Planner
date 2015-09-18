@@ -134,4 +134,18 @@ public class EventsContainer {
         }
         return clearEvents;
     }
+
+    public void deleteEvent(Event e, boolean all) {
+        ArrayList<Event> clearEvents = new ArrayList<>();
+        for (Event event : mEvents) {
+            if (!event.id.equals(e.id)) {
+                clearEvents.add(event);
+            } else {
+                if (!all && event.timeStart != e.timeStart) {
+                    clearEvents.add(event);
+                }
+            }
+        }
+        mEvents = clearEvents;
+    }
 }

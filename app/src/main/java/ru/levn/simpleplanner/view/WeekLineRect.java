@@ -96,6 +96,9 @@ public class WeekLineRect extends WeekLine {
 
             Pair<Integer, Integer> weekDays = getEventWeekDays(event);
 
+            // Если событие некорректно, пропускаем
+            if (weekDays.first > weekDays.second) continue;
+
             int lineLevel = 0;
             // Опускаем нашу линию события на уровень ниже, пока она полностью не поместится.
             while (lineLevel < maxLinesNum) {

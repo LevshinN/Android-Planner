@@ -167,19 +167,14 @@ public class MonthTable {
     }
 
     public boolean touchItem(float x, float y) {
-        touchedLine = 1 + locateTouchedLine(y + screenUp);
-        if (touchedLine < ROWS - 1 && touchedLine > 0) {
-            lines[touchedLine].touchCell(x);
-            return true;
-        }
-        return false;
+        touchedLine = locateTouchedLine(y + screenUp);
+        lines[touchedLine].touchCell(x);
+        return true;
     }
 
     public void selectItem(float x, float y) {
-        int selectedLine = 1 + locateTouchedLine(y + screenUp);
-        if (selectedLine < ROWS - 1 && selectedLine > 0) {
-            lines[selectedLine].selectItem(x);
-        }
+        int selectedLine = locateTouchedLine(y + screenUp);
+        lines[selectedLine].selectItem(x);
     }
 
     public boolean releaseTouch() {
@@ -190,7 +185,7 @@ public class MonthTable {
 
     private int locateTouchedLine(float y) {
         int row = (int)(y / lineHeight);
-        return row;
+        return (row + listStart + 1 + ROWS) % ROWS;
     }
 
     public void updateBounds(int up, int down) {

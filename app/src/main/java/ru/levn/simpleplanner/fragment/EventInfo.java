@@ -15,6 +15,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.text.ParseException;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 import ru.levn.simpleplanner.Common;
 import ru.levn.simpleplanner.MainActivity;
@@ -100,11 +102,21 @@ public class EventInfo extends DialogFragment {
     private void mEditTime(View v) {
         TextView time = (TextView)v.findViewById(R.id.event_info_time);
         if (mEvent.isAllDay) {
-            time.setText(CalendarProvider.getDate(mEvent.timeStart)
-                    + ",\n"
-                    + CalendarProvider.getDate(mEvent.timeEnd)
-                    + ", "
-                    + getResources().getString(R.string.all_day));
+            Calendar c = new GregorianCalendar();
+            c.setTimeInMillis(mEvent.timeStart);
+            c.add(Calendar.DAY_OF_YEAR, 1);
+            if (c.getTimeInMillis() < mEvent.timeStart) {
+                time.setText(CalendarProvider.getDate(mEvent.timeStart)
+                        + ",\n"
+                        + CalendarProvider.getDate(mEvent.timeEnd)
+                        + ", "
+                        + getResources().getString(R.string.all_day));
+            } else {
+                time.setText(CalendarProvider.getDate(mEvent.timeStart)
+                        + ", "
+                        + getResources().getString(R.string.all_day));
+            }
+
         } else {
             long timeEnd = mEvent.timeEnd;
             if (timeEnd == 0) {
@@ -161,20 +173,14 @@ public class EventInfo extends DialogFragment {
     }
 
     private void mEditCalendar(View v) {
-        MyCalendar eventCalendar = null;
-        for (MyCalendar c : CalendarProvider.calendars) {
-            if (c.id.equals(mEvent.calendarId)) {
-                eventCalendar = c;
-                break;
-            }
-        }
+        MyCalendar eventCalendar = CalendarProvider.getCalendarById(mEvent.id);
+
         if (eventCalendar != null) {
             ((TextView)v.findViewById(R.id.event_info_calendar)).setText( eventCalendar.displayName
                     + " ("
                     + eventCalendar.accountName
                     + ")" );
         }
-
     }
 
     private View.OnClickListener onClick = new View.OnClickListener() {
@@ -213,6 +219,7 @@ public class EventInfo extends DialogFragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         CalendarProvider.deleteSingleEvent(mEvent);
+                        Common.sEvents.deleteEvent(mEvent, true);
                         Common.onUpdate();
                         dismiss();
                     }
@@ -242,9 +249,11 @@ public class EventInfo extends DialogFragment {
                         switch (mDeleteOption) {
                             case 0:
                                 CalendarProvider.deleteSingleEvent(mEvent);
+                                Common.sEvents.deleteEvent(mEvent, false);
                                 break;
                             case 1:
                                 CalendarProvider.deleteSequenceEvent(mEvent);
+                                Common.sEvents.deleteEvent(mEvent, true);
                                 break;
                         }
                         Common.onUpdate();

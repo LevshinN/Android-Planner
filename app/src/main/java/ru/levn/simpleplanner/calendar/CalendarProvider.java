@@ -33,7 +33,7 @@ import ru.levn.simpleplanner.calendar.syncadapter.SyncUtils;
  */
 
 public class CalendarProvider {
-    public static ArrayList<MyCalendar> calendars;
+    private static ArrayList<MyCalendar> calendars;
     private static Uri calendarsUri;
 
     private static final String[] projectionCalendar = new String[]{
@@ -494,5 +494,26 @@ public class CalendarProvider {
             values.put(CalendarContract.Events.STATUS, CalendarContract.Events.STATUS_CANCELED);
             mContentResolver.insert(contentExeptionUri, values);
         }
+    }
+
+    public static ArrayList<MyCalendar> getSelectedCalendars() {
+        ArrayList<MyCalendar> selectedCalendars = new ArrayList<>();
+        for (MyCalendar cal : calendars) {
+            if (mSelectedCalendarsIDs.get(cal.id) ) {
+                selectedCalendars.add(cal);
+            }
+        }
+        return selectedCalendars;
+    }
+
+    public static ArrayList<MyCalendar> getAllCalendars() { return calendars; }
+
+    public static MyCalendar getCalendarById( String id ) {
+        for (MyCalendar cal : calendars) {
+            if (cal.id.equals(id)) {
+                return cal;
+            }
+        }
+        return null;
     }
 }

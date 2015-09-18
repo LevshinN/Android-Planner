@@ -13,7 +13,9 @@
         android:text="Event title"
         android:fontFamily="sans-serif"
         android:textStyle="bold"
-        android:textSize="@dimen/abc_text_size_headline_material" />
+        android:textSize="@dimen/abc_text_size_headline_material"
+        android:maxLines="3"
+        android:ellipsize="end"/>
 
     <ScrollView
         android:id="@+id/event_info_scroll"

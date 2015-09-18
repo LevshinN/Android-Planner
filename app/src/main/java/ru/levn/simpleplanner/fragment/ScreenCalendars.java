@@ -42,7 +42,8 @@ public class ScreenCalendars extends ModeFragment {
         super.onActivityCreated(savedInstanceState);
 
         // Заполняем лист названиями календарей
-        final CalendarListAdapter mListAdapter = new CalendarListAdapter(this.getActivity(), CalendarProvider.calendars);
+        final CalendarListAdapter mListAdapter = new CalendarListAdapter(this.getActivity(),
+                CalendarProvider.getAllCalendars());
         Toast.makeText(this.getActivity(), "" + mListAdapter.getCount(), Toast.LENGTH_SHORT).show();
         mCalendarsList.setAdapter(mListAdapter);
     }

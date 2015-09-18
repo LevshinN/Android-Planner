@@ -124,6 +124,7 @@ public class CreateEventFragment extends DialogFragment
             Calendar c = (Calendar)Common.sSelectedDate.getDate().clone();
             c.add(Calendar.HOUR_OF_DAY, 1);
             mNewEvent.timeEnd = c.getTimeInMillis();
+            mNewEvent.color = getResources().getColor(R.color.default_color) - 0xff000000;
         }
 
 
@@ -138,7 +139,7 @@ public class CreateEventFragment extends DialogFragment
 
         // Спиннер для выбора календаря
         CalendarSpinnerAdapter calendarsListAdapter =
-                new CalendarSpinnerAdapter(this.getActivity(),CalendarProvider.calendars);
+                new CalendarSpinnerAdapter(this.getActivity(),CalendarProvider.getSelectedCalendars());
         Spinner calendarSelector = (Spinner)mRootView.findViewById(R.id.edie_event_calendar);
         calendarSelector.setAdapter(calendarsListAdapter);
         calendarSelector.setOnItemSelectedListener(calendarSelectorListener);
