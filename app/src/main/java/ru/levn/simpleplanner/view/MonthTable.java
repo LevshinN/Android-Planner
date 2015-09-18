@@ -36,6 +36,11 @@ public class MonthTable {
 
     private int mContentMode = -1;
 
+    // Таблица представляет из себя цикличный список, который изменяется в
+    // зависимости от того, как пользователь скроллит. listStart указывет,
+    // где у этого списка начало.
+    protected int listStart = 0;
+
     // Размеры таблицы
     public static final int ROWS = 8;
 
@@ -90,41 +95,61 @@ public class MonthTable {
                     line = new WeekLine(context);
             }
 
-            line.setBounds(0, lineWidth, lineHeight * ( i - 1 ), lineHeight * i );
             lines[i] = line;
         }
 
-        updateLines();
+        updateLines(0);
     }
 
-    public void updateLines() {
-        Calendar cal = (Calendar)representTime.clone();
+    public void updateLines( int offset ) {
 
-        int currentMonth = cal.get(Calendar.MONTH);
+        int newListStart = (listStart + offset + ROWS) % ROWS;
+        int currentMonth = representTime.get(Calendar.MONTH);
 
-        cal.add(Calendar.WEEK_OF_YEAR, -3);
-        cal.getTimeInMillis();
-
-        cal.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
-        cal.set(Calendar.MILLISECOND, 0);
-
-        cal.getTimeInMillis();
+        if (offset < 0) {
+            Calendar cal = (Calendar)lines[newListStart].representTime.clone();
+            cal.add(Calendar.WEEK_OF_YEAR, -ROWS);
+            cal.getTimeInMillis();
+            for(int i = newListStart; i != listStart; i = (i + 1) % ROWS) {
+                lines[i].representTime = (Calendar)cal.clone();
+                lines[i].currentMonth = currentMonth;
+                lines[i].setEvents(Common.sEvents.getWeekEvents(cal.getTimeInMillis()));
+                cal.add(Calendar.WEEK_OF_YEAR, 1);
+                cal.getTimeInMillis();
+            }
+        } else if (offset > 0) {
+            Calendar cal = (Calendar)lines[listStart].representTime.clone();
+            cal.add(Calendar.WEEK_OF_YEAR, ROWS);
+            cal.getTimeInMillis();
+            for(int i = listStart; i != newListStart; i = (i + 1) % ROWS) {
+                lines[i].representTime = (Calendar)cal.clone();
+                lines[i].currentMonth = currentMonth;
+                lines[i].setEvents(Common.sEvents.getWeekEvents(cal.getTimeInMillis()));
+                cal.add(Calendar.WEEK_OF_YEAR, 1);
+                cal.getTimeInMillis();
+            }
+        } else {
+            Calendar cal = (Calendar)representTime.clone();
+            cal.add(Calendar.WEEK_OF_YEAR, -ROWS / 2);
+            cal.getTimeInMillis();
+            for(int i = listStart; i < listStart + ROWS; i += 1) {
+                lines[i % ROWS].representTime = (Calendar)cal.clone();
+                lines[i % ROWS].currentMonth = currentMonth;
+                lines[i % ROWS].setEvents(Common.sEvents.getWeekEvents(cal.getTimeInMillis()));
+                cal.add(Calendar.WEEK_OF_YEAR, 1);
+                cal.getTimeInMillis();
+            }
+        }
+        listStart = newListStart;
 
         for (int i = 0; i < ROWS; ++i) {
-            lines[i].representTime = (Calendar)cal.clone();
-            lines[i].currentMonth = currentMonth;
-            lines[i].setEvents(Common.sEvents.getWeekEvents(cal.getTimeInMillis()));
-            cal.add(Calendar.WEEK_OF_YEAR, 1);
-            cal.getTimeInMillis();
+            lines[(i + listStart) % ROWS].setBounds(0, lineWidth, lineHeight * (i - 1), lineHeight * i);
         }
     }
 
     public void draw(Canvas canvas) {
-        for (WeekLine line : lines) {
-            mDrawSingleLine(canvas, line);
+        for (int i = listStart; i < listStart + ROWS; ++i) {
+            mDrawSingleLine(canvas, lines[i % ROWS]);
         }
     }
 
@@ -133,11 +158,11 @@ public class MonthTable {
     }
 
     public void scrollWeek(int offset) {
-        touchedLine -= offset;
+        touchedLine = (touchedLine - offset) % ROWS;
         representTime.add(Calendar.WEEK_OF_YEAR, offset);
         representTime.getTimeInMillis();
         Common.sUpdateTitle(representTime);
-        updateLines();
+        updateLines(offset);
     }
 
     public boolean touchItem(float x, float y) {
@@ -157,7 +182,8 @@ public class MonthTable {
     }
 
     public boolean releaseTouch() {
-        lines[touchedLine].releaseCell();
+        if (touchedLine >= 0 && touchedLine < ROWS )
+            lines[touchedLine].releaseCell();
         return true;
     }
 
