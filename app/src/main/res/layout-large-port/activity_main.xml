@@ -34,7 +34,8 @@
                 android:layout_height="0dp"
                 android:layout_weight="7"
                 card_view:cardCornerRadius="5dp"
-                card_view:cardElevation="5sp">
+                card_view:cardElevation="5sp"
+                card_view:cardUseCompatPadding="true">
 
                 <FrameLayout
                     android:id="@+id/content_frame_main"
@@ -49,7 +50,8 @@
                 android:layout_height="0dp"
                 android:layout_weight="3"
                 card_view:cardCornerRadius="5dp"
-                card_view:cardElevation="5sp">
+                card_view:cardElevation="5sp"
+                card_view:cardUseCompatPadding="true">
 
                 <FrameLayout
                     android:id="@+id/content_frame_support"

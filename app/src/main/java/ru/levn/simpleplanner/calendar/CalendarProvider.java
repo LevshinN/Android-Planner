@@ -18,8 +18,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.TimeZone;
 
 import ru.levn.simpleplanner.Common;
@@ -39,15 +41,17 @@ public class CalendarProvider {
     private static final String[] projectionCalendar = new String[]{
             CalendarContract.Calendars._ID,                     // 0
             CalendarContract.Calendars.ACCOUNT_NAME,            // 1
-            CalendarContract.Calendars.CALENDAR_DISPLAY_NAME,   // 2
-            CalendarContract.Calendars.OWNER_ACCOUNT            // 3
+            CalendarContract.Calendars.NAME,            // 2
+            CalendarContract.Calendars.CALENDAR_DISPLAY_NAME,   // 3
+            CalendarContract.Calendars.OWNER_ACCOUNT            // 4
     };
 
     // The indices for the projection array above.
     private static final int PROJECTION_CALENDAR_ID_INDEX = 0;
     private static final int PROJECTION_CALENDAR_ACCOUNT_NAME_INDEX = 1;
-    private static final int PROJECTION_CALENDAR_DISPLAY_NAME_INDEX = 2;
-    private static final int PROJECTION_CALENDAR_OWNER_ACCOUNT_INDEX = 3;
+    private static final int PROJECTION_CALENDAR_NAME_INDEX = 2;
+    private static final int PROJECTION_CALENDAR_DISPLAY_NAME_INDEX = 3;
+    private static final int PROJECTION_CALENDAR_OWNER_ACCOUNT_INDEX = 4;
 
     private static final String[] projectionEvent = new String[] {
             CalendarContract.Events._ID,            // 0
@@ -165,6 +169,7 @@ public class CalendarProvider {
         {
             String calendarID;
             String calendarAccName;
+            String calendarName;
             String calendarDispName;
             String calendarOwnerAcc;
 
@@ -172,6 +177,7 @@ public class CalendarProvider {
             {
                 calendarID = managedCursor.getString(PROJECTION_CALENDAR_ID_INDEX);
                 calendarAccName = managedCursor.getString(PROJECTION_CALENDAR_ACCOUNT_NAME_INDEX);
+                calendarName = managedCursor.getString(PROJECTION_CALENDAR_NAME_INDEX);
                 calendarDispName = managedCursor.getString(PROJECTION_CALENDAR_DISPLAY_NAME_INDEX);
                 calendarOwnerAcc = managedCursor.getString(PROJECTION_CALENDAR_OWNER_ACCOUNT_INDEX);
 
@@ -186,6 +192,7 @@ public class CalendarProvider {
                 MyCalendar cal = new MyCalendar();
                 cal.id = calendarID;
                 cal.accountName = calendarAccName;
+                cal.accountType = calendarName;
                 cal.displayName = calendarDispName;
                 cal.ownerAccount = calendarOwnerAcc;
                 cal.enabled = mSelectedCalendarsIDs.get(calendarID);
@@ -358,7 +365,7 @@ public class CalendarProvider {
         cal.setTimeZone(TimeZone.getDefault());
         cal.setTimeInMillis(UTCTime);
 
-        return String.format("%02d:%02d", cal.get(Calendar.HOUR_OF_DAY) , cal.get(Calendar.MINUTE));
+        return String.format("%02d:%02d", cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE));
     }
 
     public static String getDate(long UtcTime) {
@@ -497,6 +504,7 @@ public class CalendarProvider {
     }
 
     public static ArrayList<MyCalendar> getSelectedCalendars() {
+
         ArrayList<MyCalendar> selectedCalendars = new ArrayList<>();
         for (MyCalendar cal : calendars) {
             if (mSelectedCalendarsIDs.get(cal.id) ) {
@@ -506,7 +514,24 @@ public class CalendarProvider {
         return selectedCalendars;
     }
 
-    public static ArrayList<MyCalendar> getAllCalendars() { return calendars; }
+    public static ArrayList<ArrayList<MyCalendar>> getAllSortedCalendars() {
+
+        HashMap<String, ArrayList<MyCalendar>> groupedCalendars = new HashMap<>();
+        ArrayList<ArrayList<MyCalendar>> result = new ArrayList<>();
+
+        for (MyCalendar cal : calendars) {
+            if (!groupedCalendars.containsKey(cal.ownerAccount)) {
+                groupedCalendars.put(cal.ownerAccount, new ArrayList<MyCalendar>());
+            }
+            groupedCalendars.get(cal.ownerAccount).add(cal);
+        }
+
+        for (String key : groupedCalendars.keySet()) {
+            result.add(groupedCalendars.get(key));
+        }
+
+        return result;
+    }
 
     public static MyCalendar getCalendarById( String id ) {
         for (MyCalendar cal : calendars) {

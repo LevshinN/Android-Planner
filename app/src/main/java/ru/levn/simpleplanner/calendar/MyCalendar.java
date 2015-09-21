@@ -8,6 +8,7 @@ package ru.levn.simpleplanner.calendar;
 public class MyCalendar {
     public String id;
     public String accountName;
+    public String accountType;
     public String displayName;
     public String ownerAccount;
     public boolean enabled;

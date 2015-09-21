@@ -14,6 +14,22 @@
         android:textSize="20sp"
         android:id="@+id/calendar_disp_name" />
 
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:text="Display Name"
+        android:textSize="20sp"
+        android:id="@+id/calendar_own_name" />
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:text="Display Name"
+        android:textSize="20sp"
+        android:id="@+id/calendar_acc_name" />
+
     <CheckBox
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
