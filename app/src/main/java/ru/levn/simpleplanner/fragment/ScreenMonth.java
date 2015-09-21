@@ -54,10 +54,19 @@ public class ScreenMonth extends ModeFragment {
                     .setText(dayNames[dayNamesProjection[i]].toUpperCase());
         }
 
+        ((MonthView)mRootView.findViewById(R.id.month_table)).setDateSelectedListener(listener);
+
         return mRootView;
     }
 
-
+    private MonthView.OnDateSelectedListener listener = new MonthView.OnDateSelectedListener() {
+        @Override
+        public void onSelect(Calendar c) {
+            Common.sCurrentMode  = mLastMainMode;
+            Common.sSelectedDate.setDate(c);
+            Common.onUpdate();
+        }
+    };
 
     @Override
     public void onUpdate() {

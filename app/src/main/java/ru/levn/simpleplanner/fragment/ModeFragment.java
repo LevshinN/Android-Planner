@@ -10,6 +10,9 @@ import java.lang.reflect.Field;
  */
 public abstract class ModeFragment extends Fragment implements ModeFragmentInterface {
 
+    // По умолчанию переключаем на режим дня
+    protected int mLastMainMode = 0;
+
     @Override
     public void onDetach() {
         super.onDetach();
@@ -23,6 +26,10 @@ public abstract class ModeFragment extends Fragment implements ModeFragmentInter
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void setLastMainMode( int mode ) {
+        mLastMainMode = mode;
     }
 
 }

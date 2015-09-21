@@ -185,17 +185,16 @@ public class WeekLine {
         touchedCell = -1;
     }
 
-    public void selectItem(float x) {
+    public Calendar selectItem(float x) {
         int selectedCell = (int)((x - weekNumberCellWidth) / dayCellWidth);
         if (selectedCell >= 0 && selectedCell <= 6) {
-            Common.sCurrentMode = Common.DAY_MODE;
             Calendar c = (Calendar)representTime.clone();
             c.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
             c.getTimeInMillis();
             c.add(Calendar.DAY_OF_YEAR, selectedCell);
             c.getTimeInMillis();
-            Common.sSelectedDate.setDate(c);
-            Common.onUpdate();
+            return c;
         }
+        return null;
     }
 }

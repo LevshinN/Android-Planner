@@ -9,6 +9,7 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.AdapterView;
 import android.widget.OverScroller;
 import android.widget.Toast;
 
@@ -26,6 +27,8 @@ public class MonthView extends View {
 
     protected boolean measurementChanged = false;
     protected MonthTable monthTable;
+
+    protected OnDateSelectedListener mListener;
 
     private GestureDetector gestureDetector;
     protected OverScroller scroller;
@@ -115,7 +118,10 @@ public class MonthView extends View {
 
         public boolean onSingleTapUp(MotionEvent e) {
             resetTouchFeedback();
-            monthTable.selectItem(e.getX(), e.getY());
+            Calendar c = monthTable.selectItem(e.getX(), e.getY());
+            if ( c != null ) {
+                mListener.onSelect(c);
+            }
             return super.onSingleTapUp(e);
         }
 
@@ -154,5 +160,13 @@ public class MonthView extends View {
 
     public Calendar getRepresentTime() {
         return monthTable.representTime;
+    }
+
+    public interface OnDateSelectedListener {
+        void onSelect(Calendar c);
+    }
+
+    public void setDateSelectedListener(OnDateSelectedListener eventListener) {
+        mListener = eventListener;
     }
 }

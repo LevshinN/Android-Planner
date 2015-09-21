@@ -172,9 +172,9 @@ public class MonthTable {
         return true;
     }
 
-    public void selectItem(float x, float y) {
+    public Calendar selectItem(float x, float y) {
         int selectedLine = locateTouchedLine(y + screenUp);
-        lines[selectedLine].selectItem(x);
+        return lines[selectedLine].selectItem(x);
     }
 
     public boolean releaseTouch() {

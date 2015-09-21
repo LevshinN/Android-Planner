@@ -119,18 +119,18 @@ public class MainActivity extends AppCompatActivity
 
         mBuildToolbar();
 
-        // Initialize the first fragment when the application first loads.
-        if (savedInstanceState == null)  {
-            mSelectItem(Common.DAY_MODE);
-        }
-
-        // Добавляем в боковую панель (при её наличии) дополнительный фрагмент
+        // Добавляем  дополнительный фрагмент
         if (findViewById(R.id.content_frame_main) != null) {
             mSupportFragment = new ScreenMonth();
             FragmentManager fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction()
                     .replace(R.id.content_frame_main, mSupportFragment, "main")
                     .commit();
+        }
+
+        // Initialize the first fragment when the application first loads.
+        if (savedInstanceState == null)  {
+            mSelectItem(Common.DAY_MODE);
         }
     }
 
@@ -208,7 +208,11 @@ public class MainActivity extends AppCompatActivity
                         mCurrentFragment,
                         "support");
             transaction.addToBackStack("support");
-            transaction.commitAllowingStateLoss();
+            transaction.commit();
+
+            if (mSupportFragment != null) {
+                mSupportFragment.setLastMainMode(projection[position]);
+            }
 
             // Highlight the selected item, update the title, and close the drawer
             mDrawerList.setItemChecked(position, true);
