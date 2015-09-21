@@ -3,12 +3,14 @@ package ru.levn.simpleplanner.view;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.graphics.drawable.shapes.RoundRectShape;
 import android.util.AttributeSet;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
+import java.util.Arrays;
 import java.util.Calendar;
 
 import ru.levn.simpleplanner.Common;
@@ -32,8 +34,6 @@ public class MonthTable {
 
     public int lineSize;
 
-    private int touchedLine = -1;
-
     private int mContentMode = -1;
 
     // Таблица представляет из себя цикличный список, который изменяется в
@@ -44,6 +44,8 @@ public class MonthTable {
     // Размеры таблицы
     public static final int ROWS = 8;
 
+    private boolean[] touchedLines = new boolean[ROWS];
+
     public MonthTable(Context context, Calendar time) {
 
         this.context = context;
@@ -51,6 +53,8 @@ public class MonthTable {
         representTime = (Calendar)time.clone();
         representTime.set(Calendar.DAY_OF_MONTH, 15);
         representTime.getTimeInMillis();
+
+        Arrays.fill(touchedLines, false);
     }
 
     public MonthTable(Context context, Calendar time, AttributeSet attrs) {
@@ -103,7 +107,9 @@ public class MonthTable {
 
     public void updateLines( int offset ) {
 
-        int newListStart = (listStart + offset + ROWS) % ROWS;
+        int newListStart = (listStart + offset) % ROWS;
+        while (newListStart < 0) newListStart += ROWS;
+
         int currentMonth = representTime.get(Calendar.MONTH);
 
         if (offset < 0) {
@@ -159,7 +165,6 @@ public class MonthTable {
     }
 
     public void scrollWeek(int offset) {
-        touchedLine = (touchedLine - offset) % ROWS;
         representTime.add(Calendar.WEEK_OF_YEAR, offset);
         representTime.getTimeInMillis();
         Common.sUpdateTitle(representTime);
@@ -167,9 +172,12 @@ public class MonthTable {
     }
 
     public boolean touchItem(float x, float y) {
-        touchedLine = locateTouchedLine(y + screenUp);
-        lines[touchedLine].touchCell(x);
-        return true;
+        int touchedLine = locateTouchedLine(y + screenUp);
+        if (lines[touchedLine].touchCell(x)) {
+            touchedLines[touchedLine] = true;
+            return true;
+        }
+        return false;
     }
 
     public Calendar selectItem(float x, float y) {
@@ -178,9 +186,15 @@ public class MonthTable {
     }
 
     public boolean releaseTouch() {
-        if (touchedLine >= 0 && touchedLine < ROWS )
-            lines[touchedLine].releaseCell();
-        return true;
+        boolean isNeedToInvalidate = false;
+        for (int i = 0; i < ROWS; ++i) {
+            if (touchedLines[i]) {
+                lines[i].releaseCell();
+                touchedLines[i] = false;
+                isNeedToInvalidate = true;
+            }
+        }
+        return isNeedToInvalidate;
     }
 
     private int locateTouchedLine(float y) {

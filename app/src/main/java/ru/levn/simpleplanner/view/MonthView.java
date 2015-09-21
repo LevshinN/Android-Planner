@@ -5,15 +5,20 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.AdapterView;
 import android.widget.OverScroller;
+import android.widget.Scroller;
 import android.widget.Toast;
 
 import java.util.Calendar;
+
+import javax.xml.datatype.Duration;
 
 import ru.levn.simpleplanner.Common;
 import ru.levn.simpleplanner.R;
@@ -31,8 +36,9 @@ public class MonthView extends View {
     protected OnDateSelectedListener mListener;
 
     private GestureDetector gestureDetector;
-    protected OverScroller scroller;
+    protected Scroller scroller;
     protected int yOffset;
+    protected int uncutYOffset;
 
     protected int canvasHeight;
 
@@ -63,13 +69,17 @@ public class MonthView extends View {
         if (isInEditMode()) return;
 
         if (scroller.computeScrollOffset()) {
-            yOffset = scroller.getCurrY();
+            yOffset += scroller.getCurrY() - uncutYOffset;
+            uncutYOffset = scroller.getCurrY();
         }
+
 
         if (measurementChanged) {
             measurementChanged = false;
             monthTable.initializeTable(getMeasuredWidth(), getMeasuredHeight());
         }
+
+
 
         if ( yOffset > monthTable.lineSize || yOffset < -monthTable.lineSize ) {
             monthTable.scrollWeek(yOffset / monthTable.lineSize);
@@ -91,7 +101,7 @@ public class MonthView extends View {
 
     private void init() {
         if (!isInEditMode()) {
-            scroller = new OverScroller(getContext(), new DecelerateInterpolator(10f));
+            scroller = new Scroller(getContext(), new DecelerateInterpolator(0.8f));
             gestureDetector = new GestureDetector(getContext(), gestureListener);
         }
     }
@@ -100,6 +110,7 @@ public class MonthView extends View {
 
         public boolean onDown(MotionEvent e) {
             if (monthTable.touchItem(e.getX(), e.getY())) {
+                Log.d("TOUCH", "onDown      -   touch");
                 invalidate();
             }
             return true;
@@ -108,6 +119,7 @@ public class MonthView extends View {
 
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
             resetTouchFeedback();
+            Log.d("TOUCH", "onScroll    -   release");
 
             yOffset += distanceY;
 
@@ -118,6 +130,7 @@ public class MonthView extends View {
 
         public boolean onSingleTapUp(MotionEvent e) {
             resetTouchFeedback();
+            Log.d("TOUCH", "onSingleTap -   release");
             Calendar c = monthTable.selectItem(e.getX(), e.getY());
             if ( c != null ) {
                 mListener.onSelect(c);
@@ -126,11 +139,24 @@ public class MonthView extends View {
         }
 
         public void onLongPress(MotionEvent e) {
+            Log.d("TOUCH", "onLongPress -   release");
             resetTouchFeedback();
         }
 
         public boolean onDoubleTapEvent(MotionEvent e) {
+            Log.d("TOUCH", "onDoubleTap -   release");
             resetTouchFeedback();
+            return true;
+        }
+
+        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+            Log.d("TOUCH", "onFling     -   release");
+            resetTouchFeedback();
+            uncutYOffset = 0;
+            scroller.fling(0, yOffset,
+                    0, (int)-velocityY,
+                    0, 0,
+                    -canvasHeight, canvasHeight);
             return true;
         }
 

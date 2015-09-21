@@ -174,11 +174,13 @@ public class WeekLine {
 
     protected void drawContent(Canvas canvas) {}
 
-    public void touchCell(float x) {
+    public boolean touchCell(float x) {
         touchedCell = (int)((x - weekNumberCellWidth) / dayCellWidth);
         if (touchedCell < 0 || touchedCell > 6) {
             touchedCell = -1;
+            return false;
         }
+        return true;
     }
 
     public void releaseCell() {
