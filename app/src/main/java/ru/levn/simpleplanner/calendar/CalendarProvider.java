@@ -41,17 +41,17 @@ public class CalendarProvider {
     private static final String[] projectionCalendar = new String[]{
             CalendarContract.Calendars._ID,                     // 0
             CalendarContract.Calendars.ACCOUNT_NAME,            // 1
-            CalendarContract.Calendars.NAME,            // 2
-            CalendarContract.Calendars.CALENDAR_DISPLAY_NAME,   // 3
-            CalendarContract.Calendars.OWNER_ACCOUNT            // 4
+            CalendarContract.Calendars.CALENDAR_DISPLAY_NAME,   // 2
+            CalendarContract.Calendars.OWNER_ACCOUNT,           // 3
+            CalendarContract.Calendars.CALENDAR_COLOR           // 4
     };
 
     // The indices for the projection array above.
     private static final int PROJECTION_CALENDAR_ID_INDEX = 0;
     private static final int PROJECTION_CALENDAR_ACCOUNT_NAME_INDEX = 1;
-    private static final int PROJECTION_CALENDAR_NAME_INDEX = 2;
-    private static final int PROJECTION_CALENDAR_DISPLAY_NAME_INDEX = 3;
-    private static final int PROJECTION_CALENDAR_OWNER_ACCOUNT_INDEX = 4;
+    private static final int PROJECTION_CALENDAR_DISPLAY_NAME_INDEX = 2;
+    private static final int PROJECTION_CALENDAR_OWNER_ACCOUNT_INDEX = 3;
+    private static final int PROJECTION_CALENDAR_COLOR_INDEX = 4;
 
     private static final String[] projectionEvent = new String[] {
             CalendarContract.Events._ID,            // 0
@@ -169,17 +169,17 @@ public class CalendarProvider {
         {
             String calendarID;
             String calendarAccName;
-            String calendarName;
             String calendarDispName;
             String calendarOwnerAcc;
+            int calendarColor;
 
             do
             {
                 calendarID = managedCursor.getString(PROJECTION_CALENDAR_ID_INDEX);
                 calendarAccName = managedCursor.getString(PROJECTION_CALENDAR_ACCOUNT_NAME_INDEX);
-                calendarName = managedCursor.getString(PROJECTION_CALENDAR_NAME_INDEX);
                 calendarDispName = managedCursor.getString(PROJECTION_CALENDAR_DISPLAY_NAME_INDEX);
                 calendarOwnerAcc = managedCursor.getString(PROJECTION_CALENDAR_OWNER_ACCOUNT_INDEX);
+                calendarColor = managedCursor.getInt(PROJECTION_CALENDAR_COLOR_INDEX);
 
 
                 // Проверяем не новый ли календарь за счет того
@@ -192,10 +192,10 @@ public class CalendarProvider {
                 MyCalendar cal = new MyCalendar();
                 cal.id = calendarID;
                 cal.accountName = calendarAccName;
-                cal.accountType = calendarName;
                 cal.displayName = calendarDispName;
                 cal.ownerAccount = calendarOwnerAcc;
                 cal.enabled = mSelectedCalendarsIDs.get(calendarID);
+                cal.color = calendarColor;
 
                 calendars.add(cal);
 
@@ -516,14 +516,16 @@ public class CalendarProvider {
 
     public static ArrayList<ArrayList<MyCalendar>> getAllSortedCalendars() {
 
+        // Календари группируются по имени аккаунта
+
         HashMap<String, ArrayList<MyCalendar>> groupedCalendars = new HashMap<>();
         ArrayList<ArrayList<MyCalendar>> result = new ArrayList<>();
 
         for (MyCalendar cal : calendars) {
-            if (!groupedCalendars.containsKey(cal.ownerAccount)) {
+            if (!groupedCalendars.containsKey(cal.accountName)) {
                 groupedCalendars.put(cal.ownerAccount, new ArrayList<MyCalendar>());
             }
-            groupedCalendars.get(cal.ownerAccount).add(cal);
+            groupedCalendars.get(cal.accountName).add(cal);
         }
 
         for (String key : groupedCalendars.keySet()) {

@@ -162,7 +162,6 @@ public class MainActivity extends AppCompatActivity
     private void mSelectItem(int position) {
 
         // Update the main content by replacing fragments
-        Common.sCurrentMode = position;
         mCurrentFragment = null;
         View pressedButton = null;
 
@@ -171,21 +170,26 @@ public class MainActivity extends AppCompatActivity
         switch (projection[position]) {
             case Common.DAY_MODE:
                 mCurrentFragment = new ScreenDay();
+                Common.sBtnCurrentDate.setVisibility(View.VISIBLE);
                 pressedButton = findViewById(R.id.btn_day_mode);
                 break;
 
             case Common.WEEK_MODE:
                 mCurrentFragment = new ScreenWeek();
+                Common.sBtnCurrentDate.setVisibility(View.VISIBLE);
                 pressedButton = findViewById(R.id.btn_week_mode);
                 break;
 
             case Common.MONTH_MODE:
                 mCurrentFragment = new ScreenMonth();
+                mCurrentFragment.setLastMainMode(Common.sCurrentMode);
+                Common.sBtnCurrentDate.setVisibility(View.VISIBLE);
                 pressedButton = findViewById(R.id.btn_month_mode);
                 break;
 
             case 3:
                 mCurrentFragment = new ScreenCalendars();
+                Common.sBtnCurrentDate.setVisibility(View.INVISIBLE);
 
                 // Обновляем список календарей
                 CalendarProvider.sUpdateCalendars();
@@ -205,8 +209,8 @@ public class MainActivity extends AppCompatActivity
             FragmentManager fragmentManager = this.getSupportFragmentManager();
             FragmentTransaction transaction = fragmentManager.beginTransaction();
             transaction.replace(R.id.content_frame_support,
-                        mCurrentFragment,
-                        "support");
+                    mCurrentFragment,
+                    "support");
             transaction.addToBackStack("support");
             transaction.commit();
 
@@ -234,6 +238,7 @@ public class MainActivity extends AppCompatActivity
             mCurrentMode = pressedButton;
         }
 
+        Common.sCurrentMode = position;
         Common.sUpdateTitle(Common.sSelectedDate.getDate());
     }
 
