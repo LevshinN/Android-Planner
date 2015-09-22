@@ -13,7 +13,11 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.Locale;
 
 import ru.levn.simpleplanner.Common;
 import ru.levn.simpleplanner.R;
@@ -77,6 +81,19 @@ public class PageDay extends Fragment {
         ListView eventList = (ListView)mRootView.findViewById(R.id.day_event_list);
         eventList.setAdapter(mAdapter);
         eventList.setOnItemClickListener(selectItemListener);
+
+        TextView number = (TextView)mRootView.findViewById(R.id.day_info_number);
+        TextView month = (TextView)mRootView.findViewById(R.id.day_info_month);
+        TextView weekDay = (TextView)mRootView.findViewById(R.id.day_info_week_day);
+
+        SimpleDateFormat sdf = new SimpleDateFormat("dd", Locale.getDefault());
+        number.setText(sdf.format(representTime));
+
+        sdf = new SimpleDateFormat("MMMM", Locale.getDefault());
+        month.setText(sdf.format(representTime));
+
+        sdf = new SimpleDateFormat("EEE", Locale.getDefault());
+        weekDay.setText(sdf.format(representTime).toUpperCase());
 
         return mRootView;
     }
