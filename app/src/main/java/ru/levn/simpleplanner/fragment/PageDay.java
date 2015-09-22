@@ -82,18 +82,21 @@ public class PageDay extends Fragment {
         eventList.setAdapter(mAdapter);
         eventList.setOnItemClickListener(selectItemListener);
 
-        TextView number = (TextView)mRootView.findViewById(R.id.day_info_number);
-        TextView month = (TextView)mRootView.findViewById(R.id.day_info_month);
-        TextView weekDay = (TextView)mRootView.findViewById(R.id.day_info_week_day);
+        if (mRootView.findViewById(R.id.day_info_box) != null) {
 
-        SimpleDateFormat sdf = new SimpleDateFormat("dd", Locale.getDefault());
-        number.setText(sdf.format(representTime));
+            TextView number = (TextView) mRootView.findViewById(R.id.day_info_number);
+            TextView month = (TextView) mRootView.findViewById(R.id.day_info_month);
+            TextView weekDay = (TextView) mRootView.findViewById(R.id.day_info_week_day);
 
-        sdf = new SimpleDateFormat("MMMM", Locale.getDefault());
-        month.setText(sdf.format(representTime));
+            SimpleDateFormat sdf = new SimpleDateFormat("dd", Locale.getDefault());
+            number.setText(sdf.format(representTime));
 
-        sdf = new SimpleDateFormat("EEE", Locale.getDefault());
-        weekDay.setText(sdf.format(representTime).toUpperCase());
+            sdf = new SimpleDateFormat("MMMM", Locale.getDefault());
+            month.setText(sdf.format(representTime));
+
+            sdf = new SimpleDateFormat("EEE", Locale.getDefault());
+            weekDay.setText(sdf.format(representTime).toUpperCase());
+        }
 
         return mRootView;
     }
