@@ -35,6 +35,7 @@ import ru.levn.simpleplanner.fragment.ScreenCalendars;
 import ru.levn.simpleplanner.fragment.ScreenDay;
 import ru.levn.simpleplanner.fragment.ScreenMonth;
 import ru.levn.simpleplanner.fragment.ScreenWeek;
+import ru.levn.simpleplanner.planner.Planner;
 
 
 public class MainActivity extends AppCompatActivity
@@ -169,7 +170,7 @@ public class MainActivity extends AppCompatActivity
 
         switch (projection[position]) {
             case Common.DAY_MODE:
-                mCurrentFragment = new ScreenDay();
+                mCurrentFragment = new Planner();
                 Common.sBtnCurrentDate.setVisibility(View.VISIBLE);
                 pressedButton = findViewById(R.id.btn_day_mode);
                 break;
