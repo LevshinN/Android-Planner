@@ -43,10 +43,11 @@ public class PlannerPage extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View mRootView = new PlannerView(inflater.getContext());
+        PlannerView mRootView = new PlannerView(inflater.getContext());
         mRootView.setLayoutParams(new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT));
+        mRootView.setRepresentTime(representTime);
         return mRootView;
     }
 

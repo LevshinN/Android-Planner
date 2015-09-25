@@ -10,6 +10,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.OverScroller;
@@ -31,7 +32,9 @@ public class PlannerView extends View {
     private int tableWidth;
 
     private int yOffset;
+    private float yScale = 1.0f;
     private GestureDetector gestureDetector;
+    private ScaleGestureDetector scaleGestureDetector;
     private OverScroller scroller;
 
     public PlannerView(Context context) {
@@ -42,6 +45,7 @@ public class PlannerView extends View {
     private void init() {
         table = new PlannerTable();
         gestureDetector = new GestureDetector(getContext(), gestureListener);
+        scaleGestureDetector = new ScaleGestureDetector(getContext(), scaleGestureListener);
         scroller = new OverScroller(getContext());
     }
 
@@ -76,7 +80,9 @@ public class PlannerView extends View {
     }
 
     public boolean onTouchEvent(MotionEvent event) {
-        return super.onTouchEvent(event) || gestureDetector.onTouchEvent(event);
+        boolean retVal = scaleGestureDetector.onTouchEvent(event);
+        retVal = gestureDetector.onTouchEvent(event) || retVal;
+        return retVal || super.onTouchEvent(event);
     }
 
     private GestureDetector.OnGestureListener gestureListener = new GestureDetector.SimpleOnGestureListener() {
@@ -89,8 +95,8 @@ public class PlannerView extends View {
             yOffset += distanceY;
 
             if (yOffset < 0) yOffset = 0;
-            if (yOffset > tableHeight - getMeasuredHeight()) {
-                yOffset = tableHeight - getMeasuredHeight();
+            if (yOffset > table.tableHeight - getMeasuredHeight()) {
+                yOffset = (int)(table.tableHeight - getMeasuredHeight());
             }
 
             invalidate();
@@ -99,9 +105,35 @@ public class PlannerView extends View {
         }
 
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-            scroller.fling(0, yOffset, 0, (int) -velocityY, 0, 0, 0, tableHeight - getMeasuredHeight());
+            scroller.fling(0, yOffset, 0, (int) -velocityY, 0, 0, 0, (int)(table.tableHeight - getMeasuredHeight()));
 
             return true;
         }
     };
+
+    private ScaleGestureDetector.OnScaleGestureListener scaleGestureListener
+            = new ScaleGestureDetector.OnScaleGestureListener() {
+
+        @Override
+        public void onScaleEnd(ScaleGestureDetector detector) {
+        }
+
+        @Override
+        public boolean onScaleBegin(ScaleGestureDetector detector) {
+            return true;
+        }
+
+        @Override
+        public boolean onScale(ScaleGestureDetector detector) {
+            float scaleValue = detector.getScaleFactor();
+            table.scale(scaleValue);
+            ViewCompat.postInvalidateOnAnimation(PlannerView.this);
+            return true;
+        }
+    };
+
+    public void setRepresentTime(long utcTime) {
+        table.representTime = utcTime;
+        table.updateEvents();
+    }
 }

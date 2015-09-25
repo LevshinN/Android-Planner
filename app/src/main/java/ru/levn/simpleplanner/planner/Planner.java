@@ -19,6 +19,7 @@ import java.util.GregorianCalendar;
 import ru.levn.simpleplanner.Common;
 import ru.levn.simpleplanner.R;
 import ru.levn.simpleplanner.calendar.CalendarProvider;
+import ru.levn.simpleplanner.calendar.Event;
 import ru.levn.simpleplanner.fragment.ModeFragment;
 
 
@@ -34,9 +35,7 @@ public class Planner extends ModeFragment {
     private int textColor;
     private int backgroundColor;
 
-    private BaseAdapter elements;
-
-    PlannerPage[] tables;
+    private Event[] elements;
 
     private static final int NUM_PAGES = 5;
     private int currentPage;
